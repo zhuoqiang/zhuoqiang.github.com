@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 程序如何找自己 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./how-program-find-self.html">程序如何找自己</a></h1>
+</header>  <div>
+    <section>
+      <p>自我定位很重要，不但是对人，对程序来说也一样。如果能知道自己的路径位置，程序就可以通过相对定位找到身边的资源文件，这对于制作无需安装的绿色软件和各类插件很关键。下面列出几种程序的自我定位方法。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#windows-api" id="id2">Windows API</a></li>
+<li><a class="reference internal" href="#unix" id="id3">Unix 平台</a></li>
+<li><a class="reference internal" href="#python" id="id4">Python</a></li>
+<li><a class="reference internal" href="#mac-ios" id="id5">Mac &amp; iOS</a></li>
+<li><a class="reference internal" href="#mozilla-gecko" id="id6">Mozilla Gecko</a></li>
+</ul>
+</div>
+<div class="section" id="windows-api">
+<h2><a class="toc-backref" href="#id2">Windows API</a></h2>
+<p>可利用 Win32 API <tt class="docutils literal">GetModuleHandleEx</tt> 来取得内存地址所在的程序路径。如果传入可执行文件自身的某个函数地址，那就能获得自己的路径。该方法如下，默认是取自身的路径:</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">wstring</span> <span class="n">get_module_path</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">address</span><span class="o">=</span><span class="nb">NULL</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">address</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">get_module_path</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">HMODULE</span> <span class="n">handle</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">BOOL</span> <span class="k">const</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">::</span><span class="n">GetModuleHandleExW</span><span class="p">(</span>
+        <span class="n">GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS</span><span class="p">,</span>
+        <span class="c1">//|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,</span>
+        <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">wchar_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">address</span><span class="p">),</span>
+        <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">handle</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">wchar_t</span> <span class="n">path_buffer</span><span class="p">[</span><span class="n">MAX_PATH</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="sc">L&#39;\0&#39;</span><span class="p">};</span>
+        <span class="n">DWORD</span> <span class="k">const</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">::</span><span class="n">GetModuleFileNameW</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">path_buffer</span><span class="p">,</span> <span class="n">MAX_PATH</span><span class="p">);</span>
+        <span class="c1">// We have to free it</span>
+        <span class="o">::</span><span class="n">FreeLibrary</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="n">ret</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">path_buffer</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="s">L&quot;&quot;</span><span class="p">;</span> <span class="c1">// not found</span>
+<span class="p">}</span>
+</pre></div>
+<p>这个方法也能在 DLL 中使用，让动态库也能获取自身的位置，方便插件的编写。</p>
+</div>
+<div class="section" id="unix">
+<h2><a class="toc-backref" href="#id3">Unix 平台</a></h2>
+<p>与 Win32 类似，在 POSIX 中 <tt class="docutils literal">dladdr</tt> 函数也可以获取某个地址所在可执行文件的路径:</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_module_path</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">address</span><span class="o">=</span><span class="nb">NULL</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">address</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">get_module_path</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="o">::</span><span class="n">Dl_info</span> <span class="n">dl_info</span><span class="p">;</span>
+    <span class="n">dl_info</span><span class="p">.</span><span class="n">dli_fname</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="k">const</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">::</span><span class="n">dladdr</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dl_info</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="n">ret</span> <span class="o">&amp;&amp;</span> <span class="n">dl_info</span><span class="p">.</span><span class="n">dli_fname</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">dl_info</span><span class="p">.</span><span class="n">dli_fname</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>该方法同样能让 so 动态库找到自身的位置，方便插件的编写。</p>
+</div>
+<div class="section" id="python">
+<h2><a class="toc-backref" href="#id4">Python</a></h2>
+<p>Python 内置变量 <tt class="docutils literal">__file__</tt> 的值就是脚本文件位置，很方便。不过一旦脚本被 py2exe 这类程序打包后，`` __file__`` 就不准确了。这时就需要用 <tt class="docutils literal">sys.argv[0]</tt> 甚至 <tt class="docutils literal">sys.executable</tt> 变量来取得打包后的程序文件的位置</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<span class="k">def</span> <span class="nf">is_frozen</span><span class="p">():</span>
+   <span class="k">return</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s">&quot;frozen&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="c"># new py2exe</span>
+           <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s">&quot;importers&quot;</span><span class="p">)</span> <span class="c"># old py2exe</span>
+           <span class="ow">or</span> <span class="n">imp</span><span class="o">.</span><span class="n">is_frozen</span><span class="p">(</span><span class="s">&quot;__main__&quot;</span><span class="p">))</span> <span class="c"># tools/freeze</span>
+
+<span class="k">def</span> <span class="nf">get_self_path</span><span class="p">():</span>
+   <span class="k">if</span> <span class="n">is_frozen</span><span class="p">():</span>
+       <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>
+   <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="mac-ios">
+<h2><a class="toc-backref" href="#id5">Mac &amp; iOS</a></h2>
+<p>Mac 和 iOS 平台上标准的 App 结构都是把可执行文件和资源文件打包在程序束 (bundle) 中，苹果还提供专门的 API 来取得 bundle 的路径，从这点上来说，苹果上的软件都是绿色的。不过如果需要，你还是可以取得自身的路径，</p>
+<div class="highlight"><pre><span class="kt">char</span> <span class="n">path</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<span class="kt">uint32_t</span> <span class="n">size</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">_NSGetExecutablePath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;executable path is %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;buffer too small; need size %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>这种方法不管是对传统的 Unix 可执行文件或是 Apple 自己标准的 App 都适用。</p>
+</div>
+<div class="section" id="mozilla-gecko">
+<h2><a class="toc-backref" href="#id6">Mozilla Gecko</a></h2>
+<p>Firefox 的扩展都基于 Gecko 架构提供的插件机制。要得到扩展自身的路径应该很方便才是，但实际上并非如此:</p>
+<div class="highlight"><pre><span class="nx">Components</span><span class="p">.</span><span class="nx">utils</span><span class="p">.</span><span class="kr">import</span><span class="p">(</span><span class="s2">&quot;resource://gre/modules/AddonManager.jsm&quot;</span><span class="p">);</span>
+<span class="nx">AddonManager</span><span class="p">.</span><span class="nx">getAddonByID</span><span class="p">(</span><span class="s2">&quot;your@addon.name&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">addon</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="nx">addon</span><span class="p">.</span><span class="nx">getResourceURI</span><span class="p">(</span><span class="s2">&quot;relative/path/to/file&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span> <span class="k">instanceof</span> <span class="nx">Components</span><span class="p">.</span><span class="nx">interfaces</span><span class="p">.</span><span class="nx">nsIFileURL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// get the absolute path to the file inside Your@Addon.name</span>
+        <span class="kd">var</span> <span class="nx">absolute_file_path</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+<p>这里，需要按扩展的名字去 <tt class="docutils literal">AddonManager</tt> 中找出扩展对象，再通过扩展对象取得扩展包内相对位置的文件路径，使用起来不太方便。</p>
+<p>其实，Gecko 中有更直接的方法。你可以在 <tt class="docutils literal">manifest</tt> 文件里把需要引用的文件都声明成 <tt class="docutils literal">resource</tt>，所有的 <tt class="docutils literal">resource</tt> 都可以在扩展里通过 URI 名字直接获得路径</p>
+<div class="highlight"><pre><span class="na">resource YOUR-ADDON-LIB path/to/libaddon.so ABI</span><span class="o">=</span><span class="s">Linux_x86-gcc3</span>
+<span class="na">resource YOUR-ADDON-LIB path/to/addon.dll ABI</span><span class="o">=</span><span class="s">WINNT_x86-msvc</span>
+</pre></div>
+<div class="highlight"><pre><span class="kr">const</span> <span class="nx">ioService</span> <span class="o">=</span> <span class="nx">Cc</span><span class="p">[</span><span class="s2">&quot;@mozilla.org/network/io-service;1&quot;</span><span class="p">].</span><span class="nx">getService</span><span class="p">(</span><span class="nx">Ci</span><span class="p">.</span><span class="nx">nsIIOService</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="nx">ioService</span><span class="p">.</span><span class="nx">newURI</span><span class="p">(</span><span class="s1">&#39;resource://YOUR-ADDON-LIB&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">uri</span> <span class="k">instanceof</span> <span class="nx">Components</span><span class="p">.</span><span class="nx">interfaces</span><span class="p">.</span><span class="nx">nsIFileURL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">lib</span> <span class="o">=</span> <span class="nx">ctypes</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">uri</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+    <span class="c1">/// ...</span>
+<span class="p">}</span>
+</pre></div>
+<p>在不同平台上，同一名字还能对应不同的资源文件，方便跨平台扩展的开发。在上面例子中，Win32 平台 <tt class="docutils literal"><span class="pre">js-ctypes</span></tt> 会使用 <tt class="docutils literal">addon.dll</tt> 而 Linux 上则会使用 <tt class="docutils literal">libaddon.so</tt>，这一切都由 gecko 帮着选择定位。我在 <a class="reference external" href="https://addons.mozilla.org/zh-cn/firefox/addon/chmfox/">chmfox</a> 里正是使用了这个手法。</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2012-06-06T19:26:00" pubdate>2012-06-06</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/c.html"><i class="icon-tag"></i> <span i18n>c++</span></i></a>
+        <li><a href="./tag/firefox.html"><i class="icon-tag"></i> <span i18n>firefox</span></i></a>
+        <li><a href="./tag/ios.html"><i class="icon-tag"></i> <span i18n>ios</span></i></a>
+        <li><a href="./tag/python.html"><i class="icon-tag"></i> <span i18n>python</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'how-program-find-self';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

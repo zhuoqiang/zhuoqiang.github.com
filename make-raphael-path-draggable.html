@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 让 Raphael 的 Path 动起来 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./make-raphael-path-draggable.html">让 Raphael 的 Path 动起来</a></h1>
+</header>  <div>
+    <section>
+      <p>Raphaël 是一个很简单实用的 Javascript 矢量图形库。它抽象出一套 API 屏蔽了 SVG 和 VML 之间的差异，做到了对主流浏览器的支持，包括很不给力的 IE6（很可惜，并不支持手机 UC 浏览器）。</p>
+<p>Raphaël 对于交互事件也有一定的支持，比如常用的鼠标拖放操作等。可惜在官网上虽然有拖放操作的例子，但例子的写法只对 circle，rect 有效，对 path 却不起作用。经过一番实践，终于了解了 Raphaël 对于拖放支持的原理，找到了一个通用的拖放操作方法，能支持所有的矢量对象，也包括 path。</p>
+<p>官方例子之所以对 path 不起作用是因为：path 没有象 circle 里面的 <tt class="docutils literal">cx</tt> 和 <tt class="docutils literal">cy</tt> 属性，要移动 path，只能使用 <tt class="docutils literal">Path.translate()</tt> 方法。还要注意的是，Path 必须要先 <tt class="docutils literal">fill</tt> 才能移动。</p>
+<p>仿照官网的例子，下面是一个 Path 移动的代码示例：</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">260</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;M0 0L100 0L50 80Z&#39;</span><span class="p">);</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span>
+    <span class="s2">&quot;fill&quot;</span><span class="o">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;opacity&#39;</span><span class="o">:</span> <span class="mf">0.8</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span>
+        <span class="nx">opacity</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">});</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">lastX</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">lastY</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">},</span>
+    <span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">deltaX</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">lastX</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">deltaY</span> <span class="o">=</span> <span class="nx">y</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">lastY</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">translate</span><span class="p">(</span><span class="nx">deltaX</span><span class="p">,</span> <span class="nx">deltaY</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastX</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastY</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">up</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span>
+            <span class="nx">opacity</span><span class="o">:</span> <span class="mf">0.8</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">drag</span><span class="p">(</span><span class="nx">move</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">up</span><span class="p">);</span>
+</pre></div>
+<p><a class="reference external" href="http://jsfiddle.net/zhuoqiang/CKsZQ/">运行效果</a> 如下，请试着用鼠标拖动小三角形：</p>
+<iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/zhuoqiang/CKsZQ/embedded/result,js/" allowfullscreen="allowfullscreen" frameborder="0"></iframe><p>这个例子有几点要说明一下</p>
+<ul class="simple">
+<li>回调函数 <tt class="docutils literal">move</tt> 的第一和第二个参数是鼠标当前所在位置距离初始鼠标位置的相对位移值。而不是距离上次 <tt class="docutils literal">move</tt> 回调时鼠标位置的位移</li>
+<li>我们在 <tt class="docutils literal">start</tt> 和 <tt class="docutils literal">move</tt> 中不断更新相对位移值，并保存在 <tt class="docutils literal">this.lastX</tt> 和 <tt class="docutils literal">this.lastY</tt> 中</li>
+<li>我们通过 <tt class="docutils literal">this.translate()</tt> 进行实际的移动操作</li>
+<li>开始就要设置 <tt class="docutils literal">fill</tt> 属性，否则就不能进行移动操作</li>
+</ul>
+<p>这个例子不但能工作，而且因为所有的 Raphael 矢量对象都有 <tt class="docutils literal">translate</tt> 方法。所以它不仅对 path 有效，也对所有的 Raphael 矢量对象有效。那是不是能做出来类似 <tt class="docutils literal">jQuery.ui</tt> 里面的 <tt class="docutils literal">draggble</tt> 之类的函数呢。下面就是一个简单的扩展，为 Raphael 对象加入了 <tt class="docutils literal">draggable</tt> 方法</p>
+<div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">R</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">R</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">draggable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">move</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">up</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">onMove</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">is</span><span class="p">(</span><span class="nx">move</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="o">?</span>
+        <span class="nx">move</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">distanceX</span><span class="p">,</span> <span class="nx">distanceY</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">deltaX</span><span class="p">,</span> <span class="nx">deltaY</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">translate</span><span class="p">(</span><span class="nx">deltaX</span><span class="p">,</span> <span class="nx">deltaY</span><span class="p">);</span>
+        <span class="p">};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">onStart</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">is</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">start</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">};</span>
+
+        <span class="kd">function</span> <span class="nx">onMove</span><span class="p">(</span><span class="nx">distanceX</span><span class="p">,</span> <span class="nx">distanceY</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">deltaX</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">-</span> <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastX</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">deltaY</span> <span class="o">=</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastY</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastX</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastY</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">onMove</span><span class="p">(</span><span class="nx">distanceX</span><span class="p">,</span> <span class="nx">distanceY</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">deltaX</span><span class="p">,</span> <span class="nx">deltaY</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">paper</span><span class="p">.</span><span class="nx">safari</span><span class="p">();</span>
+        <span class="p">};</span>
+
+        <span class="kd">function</span> <span class="nx">onStart</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastX</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">lastY</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">_ui</span><span class="p">.</span><span class="nx">onStart</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">drag</span><span class="p">(</span><span class="nx">onMove</span><span class="p">,</span> <span class="nx">onStart</span><span class="p">,</span> <span class="nx">up</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">})(</span><span class="nx">Raphael</span><span class="p">);</span>
+</pre></div>
+<p>上面的一段代码，扩展了 Raphael 对象的方法，让它们拥有了类似 <tt class="docutils literal">jquery.ui</tt> 里 <tt class="docutils literal">draggable</tt> 的能力。下面是用利用这个扩展重写的拖放 Path 的例子</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
+<span class="nx">R</span><span class="p">.</span><span class="nx">rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;M0 0L100 0L50 80Z&#39;</span><span class="p">);</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span><span class="s2">&quot;fill&quot;</span><span class="o">:</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="o">:</span><span class="mf">0.5</span><span class="p">});</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">draggable</span><span class="p">();</span>
+</pre></div>
+<p>可以看到，只需要简单的调用 <tt class="docutils literal">.draggable()</tt> 就可以让对象被鼠标拖拽了。</p>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-08-02T23:23:00" pubdate>2010-08-02</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/javascript.html"><i class="icon-tag"></i> <span i18n>javascript</span></i></a>
+        <li><a href="./tag/web.html"><i class="icon-tag"></i> <span i18n>web</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'make-raphael-path-draggable';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Monad 最简介绍 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./what-is-monad.html">Monad 最简介绍</a></h1>
+</header>  <div>
+    <section>
+      <p>Haskell 是一门特殊的编程语言，哪怕在函数语言中也很特立独行。它以彻底的纯函数和强大的类型系统闻名。Monad 概念就是由 Haskell 第一个引入编程世界的，它也许是编程领域最难理解的概念。几乎所有费心尽力最终理解了 Monad 的人都会有一种恍然顿悟的感觉，这里简单说说我悟到的 Monad。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id4">为什么 Monad</a></li>
+<li><a class="reference internal" href="#id2" id="id5">Monad 的原理</a></li>
+<li><a class="reference internal" href="#id3" id="id6">Monad 是什么</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id4">为什么 Monad</a></h2>
+<p>Haskell 为什么会引入 Monad？最大的原因是为了在纯函数语言中引入副作用。</p>
+<p>纯函数的优点是安全可靠。函数输出完全取决于输入，不存在任何隐式依赖。它的存在如同数学公式般完美无缺。可有时越是完美的东西就越没有用处，比如纯函数，因为隔绝了外部环境，纯函数连基本的输入输出都做不了。一个简单的 Hello world 就能难倒纯函数。为了引入 IO 操作，各种函数式语言八仙过海各显神通。Monad 就是 Haskell 给出的方案。并且 Monad 并不仅仅是 IO 操作的抽象，它更是多种类似操作之间共性的抽象。所以 Monad 解决的问题并不局限在 IO 上，像 Haskell 中的 <tt class="docutils literal">Maybe</tt> 和 <tt class="docutils literal">[]</tt> 都是 Monad。Haskell 中漂亮的错误处理方式和灵活的列表推导式 (list comprehension) 也都算是 Monad 的贡献。</p>
+<p>我自己一直有种误解，这里需要特别说明一下： Monad 不但不是引入 IO 的唯一方法，而且可以说 Monad 并没有把副作用引入纯函数中。纯函数不能有副作用，有副作用的不叫纯函数，哪怕用了神秘难解的 Monad 也不行。那 Monad 到底做了什么呢？</p>
+<p>让我们再回想一下: 纯函数安全可靠但无用，是个无趣的好男人; 普通函数能力强但 Bug 多，对程序来说却是必不可少的。如同危险而有魅力的坏男孩。如何同时拥有两者，让它们合作无间各自发挥特点而不互相打架呢？这就是 Monad 的作用了。它将带有副作用的 IO 操作以一种可控的方式引入到 Haskell 中，让纯函数与 IO 操作能够和平相处，共同组织出既安全又有用的程序。</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id5">Monad 的原理</a></h2>
+<p>函数之间要协作，就必须以各种形式交互连接。因为 Haskell 使用静态强类型系统，函数间的连接受限于入参与返回值类型，这大大增强了程序的安全性，同时也带来一个问题：如何既充分隔离纯函数与副作用函数，又能让两类函数相互复用？</p>
+<p>我们拿 IO 操作做例子分析，Haskell 中专门有一个类型类（类型类有点象 C++ 中的 Concept） <tt class="docutils literal">IO</tt> 用来标示某类型附带有 IO 动作。</p>
+<p>为了充分隔离纯函数与 IO 函数，Haskell 中不能实现 <tt class="docutils literal">IO Char <span class="pre">-&gt;</span> Char</tt> 这样一种输入是 IO 类型返回值却是普通类型的函数。否则副作用函数就能很容易变身为纯函数了</p>
+<div class="highlight"><pre><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Char</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="kt">IO</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span><span class="p">)</span>
+</pre></div>
+<p>事实上一旦参数中有 IO，返回值必有 IO，这就保证了充分隔离。</p>
+<p>那如何让纯函数与 IO 函数相互复用呢？这就要靠 IO Monad 中定义的 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 这两个函数了。<tt class="docutils literal">return</tt> （在 Haskell 中不是关键字，只是一般的函数名）的作用是将某个类型为 A 的值 a 以最自然的方式提升（装箱）为类型为 IO A 的值 <tt class="docutils literal">Char <span class="pre">-&gt;</span> IO Char</tt> 。后面会看到所谓“最自然”的方式是有严格定义的。有了这个函数后，纯函数就可以通过与 <tt class="docutils literal">return</tt> 复合变成返回值为 <tt class="docutils literal">IO</tt> 带副作用的函数了，当然，实际的 IO 动作是 Haskell 内建的，<tt class="docutils literal">return</tt> 的主要意义在于类型提升。</p>
+<p>有了提升可没有下降操作，怎么复合 <tt class="docutils literal">putChar :: Char <span class="pre">-&gt;</span> IO()</tt> 与 <tt class="docutils literal">getChar :: IO Char</tt> 呢。 <tt class="docutils literal">getChar</tt> 从 IO 读取一个字符， <tt class="docutils literal">putChar</tt> 把字符写入 IO。但 <tt class="docutils literal">getChar</tt> 返回的是 <tt class="docutils literal">IO Char</tt> 类型，而 <tt class="docutils literal">putChar</tt> 需要的是普通的 <tt class="docutils literal">Char</tt> 类型，两者不匹配怎么办？ <tt class="docutils literal">&gt;&gt;=</tt> 函数出马了！ <tt class="docutils literal">&gt;&gt;=</tt> 的类型是</p>
+<div class="highlight"><pre><span class="kt">IO</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span>
+</pre></div>
+<p>这样 <tt class="docutils literal">&gt;&gt;=</tt> 就可以连接 <tt class="docutils literal">getChar</tt> 与 <tt class="docutils literal">putChar</tt> ，把输入复写到输出中</p>
+<div class="highlight"><pre><span class="nf">echo</span> <span class="ow">=</span> <span class="o">&gt;&gt;=</span> <span class="n">getChar</span> <span class="o">.</span> <span class="n">putChar</span>
+</pre></div>
+<p>可以看到 <tt class="docutils literal">&gt;&gt;=</tt> 操作实际上是受限的类型下降（或拆箱）操作，只有当后面的函数返回值也是 IO 类型时才进行下降操作。这样既充分隔离纯函数与副作用函数，又能让函数相互复用。</p>
+<p>通过 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 两个平行世界 (范畴) 就有了可控的交流通道。下图直观的反映 Monad 的作用，A 与 IO A 是分属两个不同的世界，A 是纯洁类型，IO A 是带 IO 操作的类型。为了保证整个程序的质量，两个世界的交流只能以图上的方式进行</p>
+<img alt="|filename|/images/monad.png" src="./static/images/monad.png" />
+<ul class="simple">
+<li><tt class="docutils literal">return</tt> 是最自然的类型提升函数，将 a 提升为 a'</li>
+<li><tt class="docutils literal">a <span class="pre">-&gt;</span> b'</tt> 是普通的提升函数</li>
+<li><tt class="docutils literal">&gt;&gt;=</tt> 是受控的类型下降，只有当 <tt class="docutils literal">b <span class="pre">-&gt;</span> c'</tt> 存在时，才能将 b' 降到 b。这样 <tt class="docutils literal">a <span class="pre">-&gt;</span> b'</tt> 与 <tt class="docutils literal">b <span class="pre">-&gt;</span> c'</tt> 就能复合成 <tt class="docutils literal">a <span class="pre">-&gt;</span> c'</tt> 了</li>
+<li>Monad 没有定义 <tt class="docutils literal">c <span class="pre">-&gt;</span> c'</tt>，不存在这种不受控的下降方式</li>
+</ul>
+<p>这里，IO 类型类可以是任意符合 Monad 定义的类型类。a' 可以是 <tt class="docutils literal">IO a</tt>, <tt class="docutils literal">Maybe a</tt>, 或者 <tt class="docutils literal">[a]</tt>。同时 Haskell 的 do 语法糖又进一步简化了 <tt class="docutils literal">&gt;&gt;=</tt> 复合的语法，使其成为很多类似问题的通用解决方案，这里就不展开了。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id6">Monad 是什么</a></h2>
+<p>Monad 之所以难以理解，就在于它的抽象性。这不同于面向对象，鹰是一种鸟这种程度的类比就足以让人理解子类父类继承关系这些概念了。Monad 的抽象是形而上的高度抽象。它本身是抽象代数中范畴学的一个概念，是特殊的算子。要真正消化它首先要理解抽象的对象，类型，范畴，函子这些概念。没有这些概念打底，理解 Monad 可谓是空中楼阁无根之木。如果非要单独理解 Monad，那上图就是一个很好的简化说明。</p>
+<p>前面说了，<tt class="docutils literal">return</tt> 是最自然的提升方式，这里“最自然”是有明确意义的。指的是 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 这对函数必需满足下面的公理</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">return</tt> 与 <tt class="docutils literal">&gt;&gt;=</tt> 互为逆操作</p>
+<div class="highlight"><pre><span class="p">(</span><span class="n">return</span> <span class="n">x</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f</span> <span class="n">x</span>
+<span class="nf">m</span> <span class="o">&gt;&gt;=</span> <span class="n">return</span> <span class="o">==</span> <span class="n">m</span>
+</pre></div>
+</li>
+<li><p class="first"><tt class="docutils literal">&gt;&gt;=</tt> 满足结合律</p>
+<div class="highlight"><pre><span class="p">(</span><span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="o">==</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">))</span>
+</pre></div>
+</li>
+</ul>
+<p>这些公理保证了 Monad 正常工作。但可惜，它们在 Haskell 中没法用类型系统加以检查，只能靠各个 Monad 的实现者保证，算是潜规则。正如动态语言需要大量测试覆盖代码以保障质量一样，静态类型语言也需要外在的检验来保证这些潜规则没被违反。</p>
+<p>Monad 被引入进 Haskell 用来解决 IO 操作可谓神来之笔，正如面象对象概念可以在非面象对象的语言中模拟使用一样，Monad 概念也能在其它中语言中应用 （比如 Java, C++, Python）。但只有在 Haskell 这种拥有强大类型推导系统的强类型语言中，Monad 才能发挥最大功效。Haskell 或没有跻身为主流语言的一天，但相信 Monad 会象 Lambda 概念一样，从函数语言的王谢家飞入寻常主流语言中来。</p>
+<p>编程语言进步的方向是抽象，抽象，更高层次的抽象！</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2012-06-20T23:52:00" pubdate>2012-06-20</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/design.html"><i class="icon-tag"></i> <span i18n>design</span></i></a>
+        <li><a href="./tag/haskell.html"><i class="icon-tag"></i> <span i18n>haskell</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'what-is-monad';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

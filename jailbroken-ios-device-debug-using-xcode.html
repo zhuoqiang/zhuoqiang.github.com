@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 用 Xcode 在 iOS 越狱设备上开发调试 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./jailbroken-ios-device-debug-using-xcode.html">用 Xcode 在 iOS 越狱设备上开发调试</a></h1>
+</header>  <div>
+    <section>
+      <div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id8">目的</a></li>
+<li><a class="reference internal" href="#ios" id="id9">iOS 设备的设置</a></li>
+<li><a class="reference internal" href="#id2" id="id10">生成私有签名</a></li>
+<li><a class="reference internal" href="#xcode" id="id11">设置 Xcode</a><ul>
+<li><a class="reference internal" href="#id4" id="id12">告诉 Xcode 不需要签名</a></li>
+<li><a class="reference internal" href="#id5" id="id13">告诉 Xcode 不用做签发动作</a></li>
+<li><a class="reference internal" href="#xcode-app" id="id14">指示 Xcode 使用私有签名签发 App</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6" id="id15">开始调试</a></li>
+<li><a class="reference internal" href="#id7" id="id16">补充</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id8">目的</a></h2>
+<p>开发 iOS 程序时，如果要在真机上调试，开发者向苹果交 99 美金的年费来取得 iOS 开发者账号。钱虽不多，但有些开发者只想练练手玩一玩 iOS 开发，并不在意能否在 AppStore 上发布应用。对这些票友来说，这笔投资就有点纠结了。</p>
+<p>开发 iOS 越狱程序可以绕过这个限制，直接在真机上调试。但是要使用命令行界面。如果可以利用 Xcode 集成开发环境提供的便利性直接在真机上调试，那对开发效率的提升是巨大的。</p>
+<p>下面就介绍在不申请 iOS 开发者账号的情况下，如何使用 Xcode 在越狱的 iOS 设备上进行开发调试。</p>
+</div>
+<div class="section" id="ios">
+<h2><a class="toc-backref" href="#id9">iOS 设备的设置</a></h2>
+<p>iOS 在安装运行 App 时都需要先检查它的数字签名。苹果为安全起见，只允许官方数字签名签过的 App 在真机上运行。让我们先绕过这个限制:</p>
+<ol class="arabic simple">
+<li>越狱你的 iOS 设备。请自行放狗查找越狱教程</li>
+<li>安装越狱应用 AppSync。这需要在 Cydia 中添加源 <tt class="docutils literal"><span class="pre">http://cydia.hackulo.us</span></tt>，然后选择一个适合本设备的版本安装。AppSync 能让设备绕过苹果的数字签名验证机制，从而安装我们随后用私有签名签发的 App （当然也能安装盗版 App，这不在讨论范围之内，支持正版！）</li>
+<li>重启 iOS 设备</li>
+</ol>
+<p>每次 iOS 系统升级都要在设备上重复这一步。</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id10">生成私有签名</a></h2>
+<p>你需要一个数字签名来签发 (codesign) App，这样 App 才能在 iOS 上运行。既然不想花 99 美金申请苹果官方的开发者签名，那就生成自己的私有签名。</p>
+<p>苹果官方文档有详细的 <a class="reference external" href="https://developer.apple.com/library/mac/#documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html">生成步骤</a> :</p>
+<ol class="arabic simple">
+<li>打开 Mac OS X 操作系统自带的 <tt class="docutils literal">实用工具</tt> 中的 <tt class="docutils literal">钥匙串访问</tt> 程序</li>
+<li>在 <tt class="docutils literal">钥匙串访问</tt> 程序的菜单中选择 <tt class="docutils literal">证书助理</tt> -&gt; <tt class="docutils literal">创建证书</tt></li>
+<li>证书的名称一定要写 <tt class="docutils literal">iPhone Developer</tt>，以避免不必要的麻烦</li>
+<li>身份类型为 <tt class="docutils literal">自签名根证书</tt>，证书类型选 <tt class="docutils literal">代码签名</tt></li>
+<li>勾选 <tt class="docutils literal">让我覆盖这些默认值</tt> 并继续</li>
+<li>随便输入一个的序列号。只要保证序列号和证书名称唯一就可以了</li>
+<li>输入证书信息，因为是私有证书，随便写一下就行</li>
+<li>后面选择框都用默认值就好了</li>
+</ol>
+<p>完成后就可以在 <tt class="docutils literal">钥匙串访问</tt> 中看到这个刚创建的 <tt class="docutils literal">iPhone Developer</tt> 根证书了。它被标红警示 <tt class="docutils literal">此证书不被信任</tt>，表示它不是由权威机构认证生成。没关系，我们在上一步已经搞定了 iOS 设备，不再需要权威机构了。</p>
+<p>这个步骤只需一次。</p>
+</div>
+<div class="section" id="xcode">
+<h2><a class="toc-backref" href="#id11">设置 Xcode</a></h2>
+<p>我们需要告诉 Xcode 在编译调试时既不需要签名，也不用做自动的签发动作。最后还要指定使用私有签名来签发 (codesign) 我们的程序。</p>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id12">告诉 Xcode 不需要签名</a></h3>
+<p>因为需要更改 Xcode 的配置文件，我们首先要关闭 Xcode。为了安全起见，在修改配置文件之前请备份原始文件。</p>
+<p>以下的设置是以 Xcode 4.3 和 iOS SDK 5.0 为例。其它版本的路径略有不同，请自行修改。</p>
+<div class="highlight"><pre><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/
+sudo cp Info.plist Info.plist.orig
+sudo vi Info.plist
+</pre></div>
+<p>找到</p>
+<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>CODE_SIGNING_REQUIRED<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>YES<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+<p>将 <tt class="docutils literal">YES</tt> 改为 <tt class="docutils literal">NO</tt> 。</p>
+<p>再找</p>
+<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>ENTITLEMENTS_REQUIRED<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>YES<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+<p>也将 <tt class="docutils literal">YES</tt> 改为 <tt class="docutils literal">NO</tt></p>
+<p>再用同样方法，先备份 <tt class="docutils literal">/Developer/Platforms/iPhoneOS.platform/Info.plist</tt> 配置文件，然后修改其中所有的</p>
+<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>CODE_SIGN_CONTEXT_CLASS<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>XCiPhoneOSCodeSignContext<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+<p>替换其中的 <tt class="docutils literal">XCiPhoneOSCodeSignContext</tt> 为 <tt class="docutils literal">XCCodeSignContext</tt></p>
+<p>最后，我们要修改 Xcode 的 iPhone 开发 plugin</p>
+<div class="highlight"><pre><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/PrivatePlugIns/iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.xcplugin/Contents/MacOS/
+dd <span class="k">if</span><span class="o">=</span>iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support <span class="nv">of</span><span class="o">=</span>working <span class="nv">bs</span><span class="o">=</span>500 <span class="nv">count</span><span class="o">=</span>255
+<span class="nb">printf</span> <span class="s2">&quot;\xc3\x26\x00\x00&quot;</span> &gt;&gt; working
+mv -n iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.original
+mv working iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support
+chmod a+x iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support
+</pre></div>
+<p>这样一来，Xcode 就知道 iOS 的程序不需要签名了。</p>
+<p>该步骤对每个新安装的 Xcode 和 iOS SDK 版本都要做一遍。</p>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id13">告诉 Xcode 不用做签发动作</a></h3>
+<p>打开任意的 Xcode 工程，选择项目文件，在 <tt class="docutils literal">Build Settings</tt> 中找到 <tt class="docutils literal">Code Signing</tt> 项，选出 <tt class="docutils literal">Code Signing Identity</tt> 的子条目 <tt class="docutils literal">Any iOS SDK</tt>，将它设置为 <tt class="docutils literal">Don't Code Sign</tt>。</p>
+</div>
+<div class="section" id="xcode-app">
+<h3><a class="toc-backref" href="#id14">指示 Xcode 使用私有签名签发 App</a></h3>
+<p>保存下面的 python 脚本:</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;Usage: </span><span class="si">%s</span><span class="s"> appname dest_file.xcent&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">APPNAME</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DEST</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xml&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xcent&#39;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;Dest must be .xml (for ldid) or .xcent (for codesign)&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">entitlements</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="s">&lt;plist version=&quot;1.0&quot;&gt;</span>
+<span class="s">&lt;dict&gt;</span>
+<span class="s">    &lt;key&gt;application-identifier&lt;/key&gt;</span>
+<span class="s">    &lt;string&gt;</span><span class="si">%s</span><span class="s">&lt;/string&gt;</span>
+<span class="s">    &lt;key&gt;get-task-allow&lt;/key&gt;</span>
+<span class="s">    &lt;true/&gt;</span>
+<span class="s">&lt;/dict&gt;</span>
+<span class="s">&lt;/plist&gt;</span>
+<span class="s">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">APPNAME</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">DEST</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xcent&#39;</span><span class="p">):</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\xfa\xde\x71\x71</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&gt;L&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">entitlements</span><span class="p">)</span> <span class="o">+</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">entitlements</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+<p>假定脚本保存在 <tt class="docutils literal">/Developer/iphoneentitlements401/gen_entitlements.py</tt>，设为可执行</p>
+<div class="highlight"><pre>chmod 777 /Developer/iphoneentitlements401/gen_entitlements.py
+</pre></div>
+<p>最后，在每一个需要设备调试的工程里都要指定运行该脚本。选中工程文件，在 <tt class="docutils literal">Build Phases</tt> 页中点击右下角的 <tt class="docutils literal">Add Build Phase</tt> 按钮。在 <tt class="docutils literal">Shell</tt> 框中输入下面的脚本:</p>
+<div class="highlight"><pre><span class="nb">export </span><span class="nv">CODESIGN_ALLOCATE</span><span class="o">=</span>/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;${PLATFORM_NAME}&quot;</span> <span class="o">==</span> <span class="s2">&quot;iphoneos&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+/Developer/iphoneentitlements401/gen_entitlements.py <span class="s2">&quot;my.company.${PROJECT_NAME}&quot;</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot;</span>;
+codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlements <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot;</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/&quot;</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id15">开始调试</a></h2>
+<p>打开设置好的 Xcode 工程，连上 iOS 设备。打开 Xcode 的 <tt class="docutils literal">Organizer</tt> 面版，在左边的 <tt class="docutils literal">Device</tt> 列表中选中连接上的 iOS 设备，点击 <tt class="docutils literal">Use for Development</tt>，对弹出的对话框都选择 <tt class="docutils literal">拒绝</tt> 或 <tt class="docutils literal">Cancel</tt>。</p>
+<p>现在点击 <tt class="docutils literal">Run</tt> 按钮，看看你的设备，见证奇迹的时刻到了。</p>
+<p>你也可以切换到 Debug 版本进行调试: 选择菜单 <tt class="docutils literal">Product</tt> -&gt; <tt class="docutils literal">Edit Scheme …</tt> 将 <tt class="docutils literal">Run YourAppName.app</tt> 中的 <tt class="docutils literal">Build Configuration</tt> 改为 <tt class="docutils literal">Debug</tt>。</p>
+<p>至此，你就可以免掉 99 美金的年费尽情的在真机上调试应用了。</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id16">补充</a></h2>
+<ul class="simple">
+<li>本文的方案严重参考 <a class="reference external" href="http://www.alexwhittemore.com/developing-jailbroken-iphone-ios-401/">http://www.alexwhittemore.com/developing-jailbroken-iphone-ios-401/</a> 向原作者致谢</li>
+<li>该方案经验证能在 Xcode 3 ~ 4, iOS 4 ~ 5 版本上运行。不同版本的配置文件路径有所不同，请自行修改</li>
+<li>要在 AppStore 上发布你的应用，99 美金的年费是无论如何省不下来的。其实价格倒也公道，毕竟 Xcode 是免费的</li>
+<li>如要正常的签发流程，请恢复备份的原始配置文件。我还没有恢复过，不保证一定能恢复成功</li>
+</ul>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2012-04-10T22:40:00" pubdate>2012-04-10</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/ios.html"><i class="icon-tag"></i> <span i18n>ios</span></i></a>
+        <li><a href="./tag/mobile.html"><i class="icon-tag"></i> <span i18n>mobile</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'jailbroken-ios-device-debug-using-xcode';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

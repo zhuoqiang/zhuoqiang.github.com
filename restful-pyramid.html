@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | RESTful Pyramid </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./restful-pyramid.html">RESTful Pyramid</a></h1>
+</header>  <div>
+    <section>
+      <div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#english-version" id="id4">English Version (英文版)</a><ul>
+<li><a class="reference internal" href="#http-verb-based-route" id="id5">HTTP Verb Based Route</a></li>
+<li><a class="reference internal" href="#http-method-override" id="id6">HTTP Method Override</a></li>
+<li><a class="reference internal" href="#mime-type-based-route" id="id7">MIME-Type Based Route</a></li>
+<li><a class="reference internal" href="#file-extension-based-route" id="id8">File Extension Based Route</a></li>
+<li><a class="reference internal" href="#something-about-client" id="id9">Something about Client</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#chinese-version" id="id10">中文版 (Chinese Version)</a><ul>
+<li><a class="reference internal" href="#http" id="id11">基于 HTTP 动词的分派</a></li>
+<li><a class="reference internal" href="#id1" id="id12">HTTP 方法覆盖</a></li>
+<li><a class="reference internal" href="#mime-type" id="id13">基于 MIME-Type 的分派</a></li>
+<li><a class="reference internal" href="#id2" id="id14">基于文件扩展名的分派</a></li>
+<li><a class="reference internal" href="#id3" id="id15">关于客户端</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="english-version">
+<h2><a class="toc-backref" href="#id4">English Version (英文版)</a></h2>
+<p>Recently python web framework <tt class="docutils literal">Pylons</tt> and <tt class="docutils literal">repoze.bfg</tt> merged together as <tt class="docutils literal">Pyramid</tt> and release v 1.0 very soon.</p>
+<p>The first impression of Pyramid is that it is more a micro-framework than Pylons. And sometimes I found it too micro that it lacks some of the convenience utility such as build-in support for RESTful style serivce: there is no Pylons's <tt class="docutils literal">RestController</tt></p>
+<p>Thanks to Pyramid's flexible design, it's easy to setup the RESTful route manually and here comes the cookbook.</p>
+<div class="section" id="http-verb-based-route">
+<h3><a class="toc-backref" href="#id5">HTTP Verb Based Route</a></h3>
+<p>RESTful style service requires different HTTP verbs mapping to different handlers. In Pyramid we can map different views to same route based on different <tt class="docutils literal">request_method</tt></p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">pyramid.view</span> <span class="kn">import</span> <span class="n">view_config</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;GET post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;DELETE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&#39;DELETE post </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="http-method-override">
+<h3><a class="toc-backref" href="#id6">HTTP Method Override</a></h3>
+<p>RESTful web service take advantage of all HTTP methods, including <tt class="docutils literal">DELETE</tt> and <tt class="docutils literal">PUT</tt>. However sometimes HTTP clients could only send <tt class="docutils literal">GET</tt> and <tt class="docutils literal">POST</tt> requests because:</p>
+<ul class="simple">
+<li>HTML standard only supports <tt class="docutils literal">GET</tt> and <tt class="docutils literal">POST</tt> via link and form actions. Web browser just cannot send <tt class="docutils literal">PUT</tt> or <tt class="docutils literal">DELETE</tt> without ajax support.</li>
+<li>Firewalls may block HTTP <tt class="docutils literal">PUT</tt> and <tt class="docutils literal">DELETE</tt> request.</li>
+</ul>
+<p>To get around this limitation, client has to tunnel the actual <tt class="docutils literal">PUT</tt> or <tt class="docutils literal">DELETE</tt> request in a <tt class="docutils literal">POST</tt> request. The RESTful service is supposed to look for the real HTTP method embeded in the <tt class="docutils literal">POST</tt> request. There are 2 de facto standards for <tt class="docutils literal">POST tunnel</tt>:</p>
+<ul>
+<li><p class="first">Embed HTTP method in a hidden input form parameter named <tt class="docutils literal">_method</tt>:</p>
+<div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/post/123</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">19</span>
+
+a=1&amp;_method=DELETE
+</pre></div>
+<p>This is convenience when <tt class="docutils literal">POST</tt> from HTML form.</p>
+</li>
+<li><p class="first">Embed the HTTP method in <tt class="docutils literal"><span class="pre">X-HTTP-Method-Override</span></tt> HTTP header</p>
+<div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/post/123</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">5</span>
+<span class="na">X-HTTP-Method-Override</span><span class="o">:</span> <span class="l">DELETE</span>
+
+{a:1}
+</pre></div>
+<p>This is prefered when <tt class="docutils literal">POST</tt> with data format in JSON or XML</p>
+</li>
+</ul>
+<p>To recognize these 2 HTTP override conversions a <tt class="docutils literal">custom_predicates</tt> is needed for looking for the real HTTP method:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">allowed_methods</span><span class="p">(</span><span class="o">*</span><span class="n">allowed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Custom predict checking if the HTTP method in the allowed set.</span>
+<span class="sd">    It also changes the request.method according to &quot;_method&quot; form parameter</span>
+<span class="sd">    and &quot;X-HTTP-Method-Override&quot; header</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">str_POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;_method&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;X-HTTP-Method-Override&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="n">allowed</span>
+    <span class="k">return</span> <span class="n">predicate</span>
+
+
+<span class="c"># We use the allowed_methods to find the real HTTP method and do the route</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_methods</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">),))</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;DELETE post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>The above code will do the trick to override the HTTP method and dispatch the route to the correct view, Here's another more WSGI way doing it. A dedicate WSGI middleware could be applied here to override the HTTP method before the request ever goes to Pyramid application:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">HttpMethodOverrideMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;WSGI middleware for overriding HTTP Request Method for RESTful support</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="o">=</span> <span class="n">application</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;POST&#39;</span> <span class="o">==</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]:</span>
+            <span class="n">override_method</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+            <span class="c"># First check the &quot;_method&quot; form parameter</span>
+            <span class="k">if</span> <span class="s">&#39;form-urlencoded&#39;</span> <span class="ow">in</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_TYPE&#39;</span><span class="p">]:</span>
+                <span class="kn">from</span> <span class="nn">webob</span> <span class="kn">import</span> <span class="n">Request</span>
+                <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
+                <span class="n">override_method</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">str_POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;_method&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="c"># If not found, then look for &quot;X-HTTP-Method-Override&quot; header</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">override_method</span><span class="p">:</span>
+                <span class="n">override_method</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;HTTP_X_HTTP_METHOD_OVERRIDE&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">override_method</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="s">&#39;OPTIONS&#39;</span><span class="p">,</span> <span class="s">&#39;PATCH&#39;</span><span class="p">):</span>
+                <span class="c"># Save the original HTTP method</span>
+                <span class="n">environ</span><span class="p">[</span><span class="s">&#39;http_method_override.original_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span>
+                <span class="c"># Override HTTP method</span>
+                <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">override_method</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">application</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">)</span>
+</pre></div>
+<p>The usage is simple, change <tt class="docutils literal">main()</tt> in <tt class="docutils literal">__init__.py</tt> as the following:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">global_config</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="k">return</span> <span class="n">HttpMethodOverrideMiddleware</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">make_wsgi_app</span><span class="p">())</span>
+</pre></div>
+<p>Then you could just use the build-in <tt class="docutils literal">request_method</tt> since the <tt class="docutils literal">request.method</tt> is already been override by <tt class="docutils literal">HttpMethodOverrideMiddleware</tt> (Actually this is exactly what <tt class="docutils literal"><span class="pre">Rank::MethodOverride</span></tt> does for Rails).</p>
+<div class="highlight"><pre><span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;DELETE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;DELETE post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="mime-type-based-route">
+<h3><a class="toc-backref" href="#id7">MIME-Type Based Route</a></h3>
+<p>For RESTful service, an URI could gives different representations for the same resource based on <tt class="docutils literal"><span class="pre">MIME-types</span></tt> (like <tt class="docutils literal">application/xml</tt> or <tt class="docutils literal">application/json</tt>) in HTTP request's <tt class="docutils literal">Accept</tt> header. Pyramid has build-in support for this:</p>
+<div class="highlight"><pre><span class="c"># if MIME type is XML we use the xml template for render</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+             <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+             <span class="n">accept</span><span class="o">=</span><span class="s">&#39;*/xml&#39;</span><span class="p">,</span>
+             <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.xml.mako&#39;</span><span class="p">)</span>
+<span class="c"># if MIME type is json, a json template is prefered</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+             <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+             <span class="n">accept</span><span class="o">=</span><span class="s">&#39;*/json&#39;</span><span class="p">,</span>
+             <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.json.mako&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="file-extension-based-route">
+<h3><a class="toc-backref" href="#id8">File Extension Based Route</a></h3>
+<p>Some RESTful services also use file extension of the URI to decide the right resource representation.</p>
+<p>For example, server gives data in the default HTML format on URI <tt class="docutils literal">/post/123</tt>. It will also returns HTML on the explicit request for <tt class="docutils literal">/post/123.html</tt> and only returns JSON on <tt class="docutils literal">/post/123.json</tt>.</p>
+<p>We could let multiple routes mapping to the same view to support this schema:</p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post_html&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}.html&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post_json, &#39;</span><span class="n">post</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">json</span><span class="s">&#39;)</span>
+<span class="c"># The raw ID without &quot;.&quot; and &quot;/&quot;</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id:[^/\.]+}&#39;</span><span class="p">)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.html.mako&#39;</span><span class="p">)</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post_html, request_method=&#39;</span><span class="n">GET</span><span class="s">&#39;, renderer=&#39;</span><span class="n">post</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">mako</span><span class="s">&#39;)</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post_json, request_method=&#39;</span><span class="n">GET</span><span class="s">&#39;, renderer=&#39;</span><span class="n">json</span><span class="s">&#39;)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>It is tedious to repeat so many routes, let's create a dedicate custom predicate instead:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">allowed_extension</span><span class="p">(</span><span class="o">*</span><span class="n">allowed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Custom predict checking if the the file extension</span>
+<span class="sd">    of the request URI is in the allowed set.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">path_extenstion</span> <span class="o">=</span> <span class="n">ext</span>
+        <span class="k">return</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">allowed</span>
+
+    <span class="k">return</span> <span class="n">predicate</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}&#39;</span><span class="p">)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span>
+    <span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+    <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.html.mako&#39;</span><span class="p">,</span>
+    <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_extension</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;.html&#39;</span><span class="p">),))</span>
+<span class="nd">@view_config</span><span class="p">(</span>
+    <span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+    <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;json&#39;</span><span class="p">,</span>
+    <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_extension</span><span class="p">(</span><span class="s">&#39;.json&#39;</span><span class="p">),))</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>Another way is using regular expression to define a general extension pattern for the URI and dispatch the view manually in the view handle.</p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">r&#39;/post/{id:[^/\.]+}{ext:(\.json|\.html)?}&#39;</span><span class="p">)</span>
+<span class="c">#or config.add_route(&#39;post&#39;, r&#39;/post/{id:[^/\.]+}{ext:(\.[^/]+)?}&#39;)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;ext&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;.html&#39;</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="c"># return HTML</span>
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="c"># return JSON</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pyramid.httpexceptions</span> <span class="kn">import</span> <span class="n">HTTPNotFount</span>
+        <span class="k">return</span> <span class="n">HTTPNotFount</span><span class="p">(</span><span class="s">&quot;not found the format for &quot;</span> <span class="o">%</span> <span class="n">ext</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="something-about-client">
+<h3><a class="toc-backref" href="#id9">Something about Client</a></h3>
+<p>As said, you have to use the <tt class="docutils literal">POST</tt> tunnel to fire a <tt class="docutils literal">PUT</tt> or <tt class="docutils literal">DELETE</tt> request in current web browser if javascript is disabled.</p>
+<p>The only way to perform an HTTP <tt class="docutils literal">POST</tt> with standard HTML is to use a <tt class="docutils literal">&lt;form&gt;</tt> tag. and you have to use one of <tt class="docutils literal">&lt;input <span class="pre">type=&quot;submit&quot;&gt;</span></tt> <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> or <tt class="docutils literal">&lt;input <span class="pre">type=&quot;button&quot;&gt;</span></tt> tag to create the action trigger.</p>
+<p>I prefer <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> which gives you more control on how it looks (and lucky by default it just looks like a link):</p>
+<div class="highlight"><pre><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;${request.route_url(&#39;post&#39;, id=id)}&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">class=</span><span class="s">&quot;delete&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span> <span class="na">name=</span><span class="s">&quot;&quot;</span> <span class="na">value=</span><span class="s">&quot;Delete This Post!&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name=</span><span class="s">&quot;_method&quot;</span> <span class="na">value=</span><span class="s">&quot;DELETE&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+<p>Actually, you could do better. You could fire a real <tt class="docutils literal">DELETE</tt> request if javascript is avalible through ajax IO.</p>
+<p>You can even use javascript to replace the <tt class="docutils literal">form</tt> tag with the <tt class="docutils literal">link</tt> tag dynamically:</p>
+<div class="highlight"><pre><span class="nx">YUI</span><span class="p">().</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;io-base&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Erase the parent node when DELETE success</span>
+  <span class="kd">function</span> <span class="nx">onDeleteSuccess</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Replace form tag to a ajax IO link</span>
+  <span class="kd">function</span> <span class="nx">changeToLink</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+     <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
+     <span class="nx">node</span><span class="p">.</span><span class="nx">setContent</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;#&quot;&gt;Delete&lt;/a&gt;&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="p">))</span>
+         <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">cfg</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">,</span>
+              <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span><span class="nx">onDeleteSuccess</span><span class="p">(</span><span class="nx">node</span><span class="p">);}</span>
+              <span class="p">}</span>
+            <span class="p">};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Do the replacement</span>
+  <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;form.delete&#39;</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">changeToLink</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+   <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+<p>The above javascript code is a demostration of progressive enhancement using YUI3. Users with javascript disabled will have the <tt class="docutils literal">DELETE</tt> function through plain HTML form. And users with javascript enabled will get a better Ajax no-refresh <tt class="docutils literal">DELETE</tt> experience.</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="chinese-version">
+<h2><a class="toc-backref" href="#id10">中文版 (Chinese Version)</a></h2>
+<p>最近 python web 框架 Pylons 和 repoze.bfg 合并成了 Pyramid，很快就推出了 1.0 版本。</p>
+<p>对 Pyramid 的第一印象：相对 Pylons 来说，它更加简洁，有时甚至简洁到缺乏一些方便工具。比如对 RESTful 风格服务的内建支持: 你找不到原来 Pylons 中 <tt class="docutils literal">RestController</tt> 相对应的方法。好在 Pyramid 设计的很具弹性，手工搞定 RESTful 风格的 URI 分派也不是什么难事，下面就是实际的例子。</p>
+<div class="section" id="http">
+<h3><a class="toc-backref" href="#id11">基于 HTTP 动词的分派</a></h3>
+<p>RESTful 风格的服务需要根据不同的 HTTP 动词做不同的处理。在 Pyramid 中这很容易做到。只要在相同的 URI 上将不同的 <tt class="docutils literal">request_method</tt> 分派到不同的 <tt class="docutils literal">view</tt> 上就行了：</p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">pyramid.view</span> <span class="kn">import</span> <span class="n">view_config</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;GET post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;DELETE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&#39;DELETE post </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3><a class="toc-backref" href="#id12">HTTP 方法覆盖</a></h3>
+<p>RESTful 服务充分利用每一个 HTTP 方法，包括 <tt class="docutils literal">DELETE</tt> 和 <tt class="docutils literal">PUT</tt>。可有时，HTTP 客户端只能发出 <tt class="docutils literal">GET</tt> 和 <tt class="docutils literal">POST</tt> 请求：</p>
+<ul>
+<li><p class="first">HTML 标准只通过链接和表单支持 <tt class="docutils literal">GET</tt> 和 <tt class="docutils literal">POST</tt> 。在没有 Ajax 支持的网页浏览器中不能发出 <tt class="docutils literal">PUT</tt> 或 <tt class="docutils literal">DELETE</tt> 命令</p>
+</li>
+<li><p class="first">有些防火墙会挡住 HTTP <tt class="docutils literal">PUT</tt> 和 <tt class="docutils literal">DELETE</tt> 请求</p>
+<p>要绕过这个限制，客户端需要把实际的 <tt class="docutils literal">PUT</tt> 和 <tt class="docutils literal">DELETE</tt> 请求通过 <tt class="docutils literal">POST</tt> 请求穿透过来。RESTful 服务则要负责在收到的 <tt class="docutils literal">POST</tt> 请求中找到原始的 HTTP 方法并还原。</p>
+</li>
+</ul>
+<p>现在有两种常用的穿透方法：</p>
+<ul>
+<li><p class="first">将 HTTP 方法放到表单中一个名为 <tt class="docutils literal">_method</tt> 的隐藏 <tt class="docutils literal">input</tt> 中</p>
+<div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/post/123</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">19</span>
+
+a=1&amp;_method=DELETE
+</pre></div>
+<p>在通过 HTML 表单进行 <tt class="docutils literal">POST</tt> 时这种方法很方便。</p>
+</li>
+<li><p class="first">将 HTTP 方法标注在名为 &quot;X-HTTP-Method-Override&quot; 的 HTTP header 中</p>
+<div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/post/123</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">5</span>
+<span class="na">X-HTTP-Method-Override</span><span class="o">:</span> <span class="l">DELETE</span>
+
+{a:1}
+</pre></div>
+<p>当要传输 JSON 或 XML 数据时，只能用这种方式。</p>
+</li>
+</ul>
+<p>为了识别这两种覆盖惯例，我们需要定义一个 <tt class="docutils literal">custom_predicates</tt> 用来在 HTTP <tt class="docutils literal">POST</tt> 请求中查找真正的 HTTP 方法</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">allowed_methods</span><span class="p">(</span><span class="o">*</span><span class="n">allowed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Custom predict checking if the HTTP method in the allowed set.</span>
+<span class="sd">    It also changes the request.method according to &quot;_method&quot; form parameter</span>
+<span class="sd">    and &quot;X-HTTP-Method-Override&quot; header</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">str_POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;_method&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;X-HTTP-Method-Override&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="n">allowed</span>
+    <span class="k">return</span> <span class="n">predicate</span>
+
+
+<span class="c"># We use the allowed_methods to find the real HTTP method and do the route</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_methods</span><span class="p">(</span><span class="s">&#39;DELETE&#39;</span><span class="p">),))</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;DELETE post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>上面的代码能帮我们恢复 HTTP 的实际方法，并且根据实际的方法将请求分派到对应的 <tt class="docutils literal">view</tt> 中。不过，还有一种更加 WSGI 的方式来做这件事：我们可以使用专门的 WSGI 中间件，在请求到达 Pyramid 应用之前就把 HTTP 方法覆盖成检测到的实际方法：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">HttpMethodOverrideMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;WSGI middleware for overriding HTTP Request Method for RESTful support</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="o">=</span> <span class="n">application</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;POST&#39;</span> <span class="o">==</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]:</span>
+            <span class="n">override_method</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+            <span class="c"># First check the &quot;_method&quot; form parameter</span>
+            <span class="k">if</span> <span class="s">&#39;form-urlencoded&#39;</span> <span class="ow">in</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_TYPE&#39;</span><span class="p">]:</span>
+                <span class="kn">from</span> <span class="nn">webob</span> <span class="kn">import</span> <span class="n">Request</span>
+                <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
+                <span class="n">override_method</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">str_POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;_method&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="c"># If not found, then look for &quot;X-HTTP-Method-Override&quot; header</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">override_method</span><span class="p">:</span>
+                <span class="n">override_method</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;HTTP_X_HTTP_METHOD_OVERRIDE&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">override_method</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;PUT&#39;</span><span class="p">,</span> <span class="s">&#39;DELETE&#39;</span><span class="p">,</span> <span class="s">&#39;OPTIONS&#39;</span><span class="p">,</span> <span class="s">&#39;PATCH&#39;</span><span class="p">):</span>
+                <span class="c"># Save the original HTTP method</span>
+                <span class="n">environ</span><span class="p">[</span><span class="s">&#39;http_method_override.original_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span>
+                <span class="c"># Override HTTP method</span>
+                <span class="n">environ</span><span class="p">[</span><span class="s">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">override_method</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">application</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">)</span>
+</pre></div>
+<p>使用方式很简单，改动 <tt class="docutils literal">__init__.py</tt> 中的 <tt class="docutils literal">main()</tt>:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">global_config</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="k">return</span> <span class="n">HttpMethodOverrideMiddleware</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">make_wsgi_app</span><span class="p">())</span>
+</pre></div>
+<p>因为 <tt class="docutils literal">reqeust.method</tt> 已经被 <tt class="docutils literal">HttpMethodOverrideMiddleware</tt> 改写了（实际上这就是 Rails 中 <tt class="docutils literal"><span class="pre">Rank::MethodOverride</span></tt> 所做的事情），接下来只要使用自带的 <tt class="docutils literal">request_method</tt> 去做过滤就可以了</p>
+<div class="highlight"><pre><span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;DELETE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">delete_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c"># Delete the post ...</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;DELETE post </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="mime-type">
+<h3><a class="toc-backref" href="#id13">基于 MIME-Type 的分派</a></h3>
+<p>对于 RESTful 服务来说，一个 URI 背后对应的资源可以有不同的表现形式。在 HTTP 请求中可以通过 <tt class="docutils literal">Accept</tt> 头来表明客户端需要的 <tt class="docutils literal"><span class="pre">MIME-Type</span></tt> (<tt class="docutils literal">application/xml</tt>, <tt class="docutils literal">application/json</tt>)。Pyramid 对此支持的很好：</p>
+<div class="highlight"><pre><span class="c"># if MIME type is XML we use the xml template for render</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+             <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+             <span class="n">accept</span><span class="o">=</span><span class="s">&#39;*/xml&#39;</span><span class="p">,</span>
+             <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.xml.mako&#39;</span><span class="p">)</span>
+<span class="c"># if MIME type is json, a json template is prefered</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+             <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+             <span class="n">accept</span><span class="o">=</span><span class="s">&#39;*/json&#39;</span><span class="p">,</span>
+             <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.json.mako&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id14">基于文件扩展名的分派</a></h3>
+<p>一些 RESTful 服务还会利用 URI 路径的扩展名来决定客户端需要什么形式的回复。</p>
+<p>例如，当请求 <tt class="docutils literal">/post/123</tt> 时，服务器回复默认的 HTML 格式。当明确请求 <tt class="docutils literal">/post/123.html</tt> 时，仍然回复 HTML 格式。当请求 <tt class="docutils literal">post/123.json</tt> 时就会回复 JSON 格式的数据。我们可以通过定义多个 <tt class="docutils literal">route</tt> 来映射到同一个 <tt class="docutils literal">view</tt> 支持这样的模式：</p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post_html&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}.html&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post_json, &#39;</span><span class="n">post</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">json</span><span class="s">&#39;)</span>
+<span class="c"># The raw ID without &quot;.&quot; and &quot;/&quot;</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id:[^/\.]+}&#39;</span><span class="p">)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.html.mako&#39;</span><span class="p">)</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post_html, request_method=&#39;</span><span class="n">GET</span><span class="s">&#39;, renderer=&#39;</span><span class="n">post</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">mako</span><span class="s">&#39;)</span>
+<span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post_json, request_method=&#39;</span><span class="n">GET</span><span class="s">&#39;, renderer=&#39;</span><span class="n">json</span><span class="s">&#39;)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>这种做法的缺点是定义的 <tt class="docutils literal">route</tt> 太多，让我们自定义一个 <tt class="docutils literal">predicate</tt> 来代替：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">allowed_extension</span><span class="p">(</span><span class="o">*</span><span class="n">allowed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Custom predict checking if the the file extension</span>
+<span class="sd">    of the request URI is in the allowed set.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">predicate</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">path_extenstion</span> <span class="o">=</span> <span class="n">ext</span>
+        <span class="k">return</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">allowed</span>
+
+    <span class="k">return</span> <span class="n">predicate</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;post/{id}&#39;</span><span class="p">)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span>
+    <span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+    <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;post.html.mako&#39;</span><span class="p">,</span>
+    <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_extension</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;.html&#39;</span><span class="p">),))</span>
+<span class="nd">@view_config</span><span class="p">(</span>
+    <span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+    <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="s">&#39;json&#39;</span><span class="p">,</span>
+    <span class="n">custom_predicates</span><span class="o">=</span><span class="p">(</span><span class="n">allowed_extension</span><span class="p">(</span><span class="s">&#39;.json&#39;</span><span class="p">),))</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+<p>另一种方法是使用正则表达式定义 URI 中扩展名的通用格式，然后在 view 的代码中手工做分发：</p>
+<div class="highlight"><pre><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">r&#39;/post/{id:[^/\.]+}{ext:(\.json|\.html)?}&#39;</span><span class="p">)</span>
+<span class="c">#or config.add_route(&#39;post&#39;, r&#39;/post/{id:[^/\.]+}{ext:(\.[^/]+)?}&#39;)</span>
+
+<span class="nd">@view_config</span><span class="p">(</span>
+    <span class="n">route_name</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+    <span class="n">request_method</span><span class="o">=</span><span class="s">&#39;GET&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s">&#39;ext&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;.html&#39;</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="c"># return HTML</span>
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s">&#39;.json&#39;</span><span class="p">:</span>
+        <span class="c"># return JSON</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pyramid.httpexceptions</span> <span class="kn">import</span> <span class="n">HTTPNotFount</span>
+        <span class="k">return</span> <span class="n">HTTPNotFount</span><span class="p">(</span><span class="s">&quot;not found the format for &quot;</span> <span class="o">%</span> <span class="n">ext</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id15">关于客户端</a></h3>
+<p>如前述，如果禁止 javascript 的话，在浏览器里你只能使用 <tt class="docutils literal">POST</tt> 来伪装一个 <tt class="docutils literal">PUT</tt> 或 <tt class="docutils literal">DELETE</tt> 的请求。</p>
+<p>在标准 HTML 中，只能通过 <tt class="docutils literal">&lt;form&gt;</tt> 标签来发送一个 <tt class="docutils literal">POST</tt> 请求。而且，你还必须使用一个 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;submit&quot;&gt;</span></tt>, <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> 或 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;button&quot;&gt;</span></tt> 标签。个人喜欢使用 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt>, 这样可以更好地控制外观 （而且它默认也长的象普通的链接）：</p>
+<div class="highlight"><pre><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;${request.route_url(&#39;post&#39;, id=id)}&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">class=</span><span class="s">&quot;delete&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span> <span class="na">name=</span><span class="s">&quot;&quot;</span> <span class="na">value=</span><span class="s">&quot;Delete This Post!&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name=</span><span class="s">&quot;_method&quot;</span> <span class="na">value=</span><span class="s">&quot;DELETE&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+<p>实际上，还能做的更好。如果支持 javascript 的话，你可以使用 Ajax IO 动作直接发送一个真正的 <tt class="docutils literal">DELETE</tt> 请求。你甚至可以使用 javascript 动态的用 <tt class="docutils literal">link</tt> 标签替换掉原来的 <tt class="docutils literal">form</tt> 标签：</p>
+<div class="highlight"><pre><span class="nx">YUI</span><span class="p">().</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;io-base&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Erase the parent node when DELETE success</span>
+  <span class="kd">function</span> <span class="nx">onDeleteSuccess</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Replace form tag to a ajax IO link</span>
+  <span class="kd">function</span> <span class="nx">changeToLink</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+     <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
+     <span class="nx">node</span><span class="p">.</span><span class="nx">setContent</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;#&quot;&gt;Delete&lt;/a&gt;&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="p">))</span>
+         <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">cfg</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">,</span>
+              <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span><span class="nx">onDeleteSuccess</span><span class="p">(</span><span class="nx">node</span><span class="p">);}</span>
+              <span class="p">}</span>
+            <span class="p">};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Do the replacement</span>
+  <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;form.delete&#39;</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">changeToLink</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+   <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+<p>上面这段 javascript 代码就演示了使用 YUI3 怎样达到渐进增强。当 javascript 关闭时，用户可以通过普通的 HTML form 来使用 <tt class="docutils literal">DELETE</tt> 。当 javascript 打开后，用户将能透过 Ajax 体验到无刷新的 <tt class="docutils literal">DELETE</tt> 效果。</p>
+</div>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2011-03-13T18:06:00" pubdate>2011-03-13</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/english.html"><i class="icon-tag"></i> <span i18n>english</span></i></a>
+        <li><a href="./tag/javascript.html"><i class="icon-tag"></i> <span i18n>javascript</span></i></a>
+        <li><a href="./tag/python.html"><i class="icon-tag"></i> <span i18n>python</span></i></a>
+        <li><a href="./tag/web.html"><i class="icon-tag"></i> <span i18n>web</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'restful-pyramid';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

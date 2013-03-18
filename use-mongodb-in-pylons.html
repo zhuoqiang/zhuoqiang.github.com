@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 在 Pylons 中使用 MongoDB 的例子 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./use-mongodb-in-pylons.html">在 Pylons 中使用 MongoDB 的例子</a></h1>
+</header>  <div>
+    <section>
+      <p>Pylons 经过漫长的开发，终于放出了 1.0 版本。对于正规的产品开发来说，1.0 版本的意义很大，这表明 Pylons 的 API 终于稳定下来了。</p>
+<p>Pylons 虽是山寨 Rails 而生，但作为一个纯 Python 的 Web 框架，它有一个鲜明的特点：可定制性强。框架每一层都没重新发明轮子，而是尽量整合现有的 Python 库。在 MVC 的 Model 层，Pylons 默认支持 SQLAlchemy。现在 NoSQL 很火 MongoDB 很热。在 Pylons 中应用 MongoDB 也很简单。下面是一个简单的示例。</p>
+<p>在 <tt class="docutils literal">PROJECT/model/__init__.py</tt> 中定义 MongoDB 初始化函数和映射对象：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">ming</span> <span class="kn">import</span> <span class="n">Session</span>
+
+<span class="kn">from</span> <span class="nn">ming</span> <span class="kn">import</span> <span class="n">schema</span>
+<span class="kn">from</span> <span class="nn">ming.orm</span> <span class="kn">import</span> <span class="n">MappedClass</span>
+<span class="kn">from</span> <span class="nn">ming.orm</span> <span class="kn">import</span> <span class="n">FieldProperty</span><span class="p">,</span> <span class="n">ForeignIdProperty</span><span class="p">,</span> <span class="n">RelationProperty</span>
+<span class="kn">from</span> <span class="nn">ming.orm</span> <span class="kn">import</span> <span class="n">ThreadLocalORMSession</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">init_single_model</span><span class="p">(</span><span class="n">model_class</span><span class="p">):</span>
+    <span class="n">model_class</span><span class="o">.</span><span class="n">__mongometa__</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+
+<span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="n">MappedClass</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">__mongometa__</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;pages&#39;</span>
+
+    <span class="n">_id</span> <span class="o">=</span> <span class="n">FieldProperty</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">ObjectId</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">FieldProperty</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">FieldProperty</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">session</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">ThreadLocalORMSession</span><span class="p">(</span><span class="n">doc_session</span><span class="o">=</span><span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">))</span>
+    <span class="n">init_single_model</span><span class="p">(</span><span class="n">Page</span><span class="p">)</span>
+    <span class="n">MappedClass</span><span class="o">.</span><span class="n">compile_all</span><span class="p">()</span>
+</pre></div>
+<p>在 <tt class="docutils literal">PROJECT/config/environment.py</tt> 中进行初始化：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">..model</span> <span class="kn">import</span> <span class="n">init_model</span>
+<span class="kn">from</span> <span class="nn">ming.datastore</span> <span class="kn">import</span> <span class="n">DataStore</span>
+
+<span class="k">def</span> <span class="nf">load_environment</span><span class="p">(</span><span class="n">global_conf</span><span class="p">,</span> <span class="n">app_conf</span><span class="p">):</span>
+
+    <span class="o">...</span>
+
+    <span class="c"># Create the Mako TemplateLookup, with the default auto-escaping</span>
+    <span class="n">config</span><span class="p">[</span><span class="s">&#39;pylons.app_globals&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mako_lookup</span> <span class="o">=</span> <span class="n">TemplateLookup</span><span class="p">(</span>
+        <span class="n">directories</span><span class="o">=</span><span class="n">paths</span><span class="p">[</span><span class="s">&#39;templates&#39;</span><span class="p">],</span>
+        <span class="n">error_handler</span><span class="o">=</span><span class="n">handle_mako_error</span><span class="p">,</span>
+        <span class="n">module_directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app_conf</span><span class="p">[</span><span class="s">&#39;cache_dir&#39;</span><span class="p">],</span> <span class="s">&#39;templates&#39;</span><span class="p">),</span>
+        <span class="n">input_encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">default_filters</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;escape&#39;</span><span class="p">],</span>
+        <span class="n">imports</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;from webhelpers.html import escape&#39;</span><span class="p">])</span>
+
+    <span class="c"># Setup the mongodb database engine</span>
+    <span class="n">init_model</span><span class="p">(</span><span class="n">DataStore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;database.uri&#39;</span><span class="p">]))</span>
+
+    <span class="c"># CONFIGURATION OPTIONS HERE (note: all config options will override</span>
+    <span class="c"># any Pylons config options)</span>
+
+    <span class="k">return</span> <span class="n">config</span>
+</pre></div>
+<p>最后在 <tt class="docutils literal">development.ini</tt> 中加入 MongoDB 的配置项：</p>
+<div class="highlight"><pre><span class="k">[app:main]</span>
+<span class="na">database.uri</span> <span class="o">=</span> <span class="s">mongodb://localhost:27017/test</span>
+</pre></div>
+<p>如果需要在程序安装时初始化一些数据, 可以在 <tt class="docutils literal">PROJECT/websetup.py</tt> 中加入</p>
+<div class="highlight"><pre><span class="sd">&quot;&quot;&quot;Setup the wukong application&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">pylons.test</span>
+
+<span class="kn">from</span> <span class="nn">.config.environment</span> <span class="kn">import</span> <span class="n">load_environment</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">model</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">setup_app</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="nb">vars</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Place any commands to setup wukong here&quot;&quot;&quot;</span>
+    <span class="c"># Don&#39;t reload the app if it was loaded under the testing environment</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pylons</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">pylonsapp</span><span class="p">:</span>
+        <span class="n">load_environment</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">global_conf</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">local_conf</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Adding demo data.&quot;</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Page</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;demo&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s">&#39;This is for demo.&#39;</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Successfully set up.&quot;</span><span class="p">)</span>
+</pre></div>
+<p>这里使用了 Ming 库来连接 MongoDB 并做简单的 ORM。Ming 库是对 PyMongo 的 ORM 包装库。它是 SourceForge 用 TurboGears 和 MongoDB 对网站进行重构的副产物。使用起来有点象 SQLAlchemy ORM 。在上面的示例中，也可以把 Ming 替换成 MongoKit 或其它 MongoDB 的 ORM 库，甚至直接用 PyMongo 也无不可。</p>
+<p>有种感觉，MongoDB 会火。</p>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-06-01T23:21:00" pubdate>2010-06-01</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/database.html"><i class="icon-tag"></i> <span i18n>database</span></i></a>
+        <li><a href="./tag/python.html"><i class="icon-tag"></i> <span i18n>python</span></i></a>
+        <li><a href="./tag/web.html"><i class="icon-tag"></i> <span i18n>web</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'use-mongodb-in-pylons';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

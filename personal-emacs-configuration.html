@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Personal Emacs Configuration </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./personal-emacs-configuration.html">Personal Emacs Configuration</a></h1>
+</header>  <div>
+    <section>
+      <p>Emacs is known to be one of the most powerful editor in the world. Yet its power is hidden in the absence of good configuration.</p>
+<p>Emacs configuration is hard and fun. After quite a while hard time fighting against elisp I finally have some fun with my Emacs and I just open source my <a class="reference external" href="https://bitbucket.org/zhuoqiang/emacs_configuration">personal Emacs configuration</a> hoping it's helpful to you.</p>
+<p>The functions in the configuration are minimal for the sake of simplicity:</p>
+<ul class="simple">
+<li><a class="reference external" href="./torture-emacs.html">Chinese &amp; English font setting with font scale function</a></li>
+<li>key re-mapping on Mac</li>
+<li>programming language mode setting</li>
+<li>Jump functions</li>
+<li>some emacs themes</li>
+<li>auto restore files when re-open</li>
+<li>save typing using snippet and auto insert</li>
+<li>maxmize frame when startup emacs</li>
+</ul>
+<p>It works on Emacs 24 under Mac and Windows (not tested under Linux though). All you need to do is checkout the code to <tt class="docutils literal"><span class="pre">~/.emacs.d/</span></tt>. If you already have <tt class="docutils literal">.emacs</tt> file under home directory, you have to remove it so that  Emacs could use <tt class="docutils literal"><span class="pre">~/.emacs.d/init.el</span></tt> instead.</p>
+<p>It could be a good start to enhance your emacs further, good luck hacking!</p>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2012-10-25T23:43:00" pubdate>2012-10-25</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/config.html"><i class="icon-tag"></i> <span i18n>config</span></i></a>
+        <li><a href="./tag/emacs.html"><i class="icon-tag"></i> <span i18n>emacs</span></i></a>
+        <li><a href="./tag/english.html"><i class="icon-tag"></i> <span i18n>english</span></i></a>
+        <li><a href="./tag/opensource.html"><i class="icon-tag"></i> <span i18n>opensource</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'personal-emacs-configuration';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

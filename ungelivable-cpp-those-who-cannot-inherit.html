@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | C++ 不给力之不可继承 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./ungelivable-cpp-those-who-cannot-inherit.html">C++ 不给力之不可继承</a></h1>
+</header>  <div>
+    <section>
+      <p>C++ 给人的印象通常是特性众多，使用复杂，性能突出。当然，它也有不怎么给力的时候。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id6">问题</a></li>
+<li><a class="reference internal" href="#id2" id="id7">答案</a></li>
+<li><a class="reference internal" href="#id3" id="id8">名字隐藏</a></li>
+<li><a class="reference internal" href="#id4" id="id9">非依赖名字</a></li>
+<li><a class="reference internal" href="#id5" id="id10">总结</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id6">问题</a></h2>
+<p>C++ 中有没有不能被子类继承的父类成员？（私有成员除外）</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id7">答案</a></h2>
+<p>有。而且至少有两种情况：名字隐藏和非依赖名字</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">名字隐藏</a></h2>
+<p>C++ 中针对子类跟父类同名的成员函数，分为两种情况处理</p>
+<ul class="simple">
+<li>同名函数的参数签名也相同，就覆盖（override）</li>
+<li>虽然成员函数名字相同但参数签名不同，那么不管该方法是否为虚函数，父类的同名函数都被隐藏了（hide）。被隐藏起来的父类方法默认是不被继承的：</li>
+</ul>
+<div class="highlight"><pre><span class="k">struct</span> <span class="n">Base</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Derived</span> <span class="o">:</span> <span class="n">Base</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Foo</span><span class="p">(</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">m</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="n">Derived</span> <span class="n">derived</span><span class="p">;</span>
+<span class="n">derived</span><span class="p">.</span><span class="n">Foo</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span> <span class="c1">// Error, there is no Foo(int)</span>
+</pre></div>
+<p>上面的代码会引发编译错误。原因就是 <tt class="docutils literal">int <span class="pre">Base::Foo(int)</span></tt> 没有被 <tt class="docutils literal">Derived</tt> 继承。</p>
+<p>如果要使用父类里被隐藏的方法，需要加入显示的限定符：</p>
+<div class="highlight"><pre><span class="n">Derived</span> <span class="n">derived</span><span class="p">;</span>
+<span class="c1">// derived.Foo(123); // Error, there is no Foo(int)</span>
+<span class="n">derived</span><span class="p">.</span><span class="n">Base</span><span class="o">::</span><span class="n">Foo</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="c1">// Use explicit scope qualifier</span>
+</pre></div>
+<p>这样虽然可以编译，但使用太麻烦。还有一个解是在子类中显示声明使用父类的同名函数：</p>
+<div class="highlight"><pre><span class="k">struct</span> <span class="n">Derived</span> <span class="o">:</span> <span class="n">Base</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="n">Base</span><span class="o">::</span><span class="n">Foo</span><span class="p">;</span> <span class="c1">// Bring Base::Foo to this Scope</span>
+
+    <span class="kt">int</span> <span class="nf">Foo</span><span class="p">(</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">m</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="n">Derived</span> <span class="n">derived</span><span class="p">;</span>
+<span class="n">derived</span><span class="p">.</span><span class="n">Foo</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span> <span class="c1">// OK. called Base::Foo</span>
+</pre></div>
+<p>看起来只要使用 <tt class="docutils literal">using</tt> 把父类同名函数显示引入就可以了，问题解决了！但如果再想一想，就会发现新的问题：为什么要让使用者多写一个 <tt class="docutils literal">using</tt> ？ 为什么要引入隐藏机制？为什么不是默认把同名的父类方法继承过来？ 一句话，为什么 C++ 被设计成这样？要回答这些问题，先得说明白 C++ 众多的功能中的 3 个：</p>
+<ul class="simple">
+<li>强类型：编译器会在编译期检查参数类型，不允许类型不匹配的调用。这是对 C 语言的一个重大改进。强类型检查使得大部分错误在编译期就被发现</li>
+<li>函数重载：同名函数可以有不同的定义。编译器会根据调用方的入参类型来选择一个合适的函数实现。它简化了编程，也是最基本的一种多态方式（同一个名字在不同上下文中对应不同的东西）</li>
+<li>隐式类型转换：在调用函数时，如果形参和实参类型不一制，C++ 会先尝试将实参类型转换成形参类型再调用。它主要作用是为了兼容 C 语言。没有隐式类型转换，大部份的 C 代码就不可能不经修改就通过 C++ 的编译</li>
+</ul>
+<p>这三个功能互相配合互相影响。函数重载是以强类型检查为基础的，没有强类型检查，编译器就不能根据形参类型区分同名函数。而隐式类型转换却跟强类型是一对矛盾。这三个功能加在一起会产生什么问题呢？来看下面的程序</p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<span class="n">Foo</span><span class="p">(</span><span class="mi">3u</span><span class="p">);</span>
+</pre></div>
+<p>上面的程序先用隐式类型转换将 <tt class="docutils literal">3u</tt> （类型为 <tt class="docutils literal">unsigned int</tt> ）转换成 <tt class="docutils literal">3</tt> （类型为 <tt class="docutils literal">signed int</tt> ）然后再调用到 <tt class="docutils literal">void Foo(int n)</tt> ，没有任何问题。但如果某天加入了另外一个函数：</p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">Foo</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">);</span> <span class="c1">// Just Added</span>
+<span class="kt">void</span> <span class="nf">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<span class="n">Foo</span><span class="p">(</span><span class="mi">3u</span><span class="p">);</span>
+</pre></div>
+<p>这下强类型和重载判断会认定 <tt class="docutils literal">void Foo(unsigned int n)</tt> 是比 <tt class="docutils literal">void Foo(int n)</tt> 更优的一个选择，于是调用新加入的这个函数。到现在为止都还好。但如果把类和继承加入进来呢？同名但签名不同的父类和子类方法不正是属于一个重载集合吗。如果默认父类的同名方法属于子类的重载集合会发生什么事呢？</p>
+<div class="highlight"><pre><span class="k">struct</span> <span class="n">Base</span>
+<span class="p">{</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Derived</span> <span class="o">:</span> <span class="n">Base</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Foo</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">Derived</span> <span class="n">derived</span><span class="p">;</span>
+<span class="n">derived</span><span class="p">.</span><span class="n">Foo</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+<p>这段代码工作的很好，可是，某天，第三方的 Base 类有了一个升级：</p>
+<div class="highlight"><pre><span class="k">struct</span> <span class="n">Base</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>原来正常工作的代码，这时候就抛出了异常（不用惊讶， <tt class="docutils literal">NULL</tt> 更加匹配 <tt class="docutils literal">int</tt> 类型而不是 <tt class="docutils literal">void*</tt> ，可恶的 C, 可爱的 <tt class="docutils literal">nullptr</tt> ）。只是父类中增加了一个同名的重载方法，所有原来使用子类中同名方法的代码都受到了影响。而且，这个父类和子类并不要求直接继承。也就是说，不管离你多远的父类中的一个同名方法的增删，都会影响子类代码的使用，这实在是危险！这个危险就是上面列出来的强类型，函数重载，隐式类型转换三个功能在继承时带给我们的。可这三个功能都不能去掉，那怎么办？C++ 之父给了个折中：把父类的同名函数加入子类的重载集确实很危险，所以 C++ 不会这么做，除非用户显示的要求这么做（ <tt class="docutils literal">using <span class="pre">Base::Foo</span></tt> ）。这应该就是故事的来龙去脉了。可以说，Ｃ++ 为了保持和 C 语言的兼容性（隐式类型转换就是 C 兼容性的要求），让语言的复杂性大大增加。但与 C 兼容也是 C++ 成功的基石。真是成也是 C 败也是 C 。我仿佛看见了 C++ 之父无可奈何的表情。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id9">非依赖名字</a></h2>
+<p>另一个不能继承的情景是和非依赖名字（non-dependent name）相关的，下面的代码编译会出错：</p>
+<div class="highlight"><pre><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">TBase</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">TDerived</span> <span class="o">:</span> <span class="n">T</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Foo</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="c1">// Error</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">TDerived</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">&gt;</span> <span class="n">derived</span><span class="p">;</span>
+</pre></div>
+<p>这里， <tt class="docutils literal">Foo</tt> 虽然是 <tt class="docutils literal">TDerived&lt;Base&gt;</tt> 的方法，但却会引发编译错误。原因是 C++ 在引入模板时，为了要尽可能早的发现代码错误，将模板代码分为依赖名字和非依赖名字。编译器会执行二阶段查找（２ phase lookup）。所谓的依赖名字，就是所有跟模板参数类型有关的名字。非依赖名字是跟模板参数类型无关的名字。在第一阶段查找时，编译器会检查所有跟参数类型无关的名字，这时如果发现错误，就不用等模板被实例化（通常这会比较耗费资源）就给出诊断信息了。而所有依赖名字必须要等到模板实例化时，有了具体的类型才能进行检查。在我们上面的例子里， <tt class="docutils literal">Foo</tt> 这个名字是非依赖名字，它不依赖于模板参数 <tt class="docutils literal">T</tt> ，于是在模板实例化之前就被检查了。而在这个时候，编译器没有发现 <tt class="docutils literal">TDerived</tt> 有任何 <tt class="docutils literal">Foo</tt> 的定义，于是报错。如果要修正这个问题，只要将 <tt class="docutils literal">Foo</tt> 改为依赖名字就行了</p>
+<div class="highlight"><pre><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">TDerived</span> <span class="o">:</span> <span class="n">T</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">::</span><span class="n">Foo</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>或者:</p>
+<div class="highlight"><pre><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">TDerived</span> <span class="o">:</span> <span class="n">T</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">Bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Foo</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>这两种改法都将 <tt class="docutils literal">Foo</tt> 变成了依赖名字，会在 <tt class="docutils literal">TDerived&lt;Base&gt;</tt> 实例化时才进行检查，这时 <tt class="docutils literal"><span class="pre">Base::Foo</span></tt> 就能被编译器找到了。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id10">总结</a></h2>
+<p>C++ 恐怕是最复杂的编程语言了，没有之一。这些复杂性很大一部分来源于 C 语言的包袱。除了这里列出来的两种情况，我相信肯定还能找出不能被继承的情况，甚至用这些偶然发现的技巧去实现让一个不能被继承类（所谓的 <tt class="docutils literal">final</tt> 或 <tt class="docutils literal">sealed</tt> 类）也不是没有可能。这恐怕也算得 C++ 的魅力之一了。</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2011-01-05T00:25:00" pubdate>2011-01-05</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/c.html"><i class="icon-tag"></i> <span i18n>c++</span></i></a>
+        <li><a href="./tag/design.html"><i class="icon-tag"></i> <span i18n>design</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'ungelivable-cpp-those-who-cannot-inherit';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

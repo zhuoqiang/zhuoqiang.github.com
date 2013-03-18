@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | ChmFox 2 发布啦 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./chmfox2.html">ChmFox 2 发布啦</a></h1>
+</header>  <div>
+    <section>
+      <p>如果你还不知道 ChmFox 是什么，这里是一句话介绍：ChmFox 是一款让 Firefox 变身成 CHM 文件浏览器的扩展，目标是给所有平台提供最好的 CHM 浏览体验。（更多请看 <a class="reference external" href="./chmfox.html">ChmFox 介绍</a> ）</p>
+<p>随着 Firefox 6 正式版的发布 <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/chmfox/versions/2.2">ChmFox 新版 2.2</a> 也发布了。该版本加入了对 Firefox 6 的支持，还有下面的更新：</p>
+<ul class="simple">
+<li>兼容性增强：支持 Firefox 版本 4.0 到 9.0a1，未来版本的 Firefox 也可 <a class="reference external" href="http://www.google.com/search?q=firefox+%E5%BC%BA%E5%88%B6%E5%85%BC%E5%AE%B9&amp;ie=utf-8&amp;oe=utf-8&amp;aq=t&amp;rls=org.mozilla:zh-CN:official&amp;client=firefox-a">强制兼容</a> 。但放弃了对 Firefox 3 的支持</li>
+<li>新平台：增加对 Windows 和 Mac 的 x64 支持。完成了 Windows, Linux, Mac 的 x86 和 x64 的全平台支持</li>
+<li>本地化界面：包含简中，繁中和英语支持</li>
+<li>贴心侧栏：自动判断是否打开或关闭 CHM 侧栏，同时记住每个 CHM 文件上次侧栏的状态</li>
+<li>大幅提高侧栏性能</li>
+<li>修正若干小问题</li>
+</ul>
+<p>现在该版本正等待 Mozilla 评审，欢迎大家从 <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/chmfox/versions/2.2">这里</a> 下载试用。有任何问题，请留言或直接到 <a class="reference external" href="https://bitbucket.org/zhuoqiang/chmfox/issues">官网</a> 提 Issue。</p>
+<p>简单介绍完毕，下面是一些开发者角度的吐槽。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id8">贴心侧栏</a></li>
+<li><a class="reference internal" href="#xpcom" id="id9">二进制 XPCOM 组件</a></li>
+<li><a class="reference internal" href="#js-ctypes" id="id10">js-ctypes</a></li>
+<li><a class="reference internal" href="#id2" id="id11">测试</a></li>
+<li><a class="reference internal" href="#id3" id="id12">关于捐赠</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id8">贴心侧栏</a></h2>
+<p>很多户都要求 ChmFox 自动把 CHM 目录侧栏打开。我本人习惯了用快捷键去控制，却忘了用户开始时是不会用快捷键的。</p>
+<p>如果改成自动把侧栏打开，这样会方便选取章节。可我的使用习惯是把侧栏关闭好为内容留出更多的屏幕，需要时再用快捷键把侧栏呼出。这种矛盾怎么解决？一种方案是推给用户，添加一个配置项让用户选择是否默认打开侧栏。ChmFox 在这里走了另一条路，程序智能的判断是否需要打开侧栏，贴心地帮用户做出最适合他的选择。当你切换标签栏，或打开新文件时：</p>
+<ul class="simple">
+<li>如果当前页面不是 CHM 页面，就自动关闭 CHM 侧栏，同时也禁止手工打开侧栏</li>
+<li>全新打开一个 CHM 文件，自动把目录侧栏打开</li>
+<li>当你手工开启或关闭侧栏时，ChmFox 会记住这个 CHM 文件的侧栏状态</li>
+<li>再次打开曾经的 CHM 文件，会根据上次这个文件的侧栏状态调整侧栏</li>
+</ul>
+<p>这样的自动判断是否真的贴心恐怕需要大家用过才能知道。这里的理念是：针对普通用户的软件，尽量减少选项和配置。与其做一款密布选项表面专业实则难用的软件，不如做一款零配置自适应的傻瓜软件。</p>
+<p>有朋友问是否一点设置选项都不需要，我想说，不错，这正是我的目标！零配置傻瓜软件背后隐藏着复杂的智能判断逻辑。希望我的软件始终能做到这点。</p>
+</div>
+<div class="section" id="xpcom">
+<h2><a class="toc-backref" href="#id9">二进制 XPCOM 组件</a></h2>
+<p>Firefox 扩展开发以网页技术为主，如 HTML, Javascript, CSS 等。通过 Javascript 调用 Firefox 内置的众多 XPCOM 组件，大部分扩展功能都能实现。对于少数复杂应用，还可以用 C++ 实现新的二进制 XPCOM 组件，补足 Firefox 内置组件的不足。ChmFox 1.x 正是使用自定义的二进制 XPCOM 组件进行 CHM 文件的解析。</p>
+<p>它的问题在于，二进制 XPCOM 组件要分别与每个平台上的 Gecko SDK 一起编译。更坑爹的是，Firefox 大版本号升级时各平台的 Gecko SDK 都会更新，而二进制 XPCOM 组件必须与新的 Gecko SDK 重新编译才能工作。要维护这么多平台（6个平台）的同步编译升级还真是体力活，尤其是现在 Firefox 疯着和 Chrome 比拼版本号，几周就有新版本出来。这不 <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/capture-fox/">Capture Fox</a> 扩展的作者因此不打算再跟着 Firefox 玩升级游戏了，明确表示不会再浪费时间支持 Firefox 5，开源程序员你伤不起啊。</p>
+<p>ChmFox 也面临同样的升级兼容困境。好在，Firefox 准备了另一条路：js-ctypes。</p>
+</div>
+<div class="section" id="js-ctypes">
+<h2><a class="toc-backref" href="#id10">js-ctypes</a></h2>
+<p>js-ctypes 简言之，就是 Javascript 版的 Python ctypes。通过这个 Javascript 库，你就能使用 Javascript 调用任意的 C 接口动态库。包括在 Javascript 中定义 C 结构体，把 Javascript 函数包装成 C 的回调函数等高级功能一个不拉都支持。底层上，js-ctypes 与 Python 的 ctypes 都是通过 libffi 实现，他们的功能也大同小异。</p>
+<p>Firefox 4 （Gecko 2） 正式支持 js-ctypes，同时 Mozilla 也建议原来使用二进制 XPCOM 组件的扩展都转到 js-ctypes 上来。这样，你只需要把复杂的功能封装在普通的 C 动态库中，剩下的都用 Javascript 就可以开发复杂的扩展了。这种方式比用 C++ 写 XPCOM 组件要简单的多。而且，你再也不用仅仅为了跟上 Firefox 大版本升级就重新编译了，一劳永逸地解决了升级时二进制兼容的问题。也许正因为如此，Firefox 才能安心的狂飙大版本号。</p>
+<p>ChmFox 2.x 升级主要的工作量就是使用 js-ctypes 替换原来的二进制 XPCOM 组件，改写了原来一大半的代码，最终的结果超过预期。实现原来所有的功能的同时，程序变的更加简洁，扩展大小减少了 1/3，性能也有一定提升。为后面添加新特性和性能调优打下了基础。</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id11">测试</a></h2>
+<p>因为精力有限，开发时主要测试平台是我常用的 Ubuntu x86。这次上传了 ChmFox 2.1 后，又在 Windows x86 上试用了一下，侧栏居然有问题。果然发现有个平台相关的 BUG，修改完了赶快重新上传，心里不免惴惴然。应该说 ChmFox 绝大部分代码是平台无关的，而且资源和精力实在有限，很难保证每个平台的测试，特别是 Mac 平台和众多的 Linux 发行版。如果有什么意外，这里还请大家多包涵。也欢迎帮助把遇到的问题提过来。可以直接在这里留言，也可以提到 <a class="reference external" href="https://bitbucket.org/zhuoqiang/chmfox/issues">开发网站</a> 上</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id12">关于捐赠</a></h2>
+<p>ChmFox 1.x 时，我在 Mozilla 官方扩展主页放了默认 1.99 美元的爱心贡献按钮，本意是想测试爱心贡献靠不靠谱。一个月过去了，意外的收到老外的一笔 1.99 的捐款。心情之复杂堪比第一次工资到手的感觉。不禁感叹世上还是好人多，我又相信爱情了！激动之余，顺手就把默认捐款额上调到了 3.99 美元 :)</p>
+<p>其实 1.99 美元扣了手续费后也就只能吃餐盒饭，物质上并没有什么，但和大家的感谢留言一样，这些肯定让我直接体验到了做软件这件事的价值，谢谢！</p>
+<p>后面 ChmFox 改进方向将是完善搜索功能：将目录，索引和全文的搜索做到统一的界面上。也欢迎大家留言各种批评建议吐槽等。</p>
+<p>更新: 感谢 PcX 的测试反馈，现已上传 2.2 版本， 修正 Windows 平台不能打开中文文件名 CHM，和不能正确关闭文件句柄的错误。</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2011-08-18T11:36:00" pubdate>2011-08-18</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/chmfox.html"><i class="icon-tag"></i> <span i18n>chmfox</span></i></a>
+        <li><a href="./tag/firefox.html"><i class="icon-tag"></i> <span i18n>firefox</span></i></a>
+        <li><a href="./tag/opensource.html"><i class="icon-tag"></i> <span i18n>opensource</span></i></a>
+        <li><a href="./tag/javascript.html"><i class="icon-tag"></i> <span i18n>javascript</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'chmfox2';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

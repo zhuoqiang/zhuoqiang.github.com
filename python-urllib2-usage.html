@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Python 标准库 urllib2 的使用细节 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./python-urllib2-usage.html">Python 标准库 urllib2 的使用细节</a></h1>
+</header>  <div>
+    <section>
+      <p>Python 标准库中有很多实用的工具类，但是在具体使用时，标准库文档上对使用细节描述的并不清楚，比如 urllib2 这个 HTTP 客户端库。这里总结了一些 urllib2 的使用细节。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#proxy" id="id1">Proxy 的设置</a></li>
+<li><a class="reference internal" href="#timeout" id="id2">Timeout 设置</a></li>
+<li><a class="reference internal" href="#http-request-header" id="id3">在 HTTP Request 中加入特定的 Header</a></li>
+<li><a class="reference internal" href="#redirect" id="id4">Redirect</a></li>
+<li><a class="reference internal" href="#cookie" id="id5">Cookie</a></li>
+<li><a class="reference internal" href="#http-put-delete" id="id6">使用 HTTP 的 PUT 和 DELETE 方法</a></li>
+<li><a class="reference internal" href="#http" id="id7">得到 HTTP 的返回码</a></li>
+<li><a class="reference internal" href="#debug-log" id="id8">Debug Log</a></li>
+</ul>
+</div>
+<div class="section" id="proxy">
+<h2><a class="toc-backref" href="#id1">Proxy 的设置</a></h2>
+<p>urllib2 默认会使用环境变量 <tt class="docutils literal">http_proxy</tt> 来设置 HTTP Proxy。如果想在程序中明确控制 Proxy 而不受环境变量的影响，可以使用下面的方式</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="n">enable_proxy</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">proxy_handler</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">({</span><span class="s">&quot;http&quot;</span> <span class="p">:</span> <span class="s">&#39;http://some-proxy.com:8080&#39;</span><span class="p">})</span>
+<span class="n">null_proxy_handler</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">({})</span>
+
+<span class="k">if</span> <span class="n">enable_proxy</span><span class="p">:</span>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_handler</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">null_proxy_handler</span><span class="p">)</span>
+
+<span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+</pre></div>
+<p>这里要注意的一个细节，使用 <tt class="docutils literal">urllib2.install_opener()</tt> 会设置 urllib2 的全局 <tt class="docutils literal">opener</tt> 。这样后面的使用会很方便，但不能做更细粒度的控制，比如想在程序中使用两个不同的 Proxy 设置等。比较好的做法是不使用 <tt class="docutils literal">install_opener</tt> 去更改全局的设置，而只是直接调用 <tt class="docutils literal">opener</tt> 的 <tt class="docutils literal">open</tt> 方法代替全局的 <tt class="docutils literal">urlopen</tt> 方法。</p>
+</div>
+<div class="section" id="timeout">
+<h2><a class="toc-backref" href="#id2">Timeout 设置</a></h2>
+<p>在老版 Python 中，urllib2 的 API 并没有暴露 Timeout 的设置，要设置 Timeout 值，只能更改 Socket 的全局 Timeout 值。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="n">socket</span><span class="o">.</span><span class="n">setdefaulttimeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 10 秒钟后超时</span>
+<span class="n">urllib2</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">setdefaulttimeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 另一种方式</span>
+</pre></div>
+<p>在 Python 2.6 以后，超时可以通过 <tt class="docutils literal">urllib2.urlopen()</tt> 的 <tt class="docutils literal">timeout</tt> 参数直接设置。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="http-request-header">
+<h2><a class="toc-backref" href="#id3">在 HTTP Request 中加入特定的 Header</a></h2>
+<p>要加入 header，需要使用 <tt class="docutils literal">Request</tt> 对象：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="n">request</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+<span class="n">request</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s">&#39;User-Agent&#39;</span><span class="p">,</span> <span class="s">&#39;fake-client&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</pre></div>
+<p>对有些 header 要特别留意，服务器会针对这些 header 做检查</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">User-Agent</span></tt> : 有些服务器或 Proxy 会通过该值来判断是否是浏览器发出的请求</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Content-Type</span></tt> : 在使用 REST 接口时，服务器会检查该值，用来确定 HTTP Body 中的内容该怎样解析。常见的取值有：</p>
+<ul class="simple">
+<li><tt class="docutils literal">application/xml</tt> ： 在 XML RPC，如 RESTful/SOAP 调用时使用</li>
+<li><tt class="docutils literal">application/json</tt> ： 在 JSON RPC 调用时使用</li>
+<li><tt class="docutils literal"><span class="pre">application/x-www-form-urlencoded</span></tt> ： 浏览器提交 Web 表单时使用</li>
+</ul>
+<p>在使用服务器提供的 RESTful 或 SOAP 服务时， <tt class="docutils literal"><span class="pre">Content-Type</span></tt> 设置错误会导致服务器拒绝服务</p>
+</li>
+</ul>
+</div>
+<div class="section" id="redirect">
+<h2><a class="toc-backref" href="#id4">Redirect</a></h2>
+<p>urllib2 默认情况下会针对 HTTP 3XX 返回码自动进行 redirect 动作，无需人工配置。要检测是否发生了 redirect 动作，只要检查一下 <tt class="docutils literal">Response</tt> 的 URL 和 <tt class="docutils literal">Request</tt> 的 URL 是否一致就可以了。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://www.google.cn&#39;</span><span class="p">)</span>
+<span class="n">redirected</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">geturl</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;http://www.google.cn&#39;</span>
+</pre></div>
+<p>如果不想自动 redirect，除了使用更低层次的 httplib 库之外，还可以自定义 <tt class="docutils literal">HTTPRedirectHandler</tt> 类。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="k">class</span> <span class="nc">RedirectHandler</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPRedirectHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">http_error_301</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">http_error_302</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">RedirectHandler</span><span class="p">)</span>
+<span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;http://www.google.cn&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="cookie">
+<h2><a class="toc-backref" href="#id5">Cookie</a></h2>
+<p>urllib2 对 Cookie 的处理也是自动的。如果需要得到某个 Cookie 项的值，可以这么做：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">cookielib</span>
+
+<span class="n">cookie</span> <span class="o">=</span> <span class="n">cookielib</span><span class="o">.</span><span class="n">CookieJar</span><span class="p">()</span>
+<span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookie</span><span class="p">))</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">cookie</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;some_cookie_item_name&#39;</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+<div class="section" id="http-put-delete">
+<h2><a class="toc-backref" href="#id6">使用 HTTP 的 PUT 和 DELETE 方法</a></h2>
+<p>urllib2 只支持 HTTP 的 <tt class="docutils literal">GET</tt> 和 <tt class="docutils literal">POST</tt> 方法，如果要使用 HTTP <tt class="docutils literal">PUT</tt> 和 <tt class="docutils literal">DELETE</tt> ，只能使用比较低层的 httplib 库。虽然如此，我们还是能通过下面的方式，使 urllib2 能够发出 <tt class="docutils literal">PUT</tt> 或 <tt class="docutils literal">DELETE</tt> 的请求：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="n">request</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="n">request</span><span class="o">.</span><span class="n">get_method</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="s">&#39;PUT&#39;</span> <span class="c"># or &#39;DELETE&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</pre></div>
+<p>这种做法虽然属于 Hack 的方式，但实际使用起来也没什么问题。</p>
+</div>
+<div class="section" id="http">
+<h2><a class="toc-backref" href="#id7">得到 HTTP 的返回码</a></h2>
+<p>对于 <tt class="docutils literal">200 OK</tt> 来说，只要使用 <tt class="docutils literal">urlopen</tt> 返回的 <tt class="docutils literal">response</tt> 对象的 <tt class="docutils literal">getcode()</tt> 方法就可以得到 HTTP 的返回码。但对其它返回码来说，urlopen 会抛出异常。这时候，就要检查异常对象的 <tt class="docutils literal">code</tt> 属性了：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://restrict.web.com&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span>
+</pre></div>
+</div>
+<div class="section" id="debug-log">
+<h2><a class="toc-backref" href="#id8">Debug Log</a></h2>
+<p>使用 urllib2 时，可以通过下面的方法把 debug Log 打开，这样收发包的内容就会在屏幕上打印出来，方便调试，有时可以省去抓包的工作</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="n">httpHandler</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPHandler</span><span class="p">(</span><span class="n">debuglevel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">httpsHandler</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPSHandler</span><span class="p">(</span><span class="n">debuglevel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">httpHandler</span><span class="p">,</span> <span class="n">httpsHandler</span><span class="p">)</span>
+
+<span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://www.google.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-07-05T21:28:00" pubdate>2010-07-05</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/python.html"><i class="icon-tag"></i> <span i18n>python</span></i></a>
+        <li><a href="./tag/web.html"><i class="icon-tag"></i> <span i18n>web</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'python-urllib2-usage';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

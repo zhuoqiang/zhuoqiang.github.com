@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | “一”夫当关：boost::property_tree 的 i18n Bug </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./i18n-bug-in-boost-property_tree.html">“一”夫当关：boost::property_tree 的 i18n Bug</a></h1>
+</header>  <div>
+    <section>
+      <p>i18n 测试常要选用特殊字符。这些字符之所以特殊，全是拜这些字符的编码所赐，比如简单的“一”字。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id6">问题</a></li>
+<li><a class="reference internal" href="#id2" id="id7">原因</a></li>
+<li><a class="reference internal" href="#id3" id="id8">解</a></li>
+<li><a class="reference internal" href="#id5" id="id9">启发</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id6">问题</a></h2>
+<p>在做 i18n 测试时，发现程序无法正常解析含有中文的 XML 宽字节流（ <tt class="docutils literal"><span class="pre">std::wistream</span></tt> ）。分析后发现问题出在 <tt class="docutils literal"><span class="pre">boost::property_tree</span></tt> 的 <a class="reference external" href="http://www.boost.org/doc/libs/1_43_0/doc/html/boost/property_tree/xml_parser/read_xml_id939969.html">read_xml</a> 函数上。它在解析宽字节流时如果其中含有中文字符“一”，函数会抛出异常，提示在“一”字符处 XML 解析出错。下面的单元测试可以重现这个问题：</p>
+<div class="highlight"><pre><span class="cp">#define BOOST_TEST_MODULE unit_test_for_i18n_case</span>
+<span class="cp">#include &lt;boost/test/unit_test.hpp&gt;</span>
+
+<span class="cp">#include &lt;boost/property_tree/xml_parser.hpp&gt;</span>
+<span class="cp">#include &lt;sstream&gt;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="p">;</span>
+
+<span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span><span class="n">test_i18n_xml_tag_value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">wistringstream</span> <span class="n">in</span><span class="p">(</span><span class="s">L&quot;&lt;</span><span class="se">\u4E00</span><span class="s">&gt;abc&lt;/</span><span class="se">\u4E00</span><span class="s">&gt;&quot;</span><span class="p">);</span> <span class="c1">// 一的 Unicode 值</span>
+    <span class="n">property_tree</span><span class="o">::</span><span class="n">wptree</span> <span class="n">pt</span><span class="p">;</span>
+    <span class="n">BOOST_REQUIRE_NO_THROW</span><span class="p">(</span><span class="n">property_tree</span><span class="o">::</span><span class="n">read_xml</span><span class="p">(</span><span class="n">in</span><span class="p">,</span> <span class="n">pt</span><span class="p">));</span>
+    <span class="n">BOOST_CHECK</span><span class="p">(</span><span class="s">L&quot;abc&quot;</span> <span class="o">==</span> <span class="n">pt</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">wstring</span><span class="o">&gt;</span><span class="p">(</span><span class="s">L&quot;</span><span class="se">\u4E00</span><span class="s">&quot;</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+<p>那么，这个“一”到底有何魔力呢？</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id7">原因</a></h2>
+<p>我们来看看“一”的 Unicode 编码： <tt class="docutils literal"><span class="pre">L'\\u4E00'</span></tt> ，注意到那个扎眼的 <tt class="docutils literal">00</tt> 了吗， 会不会程序将“一”当成了字符串的 <tt class="docutils literal"><span class="pre">'\\x00'</span></tt> 终结符呢？翻开 Boost 源代码，确实就如猜测的那样， <tt class="docutils literal"><span class="pre">boost::property_tree</span></tt> 在这有一个 bug。</p>
+<p><tt class="docutils literal">property_tree</tt> 中包含一个简单的 XML 解析器，其中用查表法判断特殊字符，范围包括 255 个 ASCII 扩展字符。对值超过 255 的 Unicode 编码，代码错误地将字符 <tt class="docutils literal">static_cast</tt> 成 <tt class="docutils literal">unsigned char</tt> 再查表判断。在 <tt class="docutils literal">rapidxml.hpp</tt> 中：</p>
+<div class="highlight"><pre><span class="c1">// Detect attribute name character</span>
+<span class="k">struct</span> <span class="n">attribute_name_pred</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">test</span><span class="p">(</span><span class="n">Ch</span> <span class="n">ch</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">internal</span><span class="o">::</span><span class="n">lookup_tables</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;::</span><span class="n">lookup_attribute_name</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ch</span><span class="p">)];</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>如果被测试的是“一”字，那么经过 <tt class="docutils literal">static_cast</tt> ， <tt class="docutils literal"><span class="pre">L'\\u4E00'</span></tt> 就变成了 <tt class="docutils literal"><span class="pre">'\\x00'</span></tt> ，一个合法的字符变成了非法的字符串结束符，不经意的类型转换造成了“一”夫当关的现象。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">解</a></h2>
+<p>直接的解是修正 <tt class="docutils literal">property_tree</tt> 中 <tt class="docutils literal">rapidxml</tt> 的 bug。对 Unicode 做特殊处理，对值超过 255 的 Unicode 把它当成普通的 ASCII 字母 <tt class="docutils literal">'z'</tt></p>
+<div class="highlight"><pre><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Ch</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="kt">size_t</span> <span class="n">get_index</span><span class="p">(</span><span class="k">const</span> <span class="n">Ch</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// If not ASCII char, its semantic is same as plain &#39;z&#39;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="sc">&#39;z&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>再将原来使用 <tt class="docutils literal">static_cast</tt> 进行转换的地方都换成使用上面的 <tt class="docutils literal">get_index</tt> 函数：</p>
+<div class="highlight"><pre><span class="c1">// Detect attribute name character</span>
+<span class="k">struct</span> <span class="n">attribute_name_pred</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">test</span><span class="p">(</span><span class="n">Ch</span> <span class="n">ch</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">internal</span><span class="o">::</span><span class="n">lookup_tables</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;::</span><span class="n">lookup_attribute_name</span><span class="p">[</span><span class="n">internal</span><span class="o">::</span><span class="n">get_index</span><span class="p">(</span><span class="n">ch</span><span class="p">)];</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>我已经给 Boost 提了这个 <a class="reference external" href="https://svn.boost.org/trac/boost/ticket/4340">问题</a> ，并且包含了这个 <a class="reference external" href="https://svn.boost.org/trac/boost/attachment/ticket/4340/property_tree_xml_i18n_fix.patch">Patch</a> 。新版本的 Boost 已经采纳，修复了该问题。</p>
+<p>如果不能修改 Boost 库，还有个解可以绕过这个问题：不使用宽字符版本的 <tt class="docutils literal">read_xml</tt> ，而是先将数据用 UTF-8 编码成窄字节，再直接使用窄字节版本的 <tt class="docutils literal">read_xml</tt> 。这个解依赖于 UTF-8 与 ASCII 编码兼容这个特性。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id9">启发</a></h2>
+<ul class="simple">
+<li>所有代码都有可能出问题，哪怕质量很高的 Boost 库</li>
+<li>隐式类型转换不好，显式类型转换同样要小心</li>
+<li>i18n 测试要特别注意编码中含 <tt class="docutils literal"><span class="pre">'\\x00'</span></tt> 的宽字节字符，例如 <tt class="docutils literal">ĀȀ̀Ѐ一帀开怀笀묀밀</tt> 等，测试用例一定要包含这些特殊字符</li>
+<li>UTF-8 编码与 ASCII 兼容，这个特性让程序更容易迁移到 Unicode。也许正因此，wxWidget 3.0 将会使用 UTF-8 来同时支持 Unicode 和窄字符接口，统一原来的宽窄两套 API</li>
+</ul>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-06-16T22:20:00" pubdate>2010-06-16</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/boost.html"><i class="icon-tag"></i> <span i18n>boost</span></i></a>
+        <li><a href="./tag/c.html"><i class="icon-tag"></i> <span i18n>c++</span></i></a>
+        <li><a href="./tag/i18n.html"><i class="icon-tag"></i> <span i18n>i18n</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'i18n-bug-in-boost-property_tree';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

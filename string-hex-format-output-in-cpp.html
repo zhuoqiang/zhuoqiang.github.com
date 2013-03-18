@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 在 C++ 中输出字符串的十六进制表示 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./string-hex-format-output-in-cpp.html">在 C++ 中输出字符串的十六进制表示</a></h1>
+</header>  <div>
+    <section>
+      <p>在进行 i18n 相关的开发时，经常遇到字符编码转换的错误。这时如果能把相关字符串用十六进制的形式打印出来，例如，<tt class="docutils literal">&quot;abc&quot;</tt> 输出成 <tt class="docutils literal"><span class="pre">&quot;\\x61\\x62\\x63&quot;</span></tt> 这对于 i18n 的除错来说是很有帮助的。Python 里面，只需要使用 <tt class="docutils literal">repr()</tt> 函数就行了。可在 C++ 中如何做到这点呢？下面是用 <tt class="docutils literal">ostream</tt> 的格式化功能的一个简单的实现：</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">out</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">const_iterator</span> <span class="n">it</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">s</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">it</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+<p>看上去简单直接，但很可惜这段代码不能实现我们的意图。它还是按字面输出了每个字符。可我们明明指定了使用 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 来格式化输出啊！？问题原来是出在 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 只是一个针对整数类型的输出格式设置，当输出字符类型时，C++ 流还是按照字面输出。到 <tt class="docutils literal">ostream</tt> 的文档去细查才知，原来 C++ 标准输出流对于格式化输出的控制很弱，只能提供有限的几种格式定制，而且大部分都是针对整数和浮点数类型的，对于字符类型完全没有参数可以控制。有点讽刺的是， <tt class="docutils literal">ostream</tt> 利用了 C++ 的函数重载和强类型机制做到了在表达力不输于 C 的同时，又杜绝了臭名昭著的 <tt class="docutils literal">printf</tt> 带来的无穷的麻烦，大大增加了安全。可在这里，强类型安全反而是我们达到目的的障碍：我就是想让 <tt class="docutils literal">ostream</tt> 把字符当成整数打印啊！还好，C++ 还有类型强转这招可以让我们绕过强类型匹配这道安全闸门：</p>
+<div class="highlight"><pre><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">);</span>
+</pre></div>
+<p>好了，这下字符都按整数来输出了，而 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 又指示 <tt class="docutils literal">ostream</tt> 用十六进制表示去输出整数。问题解决了。且慢，为什么输出 UTF-8 中文编码的时候会变成这样：</p>
+<div class="highlight"><pre><span class="s">&quot;</span><span class="se">\xffff</span><span class="s">ffe4</span><span class="se">\xffff</span><span class="s">ffb8</span><span class="se">\xffff</span><span class="s">ffad&quot;</span> <span class="c1">// get_raw_string(&quot;中&quot;)</span>
+</pre></div>
+<p>这么多的 <tt class="docutils literal">F</tt> word 太影响市容了。能不能把它们去掉？其实原因在于，我们输出的是强制类型转换成 <tt class="docutils literal">int</tt> 的整形数值，而 <tt class="docutils literal">int</tt> 是 32 bit 长，所以会多出前面这么多位来。如果要去掉，只要转成 8 bit 的整数不就行了吗。可惜 C/C++ 中没有 8 bit 的整数，你唯一能做到的是</p>
+<div class="highlight"><pre><span class="k">typedef</span> <span class="kt">char</span> <span class="kt">int8_t</span><span class="p">;</span>
+</pre></div>
+<p>可是用这样得来的 <tt class="docutils literal">int8_t</tt> 去转也还是不行，因为在 C++ 中，<tt class="docutils literal">typedef</tt> 并没有产生一个新的类型，而只是定义了一个原来类型的别名。而这个别名是不参与到函数重载的匹配计算当中的。换言之，<tt class="docutils literal">ostream</tt> 说了，别以为你披上件 <tt class="docutils literal">int8_t</tt> 的马甲我就不认识你了，我还是把你当 <tt class="docutils literal">char</tt> 来输出。此路不通！</p>
+<p>那我们就放弃利用 <tt class="docutils literal">ostream</tt> 了吗？且慢，其实 <tt class="docutils literal">ostream</tt> 默认是不会输出前面的 0 的，那只要把最后 8 bit 之前的位都抹成 0 不就能达到我们的要求了吗。好了，下面就是无错最终版：</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">out</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">const_iterator</span> <span class="n">it</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">s</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// AND 0xFF will remove the leading &quot;ff&quot; in the output,</span>
+        <span class="c1">// So that we could get &quot;\xab&quot; instead of &quot;\xffab&quot;</span>
+        <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">short</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+<p>经历了几番波折，终于成功利用了 ostream 提供的十六进制输出的功能实现了打印字符串十六进制的功能。其实细究起来，之所以那么绕，还是因为 <tt class="docutils literal">ostream</tt> 本身在格式化输出控制方面太弱了。进一步的，C++ 里还有更好的工具做这件事吗？ <tt class="docutils literal"><span class="pre">boost::format</span></tt> 看起来象是，但它依然不能正确处理我们上面遇到的两难境地。好在，另一个 boost 库给出了合适的答案: <tt class="docutils literal"><span class="pre">boost::spirit::karma</span></tt></p>
+<p>Karma 是 <tt class="docutils literal"><span class="pre">boost::spirit</span></tt> 库的一部分。大家可能比较熟悉的是用 spirit 库做 parser 来解析字符串。而 spirit 通过 Karma 提供的功能就恰好相反，它是专门用来将 C++ 数据结构格式化为字符流的。我们恰好就需要它，下面就是用 karma 库重写的代码：</p>
+<div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">OutputIterator</span><span class="o">&gt;</span>
+<span class="kt">bool</span> <span class="n">generate_raw</span><span class="p">(</span><span class="n">OutputIterator</span> <span class="n">sink</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">spirit</span><span class="o">::</span><span class="n">karma</span><span class="o">::</span><span class="n">hex</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">spirit</span><span class="o">::</span><span class="n">karma</span><span class="o">::</span><span class="n">generate</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="nf">generate</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="sc">&#39;\&quot;&#39;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string_k</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">result</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">generate_raw</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">back_inserter</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">s</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;parse error&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>这里面最主要就是利用了 karma 内置的一个输出模块 <tt class="docutils literal"><span class="pre">karam::hex</span></tt> 来帮我们完成工作，而这个 <tt class="docutils literal">hex</tt> 是一个多态的生成器。它不象 <tt class="docutils literal">ostream</tt> 的类型重载，只能针对某些类型输出 hex 格式，而是针对所有类型都能输出 hex 格式，包括 <tt class="docutils literal">char</tt> 。还有一个优点，代码的表达力更强了，输出的格式完全在一行代码中体现：</p>
+<div class="highlight"><pre><span class="c1">// 输出格式为 &quot;\x61\x62\x63&quot;，方便直接贴到 python 或 C++ 的代码中</span>
+<span class="sc">&#39;\&quot;&#39;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span>
+</pre></div>
+<p>如果想要改变输出格式，只需要改这行代码即可，例如：</p>
+<div class="highlight"><pre><span class="c1">// 输出格式变为 &quot;0x61 0x62 0x63 &quot;</span>
+<span class="sc">&#39;\&quot;&#39;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="s">&quot;0x&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span>
+</pre></div>
+<p>那么效率方面有没有任何性能损失呢？下面是一段测试代码，分别用两种算法转换相同的字符串:</p>
+<div class="highlight"><pre><span class="cp">#include &quot;boost/test/unit_test.hpp&quot;</span>
+<span class="cp">#include &quot;boost/../libs/spirit/optimization/measure.hpp&quot;</span>
+<span class="cp">#include &quot;string.hpp&quot; </span><span class="c1">// The function for test</span>
+
+<span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;hex output performance test data 中文&quot;</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">using_karma</span> <span class="o">:</span> <span class="n">test</span><span class="o">::</span><span class="n">base</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">benchmark</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">+=</span> <span class="n">get_raw_string_c</span><span class="p">(</span><span class="n">message</span><span class="p">).</span><span class="n">size</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">using_ostream</span> <span class="o">:</span> <span class="n">test</span><span class="o">::</span><span class="n">base</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">benchmark</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">+=</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">message</span><span class="p">).</span><span class="n">size</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span><span class="n">TestStringPerformance</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">BOOST_SPIRIT_TEST_BENCHMARK</span><span class="p">(</span>
+        <span class="mi">100</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">using_karma</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">using_ostream</span><span class="p">)</span>
+        <span class="p">);</span>
+
+    <span class="n">BOOST_CHECK_NE</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">live_code</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>下面是运行的结果，分别是两种算法需要的时间，值越小越好：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">算法</th>
+<th class="head">耗时(s)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>karma</td>
+<td>6.97</td>
+</tr>
+<tr><td>ostream</td>
+<td>14.24</td>
+</tr>
+</tbody>
+</table>
+<p>可能出乎意料，大致来说 karma 比 ostream 快了一倍。这也与 spirit 官方给出的性能数据差不多。这里的函数返回值是通过 <tt class="docutils literal"><span class="pre">std::string</span></tt> 值拷贝返回的，消耗了不少时间，如果纯从格式化输出来说，猜测 karma 的性能优势只会更大。<a class="reference external" href="http://tinodidriksen.com/2010/02/07/cpp-convert-int-to-string-speed/">另一份测试</a> 表明，karma 应该是 C/C++ 里面你能找到的速度最快的格式化字符流方案了。</p>
+<p>对于这么简单的功能来说，这篇文章已经显得太长了，庆幸的是，我们最终还是找到了一个表达力强，性能高的十六进制输出方案。人说好事难双，可 C++ 这门复杂的语言，却经常能找执行飞快又高度抽象的代码方案。只是有些过于复杂了 ...</p>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-12-12T23:45:00" pubdate>2010-12-12</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/boost.html"><i class="icon-tag"></i> <span i18n>boost</span></i></a>
+        <li><a href="./tag/c.html"><i class="icon-tag"></i> <span i18n>c++</span></i></a>
+        <li><a href="./tag/i18n.html"><i class="icon-tag"></i> <span i18n>i18n</span></i></a>
+        <li><a href="./tag/performance.html"><i class="icon-tag"></i> <span i18n>performance</span></i></a>
+        <li><a href="./tag/spirit.html"><i class="icon-tag"></i> <span i18n>spirit</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'string-hex-format-output-in-cpp';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

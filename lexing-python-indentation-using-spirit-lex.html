@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Lexing Python Indentation using Spirit.Lex </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./lexing-python-indentation-using-spirit-lex.html">Lexing Python Indentation using Spirit.Lex</a></h1>
+</header>  <div>
+    <section>
+      <p>Python is well known for its whitespace-sensitivity grammar. The indentation level provides block scoping in python language. While it is possible to parse python using just straight Spirit.Qi, however, it looks messy to mixing the low level indentation handling in the parsing level. Fortunately Spirit.Lex could be a help here to transform the indentation to a bunch of proper <tt class="docutils literal">BEGIN</tt> or <tt class="docutils literal">END</tt> tokens, which will simplify the parsing logic later.</p>
+<p>Here's how to deal with indentation: for each line of the input, current line's indentation level will be compared with previews one stored in a stack:</p>
+<ul class="simple">
+<li>If the indentation is increasing it is pushed into the stack and a <tt class="docutils literal">BEGIN</tt> token is generated</li>
+<li>If indentation is not changed, just continue and nothing happens</li>
+<li>if it is decreasing comparing with the top indentation number on the stack, the top number then will be popped off from the stack and a corresponding <tt class="docutils literal">END</tt> token is generated until the same indentation number appears on top of the stack. If the same indentation number cannot be found on the stack, an indentation error occurs.</li>
+</ul>
+<p>At the end of the input, an <tt class="docutils literal">END</tt> token is generated for each indentation level remains on the stack (until only 0 remains).</p>
+<p>For simplicity let's handle just spaces for now and ignore tabs</p>
+<p>The first shot is to match zero or more spaces at the beginning of the line and then calculate the total length of the spaces in a semantic action</p>
+<div class="highlight"><pre><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">indent_</span><span class="p">(</span><span class="s">&quot;^[ ]*&quot;</span><span class="p">);</span>
+<span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">identifier_</span><span class="p">(</span><span class="s">&quot;[a-zA-Z_]</span><span class="se">\\</span><span class="s">w*&quot;</span><span class="p">);</span>
+<span class="k">this</span><span class="o">-&gt;</span><span class="n">self</span>
+    <span class="o">=</span> <span class="n">indent_</span><span class="p">[</span><span class="n">_val</span><span class="o">=</span><span class="n">_end</span><span class="o">-</span><span class="n">_begin</span><span class="p">]</span>
+    <span class="o">|</span> <span class="n">identifier_</span>
+    <span class="p">;</span>
+</pre></div>
+<p>However, this won't work for lines without spaces at the beginning.</p>
+<div class="highlight"><pre><span class="n">a_variable_without_any_indent</span>
+</pre></div>
+<p>The above will only match <tt class="docutils literal">identifier_</tt> but not zero length <tt class="docutils literal">indent_</tt>. It seems there is no way to match the pseudo <tt class="docutils literal">beginning of line</tt> anchors with Spirit.Lex</p>
+<p>The workaround is to match newline manually and switch to another lexer state dedicating for indentation.</p>
+<div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Lexer</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">Tokens</span> <span class="o">:</span> <span class="k">public</span> <span class="n">lex</span><span class="o">::</span><span class="n">lexer</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span> <span class="p">{</span>
+ <span class="nl">public:</span>
+  <span class="n">Tokens</span><span class="p">()</span>
+      <span class="o">:</span> <span class="n">indent_</span><span class="p">(</span><span class="s">&quot;[ ]*&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">newline_</span><span class="p">(</span><span class="s">&quot;[</span><span class="se">\\</span><span class="s">n</span><span class="se">\\</span><span class="s">r</span><span class="se">\\</span><span class="s">f]+&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">whitespace_</span><span class="p">(</span><span class="s">&quot;[ </span><span class="se">\\</span><span class="s">t]+&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">if_</span><span class="p">(</span><span class="s">&quot;if&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">identifier_</span><span class="p">(</span><span class="s">&quot;[a-zA-Z_]</span><span class="se">\\</span><span class="s">w*&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">equal_</span><span class="p">(</span><span class="s">&quot;==&quot;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">colon_</span><span class="p">(</span><span class="sc">&#39;:&#39;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">assign_</span><span class="p">(</span><span class="sc">&#39;=&#39;</span><span class="p">)</span>
+      <span class="p">,</span> <span class="n">integer_</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">d+&quot;</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">self</span>
+        <span class="o">=</span> <span class="n">indent_</span><span class="p">[</span><span class="n">HandleIndent</span><span class="p">(</span><span class="n">scopeLevels_</span><span class="p">)]</span>
+        <span class="p">;</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">self</span><span class="p">(</span><span class="s">&quot;NORMAL&quot;</span><span class="p">)</span>
+        <span class="o">=</span> <span class="n">newline_</span><span class="p">[</span><span class="n">HandleNewline</span><span class="p">(</span><span class="n">scopeLevels_</span><span class="p">)]</span>
+        <span class="o">|</span> <span class="n">whitespace_</span><span class="p">[</span><span class="n">lex</span><span class="o">::</span><span class="n">_pass</span><span class="o">=</span><span class="n">lex</span><span class="o">::</span><span class="n">pass_flags</span><span class="o">::</span><span class="n">pass_ignore</span><span class="p">]</span>
+        <span class="o">|</span> <span class="n">if_</span>
+        <span class="o">|</span> <span class="n">equal_</span>
+        <span class="o">|</span> <span class="n">colon_</span> <span class="o">|</span> <span class="n">assign_</span>
+        <span class="o">|</span> <span class="n">integer_</span>
+        <span class="o">|</span> <span class="n">identifier_</span>
+        <span class="p">;</span>
+  <span class="p">}</span>
+
+ <span class="nl">private:</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">indent_</span><span class="p">;</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">newline_</span><span class="p">,</span> <span class="n">whitespace_</span><span class="p">;</span>
+
+  <span class="c1">// keywords</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">if_</span><span class="p">;</span>
+
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">identifier_</span><span class="p">;</span>
+
+  <span class="c1">// operators</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">equal_</span><span class="p">;</span>
+
+  <span class="c1">// delimiters</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">colon_</span><span class="p">,</span> <span class="n">assign_</span><span class="p">;</span>
+
+  <span class="c1">// literal</span>
+  <span class="n">lex</span><span class="o">::</span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">integer_</span><span class="p">;</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">scopeLevels_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+<p>Here we use the default <tt class="docutils literal">INITIAL</tt> lexer state for indentation handling and <tt class="docutils literal">NORMAL</tt> state for other token matching. Actually the indentation handling must be the <tt class="docutils literal">INITIAL</tt> state in order to handle the first line since there is no newline before it.</p>
+<p>We use a stack <tt class="docutils literal">scopeLevels_</tt> to help store indentation levels:</p>
+<div class="highlight"><pre><span class="k">enum</span> <span class="n">TokenIds</span> <span class="p">{</span>
+  <span class="n">kTokenBegin</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+  <span class="n">kTokenEnd</span> <span class="o">=</span> <span class="mi">1001</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">HandleIndent</span> <span class="p">{</span>
+ <span class="nl">public:</span>
+  <span class="n">HandleIndent</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">scopeLevels</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">scopeLevels_</span><span class="p">(</span><span class="n">scopeLevels</span><span class="p">)</span>
+  <span class="p">{}</span>
+
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Iterator</span><span class="p">,</span> <span class="k">typename</span> <span class="n">IdType</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Context</span><span class="o">&gt;</span>
+  <span class="kt">void</span> <span class="k">operator</span><span class="p">()</span> <span class="p">(</span>
+      <span class="n">Iterator</span><span class="o">&amp;</span> <span class="n">start</span><span class="p">,</span>
+      <span class="n">Iterator</span><span class="o">&amp;</span> <span class="n">end</span><span class="p">,</span>
+      <span class="n">BOOST_SCOPED_ENUM</span><span class="p">(</span><span class="n">lex</span><span class="o">::</span><span class="n">pass_flags</span><span class="p">)</span><span class="o">&amp;</span> <span class="n">passFlag</span><span class="p">,</span>
+      <span class="n">IdType</span><span class="o">&amp;</span> <span class="n">id</span><span class="p">,</span> <span class="n">Context</span><span class="o">&amp;</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">int</span> <span class="k">const</span> <span class="n">level</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scopeLevels_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">level</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Indent must start from 0!&quot;</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">level</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// If the level is same, just ignore it and switch to normal state</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">level</span> <span class="o">==</span> <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">top</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">passFlag</span> <span class="o">=</span> <span class="n">lex</span><span class="o">::</span><span class="n">pass_flags</span><span class="o">::</span><span class="n">pass_ignore</span><span class="p">;</span>
+      <span class="n">context</span><span class="p">.</span><span class="n">set_state_name</span><span class="p">(</span><span class="s">&quot;NORMAL&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// If the level is larger, emit BEGIN and push the new level on stack</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">level</span> <span class="o">&gt;</span> <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">top</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">level</span><span class="p">);</span>
+      <span class="n">id</span> <span class="o">=</span> <span class="n">kTokenBegin</span><span class="p">;</span>
+      <span class="n">context</span><span class="p">.</span><span class="n">set_state_name</span><span class="p">(</span><span class="s">&quot;NORMAL&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// If the level is smaller, emit END and pop the top level from stack</span>
+    <span class="k">else</span> <span class="p">{</span> <span class="c1">//Dedent, end scope</span>
+      <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+      <span class="c1">// Level must be one of the numbers occurring on the stack</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">scopeLevels_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">level</span> <span class="o">&gt;</span> <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">top</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Dedenting failed, could not find indent matching previews &quot;</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// make it a zero match, we can generate multiple END token by this trick</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span>
+        <span class="n">id</span> <span class="o">=</span> <span class="n">kTokenEnd</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+ <span class="nl">private:</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">scopeLevels_</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+<span class="k">class</span> <span class="nc">HandleNewline</span> <span class="p">{</span>
+ <span class="nl">public:</span>
+  <span class="n">HandleNewline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">scopeLevels</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">scopeLevels_</span><span class="p">(</span><span class="n">scopeLevels</span><span class="p">)</span>
+  <span class="p">{}</span>
+
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Iterator</span><span class="p">,</span> <span class="k">typename</span> <span class="n">IdType</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Context</span><span class="o">&gt;</span>
+  <span class="kt">void</span> <span class="k">operator</span><span class="p">()</span> <span class="p">(</span>
+      <span class="n">Iterator</span><span class="o">&amp;</span> <span class="n">start</span><span class="p">,</span>
+      <span class="n">Iterator</span><span class="o">&amp;</span> <span class="n">end</span><span class="p">,</span>
+      <span class="n">BOOST_SCOPED_ENUM</span><span class="p">(</span><span class="n">lex</span><span class="o">::</span><span class="n">pass_flags</span><span class="p">)</span><span class="o">&amp;</span> <span class="n">passFlag</span><span class="p">,</span>
+      <span class="n">IdType</span><span class="o">&amp;</span> <span class="n">id</span><span class="p">,</span> <span class="n">Context</span><span class="o">&amp;</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">get_eoi</span><span class="p">()</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// If the &quot;end of input&quot; is reached</span>
+      <span class="c1">// we pop up all the non-zero levels.</span>
+      <span class="c1">// for each pop up we generate a corresponding END token</span>
+      <span class="c1">// here we apply the zero-match trick again to emit multiple END token</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">scopeLevels_</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">scopeLevels_</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span>
+        <span class="n">id</span> <span class="o">=</span> <span class="n">kTokenEnd</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">passFlag</span> <span class="o">=</span> <span class="n">lex</span><span class="o">::</span><span class="n">pass_flags</span><span class="o">::</span><span class="n">pass_ignore</span><span class="p">;</span>
+    <span class="n">context</span><span class="p">.</span><span class="n">set_state_name</span><span class="p">(</span><span class="s">&quot;INITIAL&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+ <span class="nl">private:</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">scopeLevels_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+<p>Notice how we apply the <cite>zero-length matching</cite> trick to generate multiple tokens.</p>
+<p>Now, let's try lex some python code:</p>
+<div class="highlight"><pre><span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">c</span>
+<span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="n">e</span>
+</pre></div>
+<p>Here's the result:</p>
+<div class="highlight"><pre><span class="k">if</span>
+<span class="n">a</span>
+<span class="o">==</span>
+<span class="mi">1</span>
+<span class="p">:</span>
+<span class="n">BEGIN</span>
+<span class="k">if</span>
+<span class="n">b</span>
+<span class="o">==</span>
+<span class="mi">0</span>
+<span class="p">:</span>
+<span class="n">BEGIN</span>
+<span class="n">c</span>
+<span class="n">END</span>
+<span class="n">END</span>
+<span class="k">if</span>
+<span class="n">d</span>
+<span class="o">==</span>
+<span class="mi">3</span>
+<span class="p">:</span>
+<span class="n">BEGIN</span>
+<span class="n">e</span>
+<span class="n">END</span>
+</pre></div>
+<p>Spirit.Qi could treat the <tt class="docutils literal">BEGIN</tt> and <tt class="docutils literal">END</tt> tokens as block delimiters, exactly as curly braces in C/C++.</p>
+<p>There's still a limitation however: There must be a newline at the end of the input otherwise the end of input cannot be detected in the HandleNewline function. A possible workaround I could think of is to have an iterator adapter to add the missing newline in the end of the input if needed.</p>
+<p>It would make lexing python much easier if Spirit.Lex could support matching pseudo tokens like:</p>
+<ul class="simple">
+<li>Begin of the line</li>
+<li>End of the line</li>
+<li>Begin of the input</li>
+<li>End of the input</li>
+</ul>
+<p>For Spirit.Lex currently there is no clear way to fail the whole lexing process inside the semantic action. Assigning <tt class="docutils literal">pass_failed</tt> flag won't work since it only fails current token's matching process. In the code above an exception is thrown to stop the lexing process, however I do hope there is a build-in support for this.</p>
+<p>Finally, there seems no debug support in Spirit.Lex as in Spirit.Qi. A debug support like what Spirit.Qi provides will be very handy for trouble shooting in Spirit.Lex (Spirix.Lex actually has debug support using the macro <tt class="docutils literal">BOOST_SPIRIT_LEXERTL_DEBUG</tt>)</p>
+<p>References:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.python.org/release/3.1.3/reference/lexical_analysis.html#indentation">Python lexical analysis for indentation</a></li>
+<li><a class="reference external" href="http://boost.2283326.n4.nabble.com/lexing-python-redux-td2681157.htm">Lexing python redux discussion</a></li>
+</ul>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2011-09-08T22:06:00" pubdate>2011-09-08</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/boost.html"><i class="icon-tag"></i> <span i18n>boost</span></i></a>
+        <li><a href="./tag/c.html"><i class="icon-tag"></i> <span i18n>c++</span></i></a>
+        <li><a href="./tag/compiler.html"><i class="icon-tag"></i> <span i18n>compiler</span></i></a>
+        <li><a href="./tag/english.html"><i class="icon-tag"></i> <span i18n>english</span></i></a>
+        <li><a href="./tag/python.html"><i class="icon-tag"></i> <span i18n>python</span></i></a>
+        <li><a href="./tag/spirit.html"><i class="icon-tag"></i> <span i18n>spirit</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'lexing-python-indentation-using-spirit-lex';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>

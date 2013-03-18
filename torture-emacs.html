@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 折腾 Emacs </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./torture-emacs.html">折腾 Emacs</a></h1>
+</header>  <div>
+    <section>
+      <p>传说中神一样编辑器的 Emacs 向来以难学难用，喜欢折腾人著称。三天打渔两天晒网的我，居然心甘情愿地被它折腾了五，六年之久，期间苦乐不足为外人道也。不过以我的使用感觉，Emacs 更象是匹烈马：初时难以驾驭，可一旦征服，使用起来便得心应手，威力无穷。尽管被它折腾的不轻，但也因此学会了很多提高工作效率的小技巧。而在用 Emacs 编辑时更是可以做到心无旁骛，任由思路驰骋纵横在键盘间，达到一种“流”的状态。</p>
+<p>虽说如此，长久以来还是有很多小细节让自己在使用 Emacs 的时候很是不爽，最近一周稍有闲暇，本着磨刀不误砍柴工的精神，也来折腾了一下 Emacs ，居然被我搞定了几个困扰已久的配置。整理记录一下，希望能帮到遇到同样问题的朋友们。</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id8">Emacs 中文字体配置</a></li>
+<li><a class="reference internal" href="#id3" id="id9">Emacs 字体大小的调整</a></li>
+<li><a class="reference internal" href="#id4" id="id10">添加删除注释</a></li>
+<li><a class="reference internal" href="#id5" id="id11">复制当前行</a></li>
+<li><a class="reference internal" href="#id6" id="id12">拷贝代码自动格式化</a></li>
+<li><a class="reference internal" href="#emacs-windows" id="id13">Emacs 与 Windows 系统的整合</a></li>
+<li><a class="reference internal" href="#id7" id="id14">Emacs 的配色</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id8">Emacs 中文字体配置</a></h2>
+<p>这是最让我恼火的配置之一，在 Emacs 23 以前，由于底层不是 Unicode，经常会遇到中文乱码的问题。好在 Emacs 23 底层统一用 Unicode 重新实现了，现在不会再有乱码的问题，可字体的配置却仍然很麻烦，网上有很多例子和文档，但都或多或少有些问题，总是不够尽善尽美。</p>
+<p>最简单的字体设置方式是：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">set-default-font</span>
+ <span class="s">&quot;-outline-Lucida Console-normal-normal-normal-mono-*-*-*-*-*-*-iso10646-1&quot;</span><span class="p">)</span>
+</pre></div>
+<p>它的问题是只对初始的窗口（frame）有效，对于新窗口如 speedbar 或用快捷键 <span class="kbd">ctrl-x</span> <span class="kbd">5</span> <span class="kbd">2</span> 分出来的窗口无效。改成下面的设置方法，字体设置对初始窗口和后面的新窗口就都会生效了。</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;Lucida Console 12&quot;</span><span class="p">))</span>
+</pre></div>
+<p>再就是对中英文混排文本的支持，可以使用同时包含中文和英文的字体来解决。网上有人把中文和等宽英文字体合并为新的字体以方便编程使用。比如我以前配置里用的 <tt class="docutils literal">微软雅黑Monaco</tt> 字体就很不错</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;微软雅黑Monaco 12&quot;</span><span class="p">))</span>
+</pre></div>
+<p>这种方法的缺点在于你没办法单独换英文字体或中文字体，要换只能新做一个字体整体换掉。而且网上做的字体里面，并没有包含斜体，样式不够丰富。其实 Emacs 本身就支持根据字符编码去找合适的字体，不过需要按编码详细的设置，让 Emacs 明白遇到汉字编码要用宋体，而不是 <tt class="docutils literal">楷体</tt> 或 <tt class="docutils literal">Lucida Console</tt> 。</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
+                  <span class="ss">&#39;han</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="s">&quot;Microsoft Yahei&quot;</span>
+                                  <span class="nv">:size</span> <span class="mi">12</span><span class="p">))</span>
+</pre></div>
+<p>除了 <tt class="docutils literal">han</tt> 以外，还有 <tt class="docutils literal">kana</tt>， <tt class="docutils literal">symbol</tt> ， <tt class="docutils literal"><span class="pre">cjk-misc</span></tt> ， <tt class="docutils literal">bopomofo</tt> 这些编码集也要一并设置好。可以用 elisp 的 <tt class="docutils literal">dolist</tt> 循环操作减少不必要的代码重复：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">charset</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">kana</span> <span class="nv">han</span> <span class="nv">symbol</span> <span class="nv">cjk-misc</span> <span class="nv">bopomofo</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
+                    <span class="nv">charset</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="s">&quot;Microsoft Yahei&quot;</span>
+                                       <span class="nv">:size</span> <span class="mi">12</span><span class="p">)))</span>
+</pre></div>
+<p>切记不能图省事，直接把 Unicode 字体设成中文，否则在 Windows 上原来的英文字体设置就失效了。还有对英文字体的设置方法要改成下面这样才能和中文的配合，不然 Emacs 会乎略英文字体的设置（至少在 Windows 平台上是这样）所以最终版本是</p>
+<div class="highlight"><pre><span class="c1">;; Setting English Font</span>
+<span class="p">(</span><span class="nf">set-face-attribute</span> <span class="ss">&#39;default</span> <span class="nv">nil</span> <span class="nv">:font</span> <span class="s">&quot;Consolas 12&quot;</span><span class="p">)</span>
+
+<span class="c1">;; Chinese Font</span>
+<span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">charset</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">kana</span> <span class="nv">han</span> <span class="nv">symbol</span> <span class="nv">cjk-misc</span> <span class="nv">bopomofo</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
+                    <span class="nv">charset</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="s">&quot;Microsoft Yahei&quot;</span>
+                                       <span class="nv">:size</span> <span class="mi">12</span><span class="p">)))</span>
+</pre></div>
+<p>字体的选择上，中文我比较喜欢微软雅黑，英文我选择等宽字体方便编程。一般常使用 Monaco 或者 Consolas。Monaco 是那种一见倾心型的，字体高挑修长，有种拉丁美人的性感。Consolas 是微软为新版 Visual Studio 专门打造的编程字体，虽然乍看没有 Monaco 那么惊艳，但相当耐看，如同小家碧玉，是个“居家过日子”的实用字体。听说 DejaVu Sans Mono 也不错，准备有时间试试看。</p>
+<p>这样 Emacs 的字体设置算是赶上其它的编辑器了。可 Emacs 作为神一般的存在，只是赶上其它编辑器这也太丢人。下面要挑战一下自我，让神器发挥它应有的威力：如何能够根据用户的喜好和操作系统的字体库来做最符合用户心意的字体设定呢？</p>
+<p>换言之，我想要的功能是：如果系统有雅黑字体，就请帮忙用雅黑，否则（如 Linux 上默认没有雅黑）就请用开源字体文泉驿微米黑。查了一下，网上没有现成的例子，只好挽起袖子，自己研究 elisp 动手写了一个设置字体的函数。</p>
+<p>首先，我们要能判断某个字体在系统中是否存在：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-font-existsp</span> <span class="p">(</span><span class="nf">font</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">null</span> <span class="p">(</span><span class="nf">x-list-fonts</span> <span class="nv">font</span><span class="p">))</span>
+      <span class="nv">nil</span>
+    <span class="nv">t</span><span class="p">))</span>
+</pre></div>
+<p>其次，要到用户预定义的字体列表中找出首个存在的字体：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">defvar</span> <span class="nv">font-list</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Microsoft Yahei&quot;</span> <span class="s">&quot;文泉驿等宽微米黑&quot;</span> <span class="s">&quot;黑体&quot;</span> <span class="s">&quot;新宋体&quot;</span> <span class="s">&quot;宋体&quot;</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;cl</span><span class="p">)</span> <span class="c1">;; find-if is in common list package</span>
+<span class="p">(</span><span class="nf">find-if</span> <span class="o">#</span><span class="ss">&#39;qiang-font-existsp</span> <span class="nv">font-list</span><span class="p">)</span>
+</pre></div>
+<p>还要有个辅助函数，用来产生带上字体大小信息的字体描述文本：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-make-font-string</span> <span class="p">(</span><span class="nf">font-name</span> <span class="nv">font-size</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">stringp</span> <span class="nv">font-size</span><span class="p">)</span>
+           <span class="p">(</span><span class="nf">equal</span> <span class="s">&quot;:&quot;</span> <span class="p">(</span><span class="nb">string </span><span class="p">(</span><span class="nf">elt</span> <span class="nv">font-size</span> <span class="mi">0</span><span class="p">))))</span>
+      <span class="p">(</span><span class="nf">format</span> <span class="s">&quot;%s%s&quot;</span> <span class="nv">font-name</span> <span class="nv">font-size</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">format</span> <span class="s">&quot;%s %s&quot;</span> <span class="nv">font-name</span> <span class="nv">font-size</span><span class="p">)))</span>
+</pre></div>
+<p>这里比较绕的地方是，如果传入的 <tt class="docutils literal"><span class="pre">font-size</span></tt> 是 <tt class="docutils literal">:pixelsize=18</tt> 这样的话，字体名称和它之间不能有空格。如果是普通的数字的话，例如 12 或“12”，需要有个空格分隔字体名称和字体大小。</p>
+<p>有了这些函数，下面出场的就是自动设置字体函数了：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-set-font</span> <span class="p">(</span><span class="nf">english-fonts</span>
+                       <span class="nv">english-font-size</span>
+                       <span class="nv">chinese-fonts</span>
+                       <span class="nv">&amp;optional</span> <span class="nv">chinese-font-size</span><span class="p">)</span>
+
+  <span class="s">&quot;english-font-size could be set to \&quot;:pixelsize=18\&quot; or a integer.</span>
+<span class="s">If set/leave chinese-font-size to nil, it will follow english-font-size&quot;</span>
+  <span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;cl</span><span class="p">)</span> <span class="c1">; for find if</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">en-font</span> <span class="p">(</span><span class="nf">qiang-make-font-string</span>
+                  <span class="p">(</span><span class="nf">find-if</span> <span class="o">#</span><span class="ss">&#39;qiang-font-existsp</span> <span class="nv">english-fonts</span><span class="p">)</span>
+                  <span class="nv">english-font-size</span><span class="p">))</span>
+        <span class="p">(</span><span class="nf">zh-font</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="p">(</span><span class="nf">find-if</span> <span class="o">#</span><span class="ss">&#39;qiang-font-existsp</span> <span class="nv">chinese-fonts</span><span class="p">)</span>
+                            <span class="nv">:size</span> <span class="nv">chinese-font-size</span><span class="p">)))</span>
+
+    <span class="c1">;; Set the default English font</span>
+    <span class="c1">;;</span>
+    <span class="c1">;; The following 2 method cannot make the font settig work in new frames.</span>
+    <span class="c1">;; (set-default-font &quot;Consolas:pixelsize=18&quot;)</span>
+    <span class="c1">;; (add-to-list &#39;default-frame-alist &#39;(font . &quot;Consolas:pixelsize=18&quot;))</span>
+    <span class="c1">;; We have to use set-face-attribute</span>
+    <span class="p">(</span><span class="nf">message</span> <span class="s">&quot;Set English Font to %s&quot;</span> <span class="nv">en-font</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">set-face-attribute</span> <span class="ss">&#39;default</span> <span class="nv">nil</span> <span class="nv">:font</span> <span class="nv">en-font</span><span class="p">)</span>
+
+    <span class="c1">;; Set Chinese font</span>
+    <span class="c1">;; Do not use &#39;unicode charset, it will cause the English font setting invalid</span>
+    <span class="p">(</span><span class="nf">message</span> <span class="s">&quot;Set Chinese Font to %s&quot;</span> <span class="nv">zh-font</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">charset</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">kana</span> <span class="nv">han</span> <span class="nv">symbol</span> <span class="nv">cjk-misc</span> <span class="nv">bopomofo</span><span class="p">))</span>
+      <span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
+                        <span class="nv">charset</span> <span class="nv">zh-font</span><span class="p">))))</span>
+</pre></div>
+<p>利用这个函数，Emacs 字体设置就是小菜一碟了：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">qiang-set-font</span>
+ <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Consolas&quot;</span> <span class="s">&quot;Monaco&quot;</span> <span class="s">&quot;DejaVu Sans Mono&quot;</span> <span class="s">&quot;Monospace&quot;</span> <span class="s">&quot;Courier New&quot;</span><span class="p">)</span> <span class="s">&quot;:pixelsize=18&quot;</span>
+ <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Microsoft Yahei&quot;</span> <span class="s">&quot;文泉驿等宽微米黑&quot;</span> <span class="s">&quot;黑体&quot;</span> <span class="s">&quot;新宋体&quot;</span> <span class="s">&quot;宋体&quot;</span><span class="p">))</span>
+</pre></div>
+<p>这样设置，Emacs 会优先选用 Consolas + 雅黑的组合。如果雅黑没有装的话，就使用文泉驿等宽微米黑，依此类推。这份字体配置不用改动就能在不同的操作系统字体环境下使用，相信应该没有其它编辑器有这么变态的字体列表设置了吧。至此，Emacs 在字体设置这方面总算是体面地稍稍胜出了其它编辑器。把上面的三个函数加到配置文件里赶快看看效果吧。（或者直接使用 <a class="reference external" href="./personal-emacs-configuration.html">我的 Emacs 配置</a> 包含了本文所有配置和后续更新）</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id9">Emacs 字体大小的调整</a></h2>
+<p>在用 Emacs 做演示或代码审查的时候，需要调整字体大小，以前常为了这个手忙脚乱。最近才知道 Emacs 默认就有快捷键支持动态调整字体大小：</p>
+<ul class="simple">
+<li>放大字体 <span class="kbd">ctrl x</span> <span class="kbd">ctrl +</span> 或 <span class="kbd">ctrl x</span> <span class="kbd">ctrl =</span></li>
+<li>缩小字体 <span class="kbd">ctrl x</span> <span class="kbd">ctrl -</span></li>
+<li>重置字体 <span class="kbd">ctrl x</span> <span class="kbd">ctrl 0</span></li>
+</ul>
+<p>更酷的是，如果要放大或缩小多次，在第二次直接按 <span class="kbd">+</span>， <span class="kbd">-</span>， <span class="kbd">0</span> 就可以了。比如，放大 3 次： <span class="kbd">ctrl x</span> <span class="kbd">ctrl =</span> <span class="kbd">=</span> <span class="kbd">=</span>。另外， <span class="kbd">shift 鼠标左键</span> 也能唤出调整字体大小的弹出菜单。</p>
+<p>不过，能不能象浏览器和 Visual Studio 2010 那样，用 <span class="kbd">ctrl</span> 加上鼠标滚轮操作来调整字体大小呢，毕竟大部分人已经习惯了这种方式。既然是无所不能的 Emacs，那当然没问题了，把下面的配置加入 .emacs 里再试试看</p>
+<div class="highlight"><pre><span class="c1">;; For Linux</span>
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-mouse-4&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-increase</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-mouse-5&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-decrease</span><span class="p">)</span>
+
+<span class="c1">;; For Windows</span>
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-wheel-up&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-increase</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-wheel-down&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-decrease</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id10">添加删除注释</a></h2>
+<p>写程序的要经常和注释打交道，注释和反注释一段代码是家常便饭。Emacs 虽然有这个功能，默认的配置却并不好用：</p>
+<ul class="simple">
+<li>注释/反注释默认没有绑定快捷键</li>
+<li>需要先选中一段区域才能调用注释功能，无法直接注释反注释当前行</li>
+<li>好在有一个 <span class="kbd">alt ;</span> 的快捷键，默认绑定了 <tt class="docutils literal"><span class="pre">comment-dwim</span></tt> 能注释反注释当前激活的区域。如果没有激活区域，就在当前行末加注释</li>
+</ul>
+<p><span class="kbd">alt ;</span> 默认绑定的 <tt class="docutils literal"><span class="pre">comment-dwim</span></tt> 已经很理想了，可还是不够 dwim（Do What I Mean）。能不能变成，如果没有激活的区域就注释反注释当前行，仅当在行尾的时候才在行尾加注释呢？下面的配置就是参考别人配置写的 “照我说的做”注释函数：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-comment-dwim-line</span> <span class="p">(</span><span class="nf">&amp;optional</span> <span class="nv">arg</span><span class="p">)</span>
+  <span class="s">&quot;Replacement for the comment-dwim command.</span>
+<span class="s">If no region is selected and current line is not blank and</span>
+<span class="s">we are not at the end of the line, then comment current line.</span>
+<span class="s">Replaces default behaviour of comment-dwim,</span>
+<span class="s">when it inserts comment at the end of the line. &quot;</span>
+
+  <span class="p">(</span><span class="nf">interactive</span> <span class="s">&quot;*P&quot;</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">comment-normalize-vars</span><span class="p">)</span>
+
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">region-active-p</span><span class="p">))</span> <span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">looking-at</span> <span class="s">&quot;[ \t]*$&quot;</span><span class="p">)))</span>
+      <span class="p">(</span><span class="nf">comment-or-uncomment-region</span> <span class="p">(</span><span class="nf">line-beginning-position</span><span class="p">)</span> <span class="p">(</span><span class="nf">line-end-position</span><span class="p">))</span>
+    <span class="p">(</span><span class="nf">comment-dwim</span> <span class="nv">arg</span><span class="p">)))</span>
+
+
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="s">&quot;\M-;&quot;</span> <span class="ss">&#39;qiang-comment-dwim-line</span><span class="p">)</span>
+</pre></div>
+<p>这样一来，注释和反注释代码的操作只使用一个 <span class="kbd">alt ;</span> 键就全部搞定了，Emacs 会心领神会地“照我说的做”。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id11">复制当前行</a></h2>
+<p>这是个经常要用到的操作，以前要么老老实实 Mark 当前行的行首和行尾，然后复制。整个按键流程是：</p>
+<ol class="arabic simple">
+<li><span class="kbd">ctrl a</span> 光标到行首</li>
+<li><span class="kbd">ctrl shift space</span> 设置标记</li>
+<li><span class="kbd">ctrl e</span> 光标到行尾，如此这一行就被选为激活区域了</li>
+<li><span class="kbd">alt w</span> 复制当前激活的区域</li>
+</ol>
+<p>要么按我比较习惯的操作先剪切当前行，再撤消上一次的剪切操作</p>
+<ol class="arabic simple">
+<li><span class="kbd">ctrl a</span> 光标到行首</li>
+<li><span class="kbd">ctrl k</span> 剪切至行屋，该行消失</li>
+<li><span class="kbd">ctrl /</span> 撤消上一次的操作，该行重现</li>
+</ol>
+<p>可以看到，方案二比方案一省一次按键，而且 <span class="kbd">ctrl</span> 键不用松开。不过如此基本的操作要按三个键还是太麻烦了，而且方案二会让文件变成被编辑过的状态。其实，可以发挥一下“按我说的做”的精神。为什么不把 <span class="kbd">alt w</span> 变的更聪明一些，当没有激活的区域时就复制当前的一整行呢？说做就做：</p>
+<div class="highlight"><pre><span class="c1">;; Smart copy, if no region active, it simply copy the current whole line</span>
+<span class="p">(</span><span class="nf">defadvice</span> <span class="nv">kill-line</span> <span class="p">(</span><span class="nf">before</span> <span class="nv">check-position</span> <span class="nv">activate</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">member </span><span class="nv">major-mode</span>
+              <span class="o">&#39;</span><span class="p">(</span><span class="nv">emacs-lisp-mode</span> <span class="nv">scheme-mode</span> <span class="nv">lisp-mode</span>
+                                <span class="nv">c-mode</span> <span class="nv">c++-mode</span> <span class="nv">objc-mode</span> <span class="nv">js-mode</span>
+                                <span class="nv">latex-mode</span> <span class="nv">plain-tex-mode</span><span class="p">))</span>
+      <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">eolp</span><span class="p">)</span> <span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">bolp</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">progn</span> <span class="p">(</span><span class="nf">forward-char</span> <span class="mi">1</span><span class="p">)</span>
+                 <span class="p">(</span><span class="nf">just-one-space</span> <span class="mi">0</span><span class="p">)</span>
+                 <span class="p">(</span><span class="nf">backward-char</span> <span class="mi">1</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="nf">defadvice</span> <span class="nv">kill-ring-save</span> <span class="p">(</span><span class="nf">before</span> <span class="nv">slick-copy</span> <span class="nv">activate</span> <span class="nv">compile</span><span class="p">)</span>
+  <span class="s">&quot;When called interactively with no active region, copy a single line instead.&quot;</span>
+  <span class="p">(</span><span class="nf">interactive</span> <span class="p">(</span><span class="k">if </span><span class="nv">mark-active</span> <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nf">region-beginning</span><span class="p">)</span> <span class="p">(</span><span class="nf">region-end</span><span class="p">))</span>
+                 <span class="p">(</span><span class="nf">message</span> <span class="s">&quot;Copied line&quot;</span><span class="p">)</span>
+                 <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nf">line-beginning-position</span><span class="p">)</span>
+                       <span class="p">(</span><span class="nf">line-beginning-position</span> <span class="mi">2</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="nf">defadvice</span> <span class="nv">kill-region</span> <span class="p">(</span><span class="nf">before</span> <span class="nv">slick-cut</span> <span class="nv">activate</span> <span class="nv">compile</span><span class="p">)</span>
+  <span class="s">&quot;When called interactively with no active region, kill a single line instead.&quot;</span>
+  <span class="p">(</span><span class="nf">interactive</span>
+   <span class="p">(</span><span class="k">if </span><span class="nv">mark-active</span> <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nf">region-beginning</span><span class="p">)</span> <span class="p">(</span><span class="nf">region-end</span><span class="p">))</span>
+     <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nf">line-beginning-position</span><span class="p">)</span>
+           <span class="p">(</span><span class="nf">line-beginning-position</span> <span class="mi">2</span><span class="p">)))))</span>
+
+<span class="c1">;; Copy line from point to the end, exclude the line break</span>
+<span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-copy-line</span> <span class="p">(</span><span class="nf">arg</span><span class="p">)</span>
+  <span class="s">&quot;Copy lines (as many as prefix argument) in the kill ring&quot;</span>
+  <span class="p">(</span><span class="nf">interactive</span> <span class="s">&quot;p&quot;</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">kill-ring-save</span> <span class="p">(</span><span class="nf">point</span><span class="p">)</span>
+                  <span class="p">(</span><span class="nf">line-end-position</span><span class="p">))</span>
+  <span class="c1">;; (line-beginning-position (+ 1 arg)))</span>
+  <span class="p">(</span><span class="nf">message</span> <span class="s">&quot;%d line%s copied&quot;</span> <span class="nv">arg</span> <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="nv">arg</span><span class="p">)</span> <span class="s">&quot;&quot;</span> <span class="s">&quot;s&quot;</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;M-k&quot;</span><span class="p">)</span> <span class="ss">&#39;qiang-copy-line</span><span class="p">)</span>
+</pre></div>
+<p>上面还多加了一个配置，就是把 <span class="kbd">alt k</span> 设成复制光标所在处到行尾。与 <tt class="docutils literal"><span class="pre">kill-line</span></tt> 的 <span class="kbd">ctrl k</span> 对应。这样一来，如果是要拷贝一整行的话，只要将光标移动到该行任意位置，按下 <span class="kbd">alt w</span> 就行了。如果是复制某个位置到行尾的文字的话，就把光标移到起始位置处，按 <span class="kbd">alt k</span> 。比默认的操作简化了很多。</p>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id12">拷贝代码自动格式化</a></h2>
+<p>Emacs 里对代码格式化支持的非常好，不但可以在编辑的时候自动帮你格式化，还可以选中一块代码，按 <span class="kbd">ctrl alt \ </span> 对这块代码重新进行格式化。如果要粘贴一块代码的话，粘贴完了紧接着按 <span class="kbd">ctrl alt \ </span> 就可以把新加入的代码格式化好。可对于这种粘贴加上重新格式化的机械操作，Emacs 应该可以将它自动化才能配得上它的名气，把下面的代码加到配置文件里，你的 Emacs 就会拥有这种能力了：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">command</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">yank</span> <span class="nv">yank-pop</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">eval</span>
+   <span class="o">`</span><span class="p">(</span><span class="nf">defadvice,</span> <span class="nv">command</span> <span class="p">(</span><span class="nf">after</span> <span class="nv">indent-region</span> <span class="nv">activate</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nb">not </span><span class="nv">current-prefix-arg</span><span class="p">)</span>
+           <span class="p">(</span><span class="nb">member </span><span class="nv">major-mode</span>
+                   <span class="o">&#39;</span><span class="p">(</span><span class="nv">emacs-lisp-mode</span> <span class="nv">lisp-mode</span> <span class="nv">clojure-mode</span> <span class="nv">scheme-mode</span>
+                                     <span class="nv">haskell-mode</span> <span class="nv">ruby-mode</span> <span class="nv">rspec-mode</span>
+                                     <span class="nv">python-mode</span> <span class="nv">c-mode</span> <span class="nv">c++-mode</span> <span class="nv">objc-mode</span>
+                                     <span class="nv">latex-mode</span> <span class="nv">js-mode</span> <span class="nv">plain-tex-mode</span><span class="p">))</span>
+           <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">mark-even-if-inactive</span> <span class="nv">transient-mark-mode</span><span class="p">))</span>
+             <span class="p">(</span><span class="nf">indent-region</span> <span class="p">(</span><span class="nf">region-beginning</span><span class="p">)</span> <span class="p">(</span><span class="nf">region-end</span><span class="p">)</span> <span class="nv">nil</span><span class="p">))))))</span>
+</pre></div>
+<p>你可以加入或删除一些 mode 名称来定制上面的配置。</p>
+</div>
+<div class="section" id="emacs-windows">
+<h2><a class="toc-backref" href="#id13">Emacs 与 Windows 系统的整合</a></h2>
+<p>在注册表中加入下面的项，右键上下文菜单中就会多出 <tt class="docutils literal">Emacs</tt> ，这样你可以快速用 Emacs 编辑任意文件，而不用事先和一堆文件类型相关联：</p>
+<div class="highlight"><pre><span class="n">Windows</span> <span class="n">Registry</span> <span class="n">Editor</span> <span class="n">Version</span> <span class="mf">5.00</span>
+
+<span class="p">[</span><span class="n">HKEY_CLASSES_ROOT</span>\<span class="n">AllFilesystemObjects</span>\<span class="n">Shell</span>\<span class="n">Emacs</span>\<span class="n">command</span><span class="p">]</span>
+<span class="err">@</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">D:</span><span class="se">\\</span><span class="s">emacs</span><span class="se">\\</span><span class="s">bin</span><span class="se">\\</span><span class="s">emacsclientw.exe</span><span class="se">\&quot;</span><span class="s"> -n -a </span><span class="se">\&quot;</span><span class="s">D:</span><span class="se">\\</span><span class="s">emacs</span><span class="se">\\</span><span class="s">bin</span><span class="se">\\</span><span class="s">runemacs.exe</span><span class="se">\&quot;</span><span class="s"> </span><span class="se">\&quot;</span><span class="s">%1</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+</pre></div>
+<p>这里调用 <tt class="docutils literal">emacsclientw.exe</tt> 是为了使用 <tt class="docutils literal"><span class="pre">server-mode</span></tt> 来避免再打开一个 Emacs 实例。 <tt class="docutils literal"><span class="pre">-n</span></tt> 参数指明不需要等待 emacs server 编辑结束就直接返回， <tt class="docutils literal"><span class="pre">-a</span></tt> 指明一个替代品：如果找不到 emacs server，那就运行 <tt class="docutils literal">runemacs.exe</tt> 启动一个 emacs 实例来编辑。不要忘了在 <tt class="docutils literal">.emacs</tt> 里加入</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">server-mode</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+<p>来自动启动 emacs server。</p>
+<p>有些工具在使用外部工具时命令行不能带任何参数，遇到这种情况，只能写一个批处理文件把上面的命令包装一下：</p>
+<div class="highlight"><pre>D:\emacs\bin\emacsclientw.exe -n -a <span class="s2">&quot;D:\emacs\bin\runemacs.exe&quot;</span> %*
+</pre></div>
+<p>如果装了 Visual Studio，那么，在 Visual Studio 的菜单 <tt class="docutils literal">Tools</tt> 下面可以通过 <tt class="docutils literal">External Tools</tt> 加入一个自定义的外部工具。外部工具的命令可以使用上面定义的 <tt class="docutils literal">emacsclientw.exe</tt> ，参数那栏加上</p>
+<div class="highlight"><pre>-n -a <span class="s2">&quot;D:\emacs\bin\runemacs.exe&quot;</span> +$(CurLine) $(ItemPath)
+</pre></div>
+<p>将这个外部工具设上一个方便的快捷键，比如我就设成 <span class="kbd">alt f1</span> ，这样每次用 Visual Studio 浏览代码时，如果看到想编辑的内容，直接 <span class="kbd">alt f1</span> 就可以把 emasc 呼出，光标会自动放在文件刚刚看的那行上面。编辑完了后再 <span class="kbd">alt tab</span> 就可以切会 Visual Studio 了。你可能还需要设置 Visual Studio 自动重新载入改过的文件，避免每次都弹出对话框让你确认是否重新载入。</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id14">Emacs 的配色</a></h2>
+<p>我以前的 Emacs 配色非常简单，黑底白字。用时间长了会腻，而且 Emacs 默认的代码高亮配色只能说相当的一般。</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span>
+      <span class="o">&#39;</span><span class="p">((</span><span class="nf">cursor-color</span> <span class="o">.</span> <span class="s">&quot;purple&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="nf">cursor-type</span> <span class="o">.</span> <span class="nv">box</span><span class="p">)</span>
+        <span class="p">(</span><span class="nf">foreground-color</span> <span class="o">.</span> <span class="s">&quot;white&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="nf">background-color</span> <span class="o">.</span> <span class="s">&quot;black&quot;</span><span class="p">))</span>
+</pre></div>
+<p>这两天在网上搜 Emacs 相关配置的时候，发现了一个很漂亮的配色。一位网友发现 Mac 上 TextMate 的 blackboard 主题配色很养眼，于是就把这个配色方案写成了一个 <tt class="docutils literal"><span class="pre">color-theme</span></tt> 移到了 emacs 上，效果相当赞。</p>
+<p>我在使用这个主题时做了三处调整</p>
+<ul class="simple">
+<li>变量声明的颜色改为绿宝石色，与函数声明的颜色相区别</li>
+<li>背景底色由黑板色改为纯黑色，增加对比度</li>
+<li>当前行高亮色改为深蓝色，不让它太明显</li>
+</ul>
+<p>下面是我调整后的主题：</p>
+<div class="highlight"><pre><span class="c1">;; Blackboard Colour Theme for Emacs.</span>
+<span class="c1">;;</span>
+<span class="c1">;; Defines a colour scheme resembling that of the original TextMate Blackboard colour theme.</span>
+<span class="c1">;; To use add the following to your .emacs file (requires the color-theme package):</span>
+<span class="c1">;;</span>
+<span class="c1">;; (require &#39;color-theme)</span>
+<span class="c1">;; (color-theme-initialize)</span>
+<span class="c1">;; (load-file &quot;~/.emacs.d/themes/color-theme-blackboard.el&quot;)</span>
+<span class="c1">;;</span>
+<span class="c1">;; And then (color-theme-blackboard) to activate it.</span>
+<span class="c1">;;</span>
+<span class="c1">;; MIT License Copyright (c) 2008 JD Huntington &lt;jdhuntington at gmail dot com&gt;</span>
+<span class="c1">;; Credits due to the excellent TextMate Blackboard theme</span>
+<span class="c1">;;</span>
+<span class="c1">;; All patches welcome</span>
+
+<span class="p">(</span><span class="nf">defun</span> <span class="nv">color-theme-blackboard</span> <span class="p">()</span>
+  <span class="s">&quot;Color theme by JD Huntington, based off the TextMate Blackboard theme, created 2008-11-27&quot;</span>
+  <span class="p">(</span><span class="nf">interactive</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">color-theme-install</span>
+   <span class="o">&#39;</span><span class="p">(</span><span class="nv">color-theme-blackboard</span>
+     <span class="p">(</span>
+      <span class="c1">;; (background-color . &quot;#0C1021&quot;)</span>
+      <span class="p">(</span><span class="nf">background-color</span> <span class="o">.</span> <span class="s">&quot;black&quot;</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">background-mode</span> <span class="o">.</span> <span class="nv">dark</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">border-color</span> <span class="o">.</span> <span class="s">&quot;black&quot;</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">cursor-color</span> <span class="o">.</span> <span class="s">&quot;#A7A7A7&quot;</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">foreground-color</span> <span class="o">.</span> <span class="s">&quot;#F8F8F8&quot;</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">mouse-color</span> <span class="o">.</span> <span class="s">&quot;sienna1&quot;</span><span class="p">))</span>
+     <span class="c1">;; (default ((t (:background &quot;#0C1021&quot; :foreground &quot;#F8F8F8&quot;))))</span>
+     <span class="p">(</span><span class="nf">default</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;black&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;#F8F8F8&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">blue</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;blue&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">bold</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:bold</span> <span class="nv">t</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">bold-italic</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:bold</span> <span class="nv">t</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">border-glyph</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">nil</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">buffers-tab</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;#0C1021&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;#F8F8F8&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-builtin-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#F8F8F8&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-comment-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:italic</span> <span class="nv">t</span> <span class="nv">:foreground</span> <span class="s">&quot;#AEAEAE&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-constant-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#D8FA3C&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-doc-string-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;DarkOrange&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-function-name-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#FF6400&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-keyword-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#FBDE2D&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-preprocessor-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;Aquamarine&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-reference-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;SlateBlue&quot;</span><span class="p">))))</span>
+
+     <span class="p">(</span><span class="nf">font-lock-regexp-grouping-backslash</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#E9C062&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-regexp-grouping-construct</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;red&quot;</span><span class="p">))))</span>
+
+     <span class="p">(</span><span class="nf">font-lock-string-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#61CE3C&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-type-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#8DA6CE&quot;</span><span class="p">))))</span>
+     <span class="c1">;; (font-lock-variable-name-face ((t (:foreground &quot;#FF6400&quot;))))</span>
+     <span class="p">(</span><span class="nf">font-lock-variable-name-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:foreground</span> <span class="s">&quot;#40E0D0&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">font-lock-warning-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:bold</span> <span class="nv">t</span> <span class="nv">:foreground</span> <span class="s">&quot;Pink&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">gui-element</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;#D4D0C8&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;black&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">region</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;#253B76&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">mode-line</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;grey75&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;black&quot;</span><span class="p">))))</span>
+     <span class="c1">;; (highlight ((t (:background &quot;#222222&quot;))))</span>
+     <span class="c1">;; (highlight ((t (:background &quot;#0C1021&quot;))))</span>
+     <span class="p">(</span><span class="nf">highlight</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;#001&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">highline-face</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;SeaGreen&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">italic</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">nil</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">left-margin</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">nil</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">text-cursor</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;yellow&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;black&quot;</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">toolbar</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">nil</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">underline</span> <span class="p">((</span><span class="nf">nil</span> <span class="p">(</span><span class="nf">:underline</span> <span class="nv">nil</span><span class="p">))))</span>
+     <span class="p">(</span><span class="nf">zmacs-region</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;snow&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;ble&quot;</span><span class="p">)))))))</span>
+</pre></div>
+<p>使用的话需要先安装 <tt class="docutils literal"><span class="pre">color-theme</span></tt> 包，将上面的配色存为 <tt class="docutils literal"><span class="pre">color-theme-blackboard.el</span></tt> 放在 emacs 的 load path 中，再加入下面的配置就好了：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;color-theme</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">eval-after-load</span> <span class="s">&quot;color-theme&quot;</span>
+  <span class="o">&#39;</span><span class="p">(</span><span class="nv">progn</span>
+     <span class="p">(</span><span class="nf">color-theme-initialize</span><span class="p">)</span>
+     <span class="p">(</span><span class="nf">color-theme-blackboard</span><span class="p">)))</span>
+</pre></div>
+<p>来看看我配置的使用 Consolas + 雅黑 + blackboard-theme 的 Emacs：</p>
+<img alt="|filename|/images/emacs.png" src="./static/images/emacs.png" style="width: 90%;" />
+<p>虽说 10 个人会配出 11 种不同的 emacs，不过我这个还算是芙蓉出水，落落大方吧。</p>
+<p>折腾到此结束，整容后的 emacs 更加的漂亮听话了。话说回来，emacs 实在是要与时俱进，改变一下难学难用的形象，最好将这些方便的操作设为默认配置。毕竟对最终用户来说这样的折腾也只能偶尔为之，是将心思花在配置这神一样的编辑器上面，自己早晚也要成为半仙。</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2010-08-15T05:38:00" pubdate>2010-08-15</time><a href="./category/programming.html"><i class="icon-folder-open-alt"></i> <span i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/config.html"><i class="icon-tag"></i> <span i18n>config</span></i></a>
+        <li><a href="./tag/emacs.html"><i class="icon-tag"></i> <span i18n>emacs</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'torture-emacs';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <i class="icon-heart-empty"></i> <a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+        <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>
