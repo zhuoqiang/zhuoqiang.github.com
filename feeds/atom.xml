@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>道可叨</title><link href="http://zhuoqiang.bitbucket.org/" rel="alternate"></link><link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" rel="self"></link><id>http://zhuoqiang.bitbucket.org/</id><updated>2012-10-25T23:43:00+08:00</updated><entry><title>Personal Emacs Configuration</title><link href="http://zhuoqiang.bitbucket.org/personal-emacs-configuration.html" rel="alternate"></link><updated>2012-10-25T23:43:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-10-25:personal-emacs-configuration.html</id><summary type="html">&lt;p&gt;Emacs is known to be one of the most powerful editor in the world. Yet its power is hidden in the absence of good configuration.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>道可叨</title><link href="http://zhuoqiang.me/" rel="alternate"></link><link href="http://zhuoqiang.me/feeds/atom.xml" rel="self"></link><id>http://zhuoqiang.me/</id><updated>2012-10-25T23:43:00+08:00</updated><entry><title>Personal Emacs Configuration</title><link href="http://zhuoqiang.me/personal-emacs-configuration.html" rel="alternate"></link><updated>2012-10-25T23:43:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-10-25:personal-emacs-configuration.html</id><summary type="html">&lt;p&gt;Emacs is known to be one of the most powerful editor in the world. Yet its power is hidden in the absence of good configuration.&lt;/p&gt;
 &lt;p&gt;Emacs configuration is hard and fun. After quite a while hard time fighting against elisp I finally have some fun with my Emacs and I just open source my &lt;a class="reference external" href="https://bitbucket.org/zhuoqiang/emacs_configuration"&gt;personal Emacs configuration&lt;/a&gt; hoping it's helpful to you.&lt;/p&gt;
 &lt;p&gt;The functions in the configuration are minimal for the sake of simplicity:&lt;/p&gt;
 &lt;ul class="simple"&gt;
-&lt;li&gt;&lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/torture-emacs.html"&gt;Chinese &amp;amp; English font setting with font scale function&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://zhuoqiang.me/torture-emacs.html"&gt;Chinese &amp;amp; English font setting with font scale function&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;key re-mapping on Mac&lt;/li&gt;
 &lt;li&gt;programming language mode setting&lt;/li&gt;
 &lt;li&gt;Jump functions&lt;/li&gt;
@@ -14,7 +14,7 @@
 &lt;/ul&gt;
 &lt;p&gt;It works on Emacs 24 under Mac and Windows (not tested under Linux though). All you need to do is checkout the code to &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;~/.emacs.d/&lt;/span&gt;&lt;/tt&gt;. If you already have &lt;tt class="docutils literal"&gt;.emacs&lt;/tt&gt; file under home directory, you have to remove it so that  Emacs could use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;~/.emacs.d/init.el&lt;/span&gt;&lt;/tt&gt; instead.&lt;/p&gt;
 &lt;p&gt;It could be a good start to enhance your emacs further, good luck hacking!&lt;/p&gt;
-</summary><category term="config"></category><category term="emacs"></category><category term="english"></category><category term="opensource"></category></entry><entry><title>ChmFox 2.7 发布</title><link href="http://zhuoqiang.bitbucket.org/chmfox-2.7-release.html" rel="alternate"></link><updated>2012-07-25T08:22:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-07-25:chmfox-2.7-release.html</id><summary type="html">&lt;p&gt;ChmFox 是一款让 Firefox 变身成 CHM 阅读器的扩展，目标是为所有平台提供最好的 CHM 浏览体验。（更多请看 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/chmfox.html"&gt;ChmFox 介绍&lt;/a&gt; ）&lt;/p&gt;
+</summary><category term="config"></category><category term="emacs"></category><category term="english"></category><category term="opensource"></category></entry><entry><title>ChmFox 2.7 发布</title><link href="http://zhuoqiang.me/chmfox-2.7-release.html" rel="alternate"></link><updated>2012-07-25T08:22:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-07-25:chmfox-2.7-release.html</id><summary type="html">&lt;p&gt;ChmFox 是一款让 Firefox 变身成 CHM 阅读器的扩展，目标是为所有平台提供最好的 CHM 浏览体验。（更多请看 &lt;a class="reference external" href="http://zhuoqiang.me/chmfox.html"&gt;ChmFox 介绍&lt;/a&gt; ）&lt;/p&gt;
 &lt;p&gt;时隔一年，ChmFox 再次更新。新版本修复了大量用户报告的错误，功能上也做了增强。欢迎从 &lt;a class="reference external" href="https://addons.mozilla.org/firefox/addon/chmfox"&gt;这里&lt;/a&gt; 下载试用。有问题，请留言或直接到 &lt;a class="reference external" href="https://bitbucket.org/zhuoqiang/chmfox/issues"&gt;官网&lt;/a&gt; 提 Issue。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
@@ -68,7 +68,7 @@
 &lt;p&gt;还等什么，快让朋友们知道你在用着世界上最舒服的姿势看 CHM&lt;/p&gt;
 &lt;p&gt;希望后面能给大家带来更好的 ChmFox，也希望更多的 Firefox 死忠享受到 ChmFox 提供的便利。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="chmfox"></category><category term="opensource"></category></entry><entry><title>Monad 最简介绍</title><link href="http://zhuoqiang.bitbucket.org/what-is-monad.html" rel="alternate"></link><updated>2012-06-20T23:52:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-06-20:what-is-monad.html</id><summary type="html">&lt;p&gt;Haskell 是一门特殊的编程语言，哪怕在函数语言中也很特立独行。它以彻底的纯函数和强大的类型系统闻名。Monad 概念就是由 Haskell 第一个引入编程世界的，它也许是编程领域最难理解的概念。几乎所有费心尽力最终理解了 Monad 的人都会有一种恍然顿悟的感觉，这里简单说说我悟到的 Monad。&lt;/p&gt;
+</summary><category term="chmfox"></category><category term="opensource"></category></entry><entry><title>Monad 最简介绍</title><link href="http://zhuoqiang.me/what-is-monad.html" rel="alternate"></link><updated>2012-06-20T23:52:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-06-20:what-is-monad.html</id><summary type="html">&lt;p&gt;Haskell 是一门特殊的编程语言，哪怕在函数语言中也很特立独行。它以彻底的纯函数和强大的类型系统闻名。Monad 概念就是由 Haskell 第一个引入编程世界的，它也许是编程领域最难理解的概念。几乎所有费心尽力最终理解了 Monad 的人都会有一种恍然顿悟的感觉，这里简单说说我悟到的 Monad。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id4"&gt;为什么 Monad&lt;/a&gt;&lt;/li&gt;
@@ -100,7 +100,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;可以看到 &lt;tt class="docutils literal"&gt;&amp;gt;&amp;gt;=&lt;/tt&gt; 操作实际上是受限的类型下降（或拆箱）操作，只有当后面的函数返回值也是 IO 类型时才进行下降操作。这样既充分隔离纯函数与副作用函数，又能让函数相互复用。&lt;/p&gt;
 &lt;p&gt;通过 &lt;tt class="docutils literal"&gt;return&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;&amp;gt;&amp;gt;=&lt;/tt&gt; 两个平行世界 (范畴) 就有了可控的交流通道。下图直观的反映 Monad 的作用，A 与 IO A 是分属两个不同的世界，A 是纯洁类型，IO A 是带 IO 操作的类型。为了保证整个程序的质量，两个世界的交流只能以图上的方式进行&lt;/p&gt;
-&lt;img alt="|filename|/images/monad.png" src="http://zhuoqiang.bitbucket.org/static/images/monad.png" /&gt;
+&lt;img alt="|filename|/images/monad.png" src="http://zhuoqiang.me/static/images/monad.png" /&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;tt class="docutils literal"&gt;return&lt;/tt&gt; 是最自然的类型提升函数，将 a 提升为 a'&lt;/li&gt;
 &lt;li&gt;&lt;tt class="docutils literal"&gt;a &lt;span class="pre"&gt;-&amp;gt;&lt;/span&gt; b'&lt;/tt&gt; 是普通的提升函数&lt;/li&gt;
@@ -128,7 +128,7 @@
 &lt;p&gt;Monad 被引入进 Haskell 用来解决 IO 操作可谓神来之笔，正如面象对象概念可以在非面象对象的语言中模拟使用一样，Monad 概念也能在其它中语言中应用 （比如 Java, C++, Python）。但只有在 Haskell 这种拥有强大类型推导系统的强类型语言中，Monad 才能发挥最大功效。Haskell 或没有跻身为主流语言的一天，但相信 Monad 会象 Lambda 概念一样，从函数语言的王谢家飞入寻常主流语言中来。&lt;/p&gt;
 &lt;p&gt;编程语言进步的方向是抽象，抽象，更高层次的抽象！&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="design"></category><category term="haskell"></category></entry><entry><title>ftputil 简介</title><link href="http://zhuoqiang.bitbucket.org/ftputil-introduction.html" rel="alternate"></link><updated>2012-06-12T23:23:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-06-12:ftputil-introduction.html</id><summary type="html">&lt;p&gt;最近工作上需要定制一个 FTP 客户端工具，用来同步本地文件夹到 FTP 服务器上。这般粗活首选当然是 Python: 开发迅速，编写简洁，还能用 py2exe 打包独立分发。&lt;/p&gt;
+</summary><category term="design"></category><category term="haskell"></category></entry><entry><title>ftputil 简介</title><link href="http://zhuoqiang.me/ftputil-introduction.html" rel="alternate"></link><updated>2012-06-12T23:23:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-06-12:ftputil-introduction.html</id><summary type="html">&lt;p&gt;最近工作上需要定制一个 FTP 客户端工具，用来同步本地文件夹到 FTP 服务器上。这般粗活首选当然是 Python: 开发迅速，编写简洁，还能用 py2exe 打包独立分发。&lt;/p&gt;
 &lt;p&gt;但 Python 标准库对 FTP 的封装太底层，很不好用。在自己动手改进之前先放狗搜了一下，果然早有人忍不住，不但封装了 FTP 客户端，而且开源了。这就是 &lt;a class="reference external" href="http://ftputil.sschwarzer.net"&gt;ftputil&lt;/a&gt; ，一个 Python 高层次接口 FTP 客户端库。&lt;/p&gt;
 &lt;p&gt;ftputil 的接口非常简单易用。一个 &lt;tt class="docutils literal"&gt;ftputil.FTPHost&lt;/tt&gt; 对象就包括了 FTP 的上传下载和查询。整个接口还刻意模仿标准模块 &lt;tt class="docutils literal"&gt;os&lt;/tt&gt; 的本地文件操作接口，上手不费吹灰之力。与 &lt;tt class="docutils literal"&gt;os&lt;/tt&gt; 模块的文件操作接口保持一致还有个好处: 多态。本地文件和 FTP 远程文件操作接口一模一样，这样对已有的程序添加 FTP 存储支持，只需要把 os 模块换成 FTPHost 对象就成了。FTP 的操作对调用端代码是透明的，非常方便。&lt;/p&gt;
 &lt;p&gt;ftputil 还有个隐藏功能：对本地和远程 FTP 文件夹进行同步。也许作者认为这个功能还不成熟，并没在文档中提及。不过文件夹同步恰好是我需要的，自然毫不客气直接拿来使用！ftputil 源代码中的 &lt;tt class="docutils literal"&gt;ftp_sync&lt;/tt&gt; 实现了同步功能。下面几行代码就实现了将本地文件夹同步到 FTP 服务器&lt;/p&gt;
@@ -152,7 +152,7 @@
 &lt;p&gt;这两个问题我遇到了，修好了。本着人人为我我为人人的开源精神，我给作者提了两个 bug (&lt;a class="reference external" href="http://ftputil.sschwarzer.net/trac/ticket/62"&gt;#62&lt;/a&gt;, &lt;a class="reference external" href="http://ftputil.sschwarzer.net/trac/ticket/63"&gt;#63&lt;/a&gt;)，并跟作者一起在 ftputil v2.7 中修好了这两个问题。ftputil 的作者 Stefan 很好沟通，一点举手之劳赢得他的感谢，还挺有成就感的。&lt;/p&gt;
 &lt;p&gt;天下程序一大抄，看你会抄不会抄。不会抄的，键盘上的 &lt;span class="kbd"&gt;ctrl&lt;/span&gt; &lt;span class="kbd"&gt;c&lt;/span&gt; &lt;span class="kbd"&gt;v&lt;/span&gt; 键一定是饱经风霜了吧; 会抄的，在发明轮子前，先找现成的轮子，找到了，会用了，从此工具箱中又多了一件趁手的兵器。这不比毫无积累的复制粘贴大法高出不少吗; 如果能再进一步，不怕麻烦，帮着修补轮子，让它更加结实好用，利人利己，也算是抄亦有道了吧。&lt;/p&gt;
 &lt;p&gt;谢谢 Stefan 给 Python 社区贡献的好轮子！&lt;/p&gt;
-</summary><category term="opensource"></category><category term="python"></category></entry><entry><title>程序如何找自己</title><link href="http://zhuoqiang.bitbucket.org/how-program-find-self.html" rel="alternate"></link><updated>2012-06-06T19:26:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-06-06:how-program-find-self.html</id><summary type="html">&lt;p&gt;自我定位很重要，不但是对人，对程序来说也一样。如果能知道自己的路径位置，程序就可以通过相对定位找到身边的资源文件，这对于制作无需安装的绿色软件和各类插件很关键。下面列出几种程序的自我定位方法。&lt;/p&gt;
+</summary><category term="opensource"></category><category term="python"></category></entry><entry><title>程序如何找自己</title><link href="http://zhuoqiang.me/how-program-find-self.html" rel="alternate"></link><updated>2012-06-06T19:26:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-06-06:how-program-find-self.html</id><summary type="html">&lt;p&gt;自我定位很重要，不但是对人，对程序来说也一样。如果能知道自己的路径位置，程序就可以通过相对定位找到身边的资源文件，这对于制作无需安装的绿色软件和各类插件很关键。下面列出几种程序的自我定位方法。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#windows-api" id="id2"&gt;Windows API&lt;/a&gt;&lt;/li&gt;
@@ -274,7 +274,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;在不同平台上，同一名字还能对应不同的资源文件，方便跨平台扩展的开发。在上面例子中，Win32 平台 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;js-ctypes&lt;/span&gt;&lt;/tt&gt; 会使用 &lt;tt class="docutils literal"&gt;addon.dll&lt;/tt&gt; 而 Linux 上则会使用 &lt;tt class="docutils literal"&gt;libaddon.so&lt;/tt&gt;，这一切都由 gecko 帮着选择定位。我在 &lt;a class="reference external" href="https://addons.mozilla.org/zh-cn/firefox/addon/chmfox/"&gt;chmfox&lt;/a&gt; 里正是使用了这个手法。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="c++"></category><category term="firefox"></category><category term="ios"></category><category term="python"></category></entry><entry><title>Programming in Lua 笔记</title><link href="http://zhuoqiang.bitbucket.org/programming-in-lua-notes.html" rel="alternate"></link><updated>2012-05-02T01:20:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-05-02:programming-in-lua-notes.html</id><summary type="html">&lt;p&gt;最近花了两天读完了《Programming in Lua》。本书不但教授如何使用 Lua 语言，还顺带解释了为什么 Lua 会设计成现在这样子，很有价值。&lt;/p&gt;
+</summary><category term="c++"></category><category term="firefox"></category><category term="ios"></category><category term="python"></category></entry><entry><title>Programming in Lua 笔记</title><link href="http://zhuoqiang.me/programming-in-lua-notes.html" rel="alternate"></link><updated>2012-05-02T01:20:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-05-02:programming-in-lua-notes.html</id><summary type="html">&lt;p&gt;最近花了两天读完了《Programming in Lua》。本书不但教授如何使用 Lua 语言，还顺带解释了为什么 Lua 会设计成现在这样子，很有价值。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#lua" id="id4"&gt;Lua 的特点: 小快灵&lt;/a&gt;&lt;/li&gt;
@@ -386,7 +386,7 @@
 &lt;p&gt;Lua 是一门局限性很大的语言，由于其小快灵的特点，在游戏脚本，编写扩展等领域是非常好的选择。可一旦程序上规模就会捉襟见肘。其极端的灵活性和简陋的设施，并不适合大团队协同开发。这年头语言层出不穷，新语言要想得到市场认可，四平八稳的设计思路是很难出头的。Lua 很多近乎偏质的设计决定，正是它得以流行的关键。&lt;/p&gt;
 &lt;p&gt;当然，Lua 还远谈不上是一门好语言。我一向认为，编程语言本身需肩负起教育与规劝的责任，应该用精巧的限制和有力的规则来避免码农犯愚蠢的错误。相反，把过多的自由交给无知的键盘，只会带给世界更多的垃圾代码。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="design"></category><category term="lua"></category><category term="review"></category></entry><entry><title>用 Xcode 在 iOS 越狱设备上开发调试</title><link href="http://zhuoqiang.bitbucket.org/jailbroken-ios-device-debug-using-xcode.html" rel="alternate"></link><updated>2012-04-10T22:40:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-04-10:jailbroken-ios-device-debug-using-xcode.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
+</summary><category term="design"></category><category term="lua"></category><category term="review"></category></entry><entry><title>用 Xcode 在 iOS 越狱设备上开发调试</title><link href="http://zhuoqiang.me/jailbroken-ios-device-debug-using-xcode.html" rel="alternate"></link><updated>2012-04-10T22:40:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-04-10:jailbroken-ios-device-debug-using-xcode.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id8"&gt;目的&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#ios" id="id9"&gt;iOS 设备的设置&lt;/a&gt;&lt;/li&gt;
@@ -542,7 +542,7 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;li&gt;如要正常的签发流程，请恢复备份的原始配置文件。我还没有恢复过，不保证一定能恢复成功&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</summary><category term="ios"></category><category term="mobile"></category></entry><entry><title>钢铁森林</title><link href="http://zhuoqiang.bitbucket.org/iron-forest.html" rel="alternate"></link><updated>2012-03-06T07:33:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2012-03-06:iron-forest.html</id><summary type="html">&lt;p&gt;树杈钢筋 &lt;br /&gt;
+</summary><category term="ios"></category><category term="mobile"></category></entry><entry><title>钢铁森林</title><link href="http://zhuoqiang.me/iron-forest.html" rel="alternate"></link><updated>2012-03-06T07:33:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2012-03-06:iron-forest.html</id><summary type="html">&lt;p&gt;树杈钢筋 &lt;br /&gt;
 水泥草皮 &lt;br /&gt;
 还有花朵塑料 &lt;br /&gt;
 庞然大树们在阳光下低头 &lt;br /&gt;
@@ -566,7 +566,7 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;p&gt;树杈钢筋 &lt;br /&gt;
 水泥草皮 &lt;br /&gt;
 还有花朵塑料&lt;/p&gt;
-</summary><category term="poem"></category></entry><entry><title>找自己</title><link href="http://zhuoqiang.bitbucket.org/find-ego.html" rel="alternate"></link><updated>2011-10-13T23:02:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-10-13:find-ego.html</id><summary type="html">&lt;p&gt;双脚开立，与肩同宽。&lt;/p&gt;
+</summary><category term="poem"></category></entry><entry><title>找自己</title><link href="http://zhuoqiang.me/find-ego.html" rel="alternate"></link><updated>2011-10-13T23:02:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-10-13:find-ego.html</id><summary type="html">&lt;p&gt;双脚开立，与肩同宽。&lt;/p&gt;
 &lt;p&gt;曲膝，松胯，塌腰，坠肘，沉肩，含胸，拔背，头领。&lt;/p&gt;
 &lt;p&gt;自觉动作到位，正想进一步领悟静中有动的太极境界，师父却走过来把我上身往后推了半掌: 这样才站的中正!&lt;/p&gt;
 &lt;p&gt;原来自以为站正的时候，身体却是往前顷的。仔细体会一下脚底的感觉，以前的站姿前脚掌实而后脚跟虚，重心确实偏前。被师父纠正后再体味一下，全身重量平均分担在双脚之间，原来身体隐藏的紧张感也随着姿态的调整减轻了很多。&lt;/p&gt;
@@ -579,7 +579,7 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;p&gt;佛陀说: 天上天下，唯我独尊&lt;/p&gt;
 &lt;p&gt;Follow my heart&lt;/p&gt;
 &lt;p&gt;初练太极，有悟于心，遂记之&lt;/p&gt;
-</summary><category term="essay"></category><category term="life"></category></entry><entry><title>Lexing Python Indentation using Spirit.Lex</title><link href="http://zhuoqiang.bitbucket.org/lexing-python-indentation-using-spirit-lex.html" rel="alternate"></link><updated>2011-09-08T22:06:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-09-08:lexing-python-indentation-using-spirit-lex.html</id><summary type="html">&lt;p&gt;Python is well known for its whitespace-sensitivity grammar. The indentation level provides block scoping in python language. While it is possible to parse python using just straight Spirit.Qi, however, it looks messy to mixing the low level indentation handling in the parsing level. Fortunately Spirit.Lex could be a help here to transform the indentation to a bunch of proper &lt;tt class="docutils literal"&gt;BEGIN&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;END&lt;/tt&gt; tokens, which will simplify the parsing logic later.&lt;/p&gt;
+</summary><category term="essay"></category><category term="life"></category></entry><entry><title>Lexing Python Indentation using Spirit.Lex</title><link href="http://zhuoqiang.me/lexing-python-indentation-using-spirit-lex.html" rel="alternate"></link><updated>2011-09-08T22:06:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-09-08:lexing-python-indentation-using-spirit-lex.html</id><summary type="html">&lt;p&gt;Python is well known for its whitespace-sensitivity grammar. The indentation level provides block scoping in python language. While it is possible to parse python using just straight Spirit.Qi, however, it looks messy to mixing the low level indentation handling in the parsing level. Fortunately Spirit.Lex could be a help here to transform the indentation to a bunch of proper &lt;tt class="docutils literal"&gt;BEGIN&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;END&lt;/tt&gt; tokens, which will simplify the parsing logic later.&lt;/p&gt;
 &lt;p&gt;Here's how to deal with indentation: for each line of the input, current line's indentation level will be compared with previews one stored in a stack:&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;If the indentation is increasing it is pushed into the stack and a &lt;tt class="docutils literal"&gt;BEGIN&lt;/tt&gt; token is generated&lt;/li&gt;
@@ -790,7 +790,7 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;li&gt;&lt;a class="reference external" href="http://docs.python.org/release/3.1.3/reference/lexical_analysis.html#indentation"&gt;Python lexical analysis for indentation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference external" href="http://boost.2283326.n4.nabble.com/lexing-python-redux-td2681157.htm"&gt;Lexing python redux discussion&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</summary><category term="boost"></category><category term="c++"></category><category term="compiler"></category><category term="english"></category><category term="python"></category><category term="spirit"></category></entry><entry><title>ChmFox 2 发布啦</title><link href="http://zhuoqiang.bitbucket.org/chmfox2.html" rel="alternate"></link><updated>2011-08-18T11:36:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-08-18:chmfox2.html</id><summary type="html">&lt;p&gt;如果你还不知道 ChmFox 是什么，这里是一句话介绍：ChmFox 是一款让 Firefox 变身成 CHM 文件浏览器的扩展，目标是给所有平台提供最好的 CHM 浏览体验。（更多请看 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/chmfox.html"&gt;ChmFox 介绍&lt;/a&gt; ）&lt;/p&gt;
+</summary><category term="boost"></category><category term="c++"></category><category term="compiler"></category><category term="english"></category><category term="python"></category><category term="spirit"></category></entry><entry><title>ChmFox 2 发布啦</title><link href="http://zhuoqiang.me/chmfox2.html" rel="alternate"></link><updated>2011-08-18T11:36:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-08-18:chmfox2.html</id><summary type="html">&lt;p&gt;如果你还不知道 ChmFox 是什么，这里是一句话介绍：ChmFox 是一款让 Firefox 变身成 CHM 文件浏览器的扩展，目标是给所有平台提供最好的 CHM 浏览体验。（更多请看 &lt;a class="reference external" href="http://zhuoqiang.me/chmfox.html"&gt;ChmFox 介绍&lt;/a&gt; ）&lt;/p&gt;
 &lt;p&gt;随着 Firefox 6 正式版的发布 &lt;a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/chmfox/versions/2.2"&gt;ChmFox 新版 2.2&lt;/a&gt; 也发布了。该版本加入了对 Firefox 6 的支持，还有下面的更新：&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;兼容性增强：支持 Firefox 版本 4.0 到 9.0a1，未来版本的 Firefox 也可 &lt;a class="reference external" href="http://www.google.com/search?q=firefox+%E5%BC%BA%E5%88%B6%E5%85%BC%E5%AE%B9&amp;amp;ie=utf-8&amp;amp;oe=utf-8&amp;amp;aq=t&amp;amp;rls=org.mozilla:zh-CN:official&amp;amp;client=firefox-a"&gt;强制兼容&lt;/a&gt; 。但放弃了对 Firefox 3 的支持&lt;/li&gt;
@@ -847,10 +847,10 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;p&gt;后面 ChmFox 改进方向将是完善搜索功能：将目录，索引和全文的搜索做到统一的界面上。也欢迎大家留言各种批评建议吐槽等。&lt;/p&gt;
 &lt;p&gt;更新: 感谢 PcX 的测试反馈，现已上传 2.2 版本， 修正 Windows 平台不能打开中文文件名 CHM，和不能正确关闭文件句柄的错误。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="chmfox"></category><category term="firefox"></category><category term="opensource"></category><category term="javascript"></category></entry><entry><title>ChmFox</title><link href="http://zhuoqiang.bitbucket.org/chmfox.html" rel="alternate"></link><updated>2011-07-12T00:30:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-07-12:chmfox.html</id><summary type="html">&lt;p&gt;新版本 2.2 已发布，升级和新功能请看 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/chmfox2.html"&gt;ChmFox2&lt;/a&gt;&lt;/p&gt;
+</summary><category term="chmfox"></category><category term="firefox"></category><category term="opensource"></category><category term="javascript"></category></entry><entry><title>ChmFox</title><link href="http://zhuoqiang.me/chmfox.html" rel="alternate"></link><updated>2011-07-12T00:30:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-07-12:chmfox.html</id><summary type="html">&lt;p&gt;新版本 2.2 已发布，升级和新功能请看 &lt;a class="reference external" href="http://zhuoqiang.me/chmfox2.html"&gt;ChmFox2&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;最近有很多朋友问 ChmFox 的问题，这里大致介绍一下，也做个推荐。&lt;/p&gt;
 &lt;p&gt;ChmFox 是一款 Firefox 扩展。它可以将 Firefox 变成阅读 CHM 文件的利器。如果和 Firefox 上众多提升阅读体验的扩展配合使用，你就拥有了最好的 CHM 阅读软件。更棒的是，它和 Firefox 一样是跨平台的，你可以在 Windows，Linux，Mac 等平台上获得一致的 CHM 阅读体验。&lt;/p&gt;
-&lt;img alt="|filename|/images/chmfox.png" src="http://zhuoqiang.bitbucket.org/static/images/chmfox.png" /&gt;
+&lt;img alt="|filename|/images/chmfox.png" src="http://zhuoqiang.me/static/images/chmfox.png" /&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id10"&gt;安装&lt;/a&gt;&lt;/li&gt;
@@ -955,7 +955,7 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;/ul&gt;
 &lt;p&gt;欢迎大家在使用 ChmFox 时给它多提意见。一起帮它变的更好！&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="chmfox"></category><category term="firefox"></category><category term="opensource"></category></entry><entry><title>推与拉</title><link href="http://zhuoqiang.bitbucket.org/push-and-pull.html" rel="alternate"></link><updated>2011-06-13T22:19:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-06-13:push-and-pull.html</id><summary type="html">&lt;p&gt;推与拉是两种设计风格，各有优劣。本文略述一二，抛砖引玉。&lt;/p&gt;
+</summary><category term="chmfox"></category><category term="firefox"></category><category term="opensource"></category></entry><entry><title>推与拉</title><link href="http://zhuoqiang.me/push-and-pull.html" rel="alternate"></link><updated>2011-06-13T22:19:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-06-13:push-and-pull.html</id><summary type="html">&lt;p&gt;推与拉是两种设计风格，各有优劣。本文略述一二，抛砖引玉。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id2" id="id6"&gt;如何推，怎么拉&lt;/a&gt;&lt;/li&gt;
@@ -1020,13 +1020,13 @@ codesign -f -s &lt;span class="s2"&gt;&amp;quot;iPhone Developer&amp;quot;&lt;/s
 &lt;h2&gt;&lt;a class="toc-backref" href="#id9"&gt;语言的支持&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;既然推与拉这么的普遍，为何不在语言层面给以直接的支持呢。实际上，确实有很多语言这么做了，比如 Python。Python 通过 &lt;tt class="docutils literal"&gt;yield&lt;/tt&gt; 关键字既可以方便的将数据推送给调用者，也可以从调用者那拉来数据。实际上 &lt;tt class="docutils literal"&gt;yield&lt;/tt&gt; 关键字只是协程（Coroutine）不完全实现, 而协程恰恰是实现推拉互动的所谓非抢占式协作的关键。不过，哪怕是不完整的实现，也让 Python 在数据推拉相关的程序上的表达力丰富了许多，以至于很多人觉得有必要在 Python 中实现完整的协程支持。当然，那又是另外一个话题了。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="c++"></category><category term="design"></category><category term="python"></category></entry><entry><title>瓜达尔港</title><link href="http://zhuoqiang.bitbucket.org/gwadar-port.html" rel="alternate"></link><updated>2011-05-23T00:49:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-05-23:gwadar-port.html</id><summary type="html">&lt;p&gt;曾经，俄国人赌上国运也没能拿到一个印度洋出海口。&lt;/p&gt;
+</summary><category term="c++"></category><category term="design"></category><category term="python"></category></entry><entry><title>瓜达尔港</title><link href="http://zhuoqiang.me/gwadar-port.html" rel="alternate"></link><updated>2011-05-23T00:49:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-05-23:gwadar-port.html</id><summary type="html">&lt;p&gt;曾经，俄国人赌上国运也没能拿到一个印度洋出海口。&lt;/p&gt;
 &lt;p&gt;今天，巴基斯坦请求中国接收瓜达尔港。&lt;/p&gt;
 &lt;iframe width="96%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://ditu.google.com/maps/ms?ie=UTF8&amp;amp;hl=zh-CN&amp;amp;brcurrent=3,0x31508e64e5c642c1:0x951daa7c349f366f,0%3B5,0,0&amp;amp;msa=0&amp;amp;msid=203856847079115168968.0004a3ddfe6a93b884618&amp;amp;t=p&amp;amp;source=embed&amp;amp;ll=28.613459,88.59375&amp;amp;spn=70.474467,112.5&amp;amp;output=embed"&gt;&lt;/iframe&gt;&lt;p&gt;瓜达尔港作为印度洋出海口，靠阿富汗，伊朗，亚丁湾，霍尔木兹海峡都很近。港深足以停泊航母，巴基斯坦还希望中国能在此建军港。如接收此港，中国不但绕开了第一岛链的封堵，而且对欧亚大陆战略核心地带可以施加更为直接的影响力。中东能源也不必非走马六甲海峡仰人鼻息，以后还可以从印度洋经瓜达尔港上岸，走陆路直达新疆喀什。&lt;/p&gt;
 &lt;p&gt;很明显，瓜达尔港带给中国的地缘战略意义非常巨大。可以想象假以时日，中国将它建成第一个海外军事基地时，那将带给中国带给世界更大的心理影响。&lt;/p&gt;
 &lt;p&gt;中国从 2002 开始就帮助巴基斯坦修建瓜达尔港，而从瓜达尔到新疆的铁路公路和输油管线也一直在建设当中。我们的布局相当早，所谋者亦大。个人猜测，如果不是美国越境清除拉登带给巴基斯坦的压力，瓜达尔港的接收可能还要再遮遮掩掩一阵子。&lt;/p&gt;
 &lt;p&gt;这将会是帝国的开始吗？我们都在见证历史！&lt;/p&gt;
-</summary><category term="political"></category></entry><entry><title>RESTful Pyramid</title><link href="http://zhuoqiang.bitbucket.org/restful-pyramid.html" rel="alternate"></link><updated>2011-03-13T18:06:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-03-13:restful-pyramid.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
+</summary><category term="political"></category></entry><entry><title>RESTful Pyramid</title><link href="http://zhuoqiang.me/restful-pyramid.html" rel="alternate"></link><updated>2011-03-13T18:06:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-03-13:restful-pyramid.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#english-version" id="id4"&gt;English Version (英文版)&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#http-verb-based-route" id="id5"&gt;HTTP Verb Based Route&lt;/a&gt;&lt;/li&gt;
@@ -1518,7 +1518,7 @@ a=1&amp;amp;_method=DELETE
 &lt;p&gt;上面这段 javascript 代码就演示了使用 YUI3 怎样达到渐进增强。当 javascript 关闭时，用户可以通过普通的 HTML form 来使用 &lt;tt class="docutils literal"&gt;DELETE&lt;/tt&gt; 。当 javascript 打开后，用户将能透过 Ajax 体验到无刷新的 &lt;tt class="docutils literal"&gt;DELETE&lt;/tt&gt; 效果。&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</summary><category term="english"></category><category term="javascript"></category><category term="python"></category><category term="web"></category></entry><entry><title>python 线程，GIL 和 ctypes</title><link href="http://zhuoqiang.bitbucket.org/python-thread-gil-and-ctypes.html" rel="alternate"></link><updated>2011-01-10T02:21:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-01-10:python-thread-gil-and-ctypes.html</id><summary type="html">&lt;div class="section" id="gil-python"&gt;
+</summary><category term="english"></category><category term="javascript"></category><category term="python"></category><category term="web"></category></entry><entry><title>python 线程，GIL 和 ctypes</title><link href="http://zhuoqiang.me/python-thread-gil-and-ctypes.html" rel="alternate"></link><updated>2011-01-10T02:21:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-01-10:python-thread-gil-and-ctypes.html</id><summary type="html">&lt;div class="section" id="gil-python"&gt;
 &lt;h2&gt;GIL 与 Python 线程的纠葛&lt;/h2&gt;
 &lt;p&gt;GIL 是什么东西？它对我们的 python 程序会产生什么样的影响？我们先来看一个问题。运行下面这段 python 程序，CPU 占用率是多少？&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;# 请勿在工作中模仿，危险:)&lt;/span&gt;
@@ -1622,7 +1622,7 @@ a=1&amp;amp;_method=DELETE
 &lt;h2&gt;结语&lt;/h2&gt;
 &lt;p&gt;虽然 CPython 的线程库封装了操作系统的原生线程，但却因为 GIL 的存在导致多线程不能利用多个 CPU 内核的计算能力。好在现在 Python 有了易经筋（multiprocessing）, 吸星大法（C 语言扩展机制）和独孤九剑（ctypes），足以应付多核时代的挑战，GIL 切还是不切已经不重要了，不是吗。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="concurrent"></category><category term="python"></category></entry><entry><title>C++ 不给力之不可继承</title><link href="http://zhuoqiang.bitbucket.org/ungelivable-cpp-those-who-cannot-inherit.html" rel="alternate"></link><updated>2011-01-05T00:25:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2011-01-05:ungelivable-cpp-those-who-cannot-inherit.html</id><summary type="html">&lt;p&gt;C++ 给人的印象通常是特性众多，使用复杂，性能突出。当然，它也有不怎么给力的时候。&lt;/p&gt;
+</summary><category term="concurrent"></category><category term="python"></category></entry><entry><title>C++ 不给力之不可继承</title><link href="http://zhuoqiang.me/ungelivable-cpp-those-who-cannot-inherit.html" rel="alternate"></link><updated>2011-01-05T00:25:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2011-01-05:ungelivable-cpp-those-who-cannot-inherit.html</id><summary type="html">&lt;p&gt;C++ 给人的印象通常是特性众多，使用复杂，性能突出。当然，它也有不怎么给力的时候。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id6"&gt;问题&lt;/a&gt;&lt;/li&gt;
@@ -1775,7 +1775,7 @@ a=1&amp;amp;_method=DELETE
 &lt;h2&gt;&lt;a class="toc-backref" href="#id10"&gt;总结&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;C++ 恐怕是最复杂的编程语言了，没有之一。这些复杂性很大一部分来源于 C 语言的包袱。除了这里列出来的两种情况，我相信肯定还能找出不能被继承的情况，甚至用这些偶然发现的技巧去实现让一个不能被继承类（所谓的 &lt;tt class="docutils literal"&gt;final&lt;/tt&gt; 或 &lt;tt class="docutils literal"&gt;sealed&lt;/tt&gt; 类）也不是没有可能。这恐怕也算得 C++ 的魅力之一了。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="c++"></category><category term="design"></category></entry><entry><title>在 C++ 中输出字符串的十六进制表示</title><link href="http://zhuoqiang.bitbucket.org/string-hex-format-output-in-cpp.html" rel="alternate"></link><updated>2010-12-12T23:45:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-12-12:string-hex-format-output-in-cpp.html</id><summary type="html">&lt;p&gt;在进行 i18n 相关的开发时，经常遇到字符编码转换的错误。这时如果能把相关字符串用十六进制的形式打印出来，例如，&lt;tt class="docutils literal"&gt;&amp;quot;abc&amp;quot;&lt;/tt&gt; 输出成 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;quot;\\x61\\x62\\x63&amp;quot;&lt;/span&gt;&lt;/tt&gt; 这对于 i18n 的除错来说是很有帮助的。Python 里面，只需要使用 &lt;tt class="docutils literal"&gt;repr()&lt;/tt&gt; 函数就行了。可在 C++ 中如何做到这点呢？下面是用 &lt;tt class="docutils literal"&gt;ostream&lt;/tt&gt; 的格式化功能的一个简单的实现：&lt;/p&gt;
+</summary><category term="c++"></category><category term="design"></category></entry><entry><title>在 C++ 中输出字符串的十六进制表示</title><link href="http://zhuoqiang.me/string-hex-format-output-in-cpp.html" rel="alternate"></link><updated>2010-12-12T23:45:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-12-12:string-hex-format-output-in-cpp.html</id><summary type="html">&lt;p&gt;在进行 i18n 相关的开发时，经常遇到字符编码转换的错误。这时如果能把相关字符串用十六进制的形式打印出来，例如，&lt;tt class="docutils literal"&gt;&amp;quot;abc&amp;quot;&lt;/tt&gt; 输出成 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;quot;\\x61\\x62\\x63&amp;quot;&lt;/span&gt;&lt;/tt&gt; 这对于 i18n 的除错来说是很有帮助的。Python 里面，只需要使用 &lt;tt class="docutils literal"&gt;repr()&lt;/tt&gt; 函数就行了。可在 C++ 中如何做到这点呢？下面是用 &lt;tt class="docutils literal"&gt;ostream&lt;/tt&gt; 的格式化功能的一个简单的实现：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;get_raw_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;ostringstream&lt;/span&gt; &lt;span class="n"&gt;out&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
@@ -1901,15 +1901,15 @@ a=1&amp;amp;_method=DELETE
 &lt;/table&gt;
 &lt;p&gt;可能出乎意料，大致来说 karma 比 ostream 快了一倍。这也与 spirit 官方给出的性能数据差不多。这里的函数返回值是通过 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;std::string&lt;/span&gt;&lt;/tt&gt; 值拷贝返回的，消耗了不少时间，如果纯从格式化输出来说，猜测 karma 的性能优势只会更大。&lt;a class="reference external" href="http://tinodidriksen.com/2010/02/07/cpp-convert-int-to-string-speed/"&gt;另一份测试&lt;/a&gt; 表明，karma 应该是 C/C++ 里面你能找到的速度最快的格式化字符流方案了。&lt;/p&gt;
 &lt;p&gt;对于这么简单的功能来说，这篇文章已经显得太长了，庆幸的是，我们最终还是找到了一个表达力强，性能高的十六进制输出方案。人说好事难双，可 C++ 这门复杂的语言，却经常能找执行飞快又高度抽象的代码方案。只是有些过于复杂了 ...&lt;/p&gt;
-</summary><category term="boost"></category><category term="c++"></category><category term="i18n"></category><category term="performance"></category><category term="spirit"></category></entry><entry><title>博客搬家</title><link href="http://zhuoqiang.bitbucket.org/blog-move.html" rel="alternate"></link><updated>2010-08-22T16:44:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-08-22:blog-move.html</id><summary type="html">&lt;p&gt;博客搬家拉！&lt;a class="reference external" href="http://blog.zhuoqiang.me"&gt;原来的域名&lt;/a&gt;绑定的是&lt;a class="reference external" href="http://72pines.com/"&gt;七十二松&lt;/a&gt;的博客服务，还会再保留一段时间，但不会更新了， 新博客域名为 &lt;a class="reference external" href="http://zhuoqiang.me"&gt;zhuoqiang.me&lt;/a&gt; 。我已经将所有老文章导入，这还得要谢谢七十二松导出全部文章和评论功能，非常的人性化。&lt;/p&gt;
+</summary><category term="boost"></category><category term="c++"></category><category term="i18n"></category><category term="performance"></category><category term="spirit"></category></entry><entry><title>博客搬家</title><link href="http://zhuoqiang.me/blog-move.html" rel="alternate"></link><updated>2010-08-22T16:44:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-08-22:blog-move.html</id><summary type="html">&lt;p&gt;博客搬家拉！&lt;a class="reference external" href="http://blog.zhuoqiang.me"&gt;原来的域名&lt;/a&gt;绑定的是&lt;a class="reference external" href="http://72pines.com/"&gt;七十二松&lt;/a&gt;的博客服务，还会再保留一段时间，但不会更新了， 新博客域名为 &lt;a class="reference external" href="http://zhuoqiang.me"&gt;zhuoqiang.me&lt;/a&gt; 。我已经将所有老文章导入，这还得要谢谢七十二松导出全部文章和评论功能，非常的人性化。&lt;/p&gt;
 &lt;p&gt;对七十二松的博客服务还是很满意的。毕竟对一个博客服务提供商来说，能免费提供稳定的空间，绑定域名，预设多种主题和插件，自由的导入导出，而且还没有广告，作为用户还能有什么奢求呢。只是，随着博客越写越多，越需要对博客的各方面做出修改和定制，七十二松平台的限制也越发明显：&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;提供的主题有限，而且不能修改&lt;/li&gt;
-&lt;li&gt;预设的插件偏少，不允许自行安装和修改插件。不能满足我对 Lisp 语言语法高亮的支持，也不支持直接在文章里嵌入 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/make-raphael-path-draggable.html"&gt;Javascript 运行示例&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;预设的插件偏少，不允许自行安装和修改插件。不能满足我对 Lisp 语言语法高亮的支持，也不支持直接在文章里嵌入 &lt;a class="reference external" href="http://zhuoqiang.me/make-raphael-path-draggable.html"&gt;Javascript 运行示例&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;我的空间我做主，在 &lt;a class="reference external" href="http://ahei.info/blog-reborn.htm"&gt;ahei&lt;/a&gt; 的建议下，我也终于掏银子买空间架了一个独立的 WordPress 博客。自由虽然不免费（Freedom is not Free），但也贵不到哪里， &lt;a class="reference external" href="http://hugege.com/2010/08/13/42th-host/"&gt;胡戈戈&lt;/a&gt; 提供的 100 元一年的新手型空间对我的小博客来说已经足够了。再绑定上之前 GoDaddy 上 $9 买的的一级域名 &lt;tt class="docutils literal"&gt;zhuoqiang.me&lt;/tt&gt; ，一共才 200 元不到。这点小小的投资也算是个鞭策吧，希望今后能坚持记录自己的所学所思，别让这钱打了水漂。&lt;/p&gt;
 &lt;p&gt;当然，能力越大担子也越重，周末两天就尽是折腾新的 WordPress 的主题和插件了，等折腾完了再来更新。&lt;/p&gt;
-</summary><category term="blog"></category></entry><entry><title>折腾 Emacs</title><link href="http://zhuoqiang.bitbucket.org/torture-emacs.html" rel="alternate"></link><updated>2010-08-15T05:38:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-08-15:torture-emacs.html</id><summary type="html">&lt;p&gt;传说中神一样编辑器的 Emacs 向来以难学难用，喜欢折腾人著称。三天打渔两天晒网的我，居然心甘情愿地被它折腾了五，六年之久，期间苦乐不足为外人道也。不过以我的使用感觉，Emacs 更象是匹烈马：初时难以驾驭，可一旦征服，使用起来便得心应手，威力无穷。尽管被它折腾的不轻，但也因此学会了很多提高工作效率的小技巧。而在用 Emacs 编辑时更是可以做到心无旁骛，任由思路驰骋纵横在键盘间，达到一种“流”的状态。&lt;/p&gt;
+</summary><category term="blog"></category></entry><entry><title>折腾 Emacs</title><link href="http://zhuoqiang.me/torture-emacs.html" rel="alternate"></link><updated>2010-08-15T05:38:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-08-15:torture-emacs.html</id><summary type="html">&lt;p&gt;传说中神一样编辑器的 Emacs 向来以难学难用，喜欢折腾人著称。三天打渔两天晒网的我，居然心甘情愿地被它折腾了五，六年之久，期间苦乐不足为外人道也。不过以我的使用感觉，Emacs 更象是匹烈马：初时难以驾驭，可一旦征服，使用起来便得心应手，威力无穷。尽管被它折腾的不轻，但也因此学会了很多提高工作效率的小技巧。而在用 Emacs 编辑时更是可以做到心无旁骛，任由思路驰骋纵横在键盘间，达到一种“流”的状态。&lt;/p&gt;
 &lt;p&gt;虽说如此，长久以来还是有很多小细节让自己在使用 Emacs 的时候很是不爽，最近一周稍有闲暇，本着磨刀不误砍柴工的精神，也来折腾了一下 Emacs ，居然被我搞定了几个困扰已久的配置。整理记录一下，希望能帮到遇到同样问题的朋友们。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
@@ -2015,7 +2015,7 @@ a=1&amp;amp;_method=DELETE
  &lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Consolas&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Monaco&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;DejaVu Sans Mono&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Monospace&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Courier New&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;:pixelsize=18&amp;quot;&lt;/span&gt;
  &lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Microsoft Yahei&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;文泉驿等宽微米黑&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;黑体&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;新宋体&amp;quot;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;宋体&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;这样设置，Emacs 会优先选用 Consolas + 雅黑的组合。如果雅黑没有装的话，就使用文泉驿等宽微米黑，依此类推。这份字体配置不用改动就能在不同的操作系统字体环境下使用，相信应该没有其它编辑器有这么变态的字体列表设置了吧。至此，Emacs 在字体设置这方面总算是体面地稍稍胜出了其它编辑器。把上面的三个函数加到配置文件里赶快看看效果吧。（或者直接使用 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/personal-emacs-configuration.html"&gt;我的 Emacs 配置&lt;/a&gt; 包含了本文所有配置和后续更新）&lt;/p&gt;
+&lt;p&gt;这样设置，Emacs 会优先选用 Consolas + 雅黑的组合。如果雅黑没有装的话，就使用文泉驿等宽微米黑，依此类推。这份字体配置不用改动就能在不同的操作系统字体环境下使用，相信应该没有其它编辑器有这么变态的字体列表设置了吧。至此，Emacs 在字体设置这方面总算是体面地稍稍胜出了其它编辑器。把上面的三个函数加到配置文件里赶快看看效果吧。（或者直接使用 &lt;a class="reference external" href="http://zhuoqiang.me/personal-emacs-configuration.html"&gt;我的 Emacs 配置&lt;/a&gt; 包含了本文所有配置和后续更新）&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="id3"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id9"&gt;Emacs 字体大小的调整&lt;/a&gt;&lt;/h2&gt;
@@ -2247,11 +2247,11 @@ a=1&amp;amp;_method=DELETE
      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;color-theme-blackboard&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;来看看我配置的使用 Consolas + 雅黑 + blackboard-theme 的 Emacs：&lt;/p&gt;
-&lt;img alt="|filename|/images/emacs.png" src="http://zhuoqiang.bitbucket.org/static/images/emacs.png" style="width: 90%;" /&gt;
+&lt;img alt="|filename|/images/emacs.png" src="http://zhuoqiang.me/static/images/emacs.png" style="width: 90%;" /&gt;
 &lt;p&gt;虽说 10 个人会配出 11 种不同的 emacs，不过我这个还算是芙蓉出水，落落大方吧。&lt;/p&gt;
 &lt;p&gt;折腾到此结束，整容后的 emacs 更加的漂亮听话了。话说回来，emacs 实在是要与时俱进，改变一下难学难用的形象，最好将这些方便的操作设为默认配置。毕竟对最终用户来说这样的折腾也只能偶尔为之，是将心思花在配置这神一样的编辑器上面，自己早晚也要成为半仙。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="config"></category><category term="emacs"></category></entry><entry><title>死亡</title><link href="http://zhuoqiang.bitbucket.org/death.html" rel="alternate"></link><updated>2010-08-06T07:28:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-08-06:death.html</id><summary type="html">&lt;p&gt;鄙厌的 &lt;br /&gt;
+</summary><category term="config"></category><category term="emacs"></category></entry><entry><title>死亡</title><link href="http://zhuoqiang.me/death.html" rel="alternate"></link><updated>2010-08-06T07:28:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-08-06:death.html</id><summary type="html">&lt;p&gt;鄙厌的 &lt;br /&gt;
 盘旋的鹰 &lt;br /&gt;
 白色天际的黑点 &lt;br /&gt;
 飞驰而下 &lt;br /&gt;
@@ -2262,7 +2262,7 @@ a=1&amp;amp;_method=DELETE
 留下洁白的骨头 &lt;br /&gt;
 散在大地 &lt;br /&gt;
 迎接每一个明天 &lt;br /&gt;&lt;/p&gt;
-</summary><category term="poem"></category></entry><entry><title>让 Raphael 的 Path 动起来</title><link href="http://zhuoqiang.bitbucket.org/make-raphael-path-draggable.html" rel="alternate"></link><updated>2010-08-02T23:23:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-08-02:make-raphael-path-draggable.html</id><summary type="html">&lt;p&gt;Raphaël 是一个很简单实用的 Javascript 矢量图形库。它抽象出一套 API 屏蔽了 SVG 和 VML 之间的差异，做到了对主流浏览器的支持，包括很不给力的 IE6（很可惜，并不支持手机 UC 浏览器）。&lt;/p&gt;
+</summary><category term="poem"></category></entry><entry><title>让 Raphael 的 Path 动起来</title><link href="http://zhuoqiang.me/make-raphael-path-draggable.html" rel="alternate"></link><updated>2010-08-02T23:23:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-08-02:make-raphael-path-draggable.html</id><summary type="html">&lt;p&gt;Raphaël 是一个很简单实用的 Javascript 矢量图形库。它抽象出一套 API 屏蔽了 SVG 和 VML 之间的差异，做到了对主流浏览器的支持，包括很不给力的 IE6（很可惜，并不支持手机 UC 浏览器）。&lt;/p&gt;
 &lt;p&gt;Raphaël 对于交互事件也有一定的支持，比如常用的鼠标拖放操作等。可惜在官网上虽然有拖放操作的例子，但例子的写法只对 circle，rect 有效，对 path 却不起作用。经过一番实践，终于了解了 Raphaël 对于拖放支持的原理，找到了一个通用的拖放操作方法，能支持所有的矢量对象，也包括 path。&lt;/p&gt;
 &lt;p&gt;官方例子之所以对 path 不起作用是因为：path 没有象 circle 里面的 &lt;tt class="docutils literal"&gt;cx&lt;/tt&gt; 和 &lt;tt class="docutils literal"&gt;cy&lt;/tt&gt; 属性，要移动 path，只能使用 &lt;tt class="docutils literal"&gt;Path.translate()&lt;/tt&gt; 方法。还要注意的是，Path 必须要先 &lt;tt class="docutils literal"&gt;fill&lt;/tt&gt; 才能移动。&lt;/p&gt;
 &lt;p&gt;仿照官网的例子，下面是一个 Path 移动的代码示例：&lt;/p&gt;
@@ -2348,7 +2348,7 @@ a=1&amp;amp;_method=DELETE
 &lt;span class="nx"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;draggable&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;可以看到，只需要简单的调用 &lt;tt class="docutils literal"&gt;.draggable()&lt;/tt&gt; 就可以让对象被鼠标拖拽了。&lt;/p&gt;
-</summary><category term="javascript"></category><category term="web"></category></entry><entry><title>Python 标准库 urllib2 的使用细节</title><link href="http://zhuoqiang.bitbucket.org/python-urllib2-usage.html" rel="alternate"></link><updated>2010-07-05T21:28:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-07-05:python-urllib2-usage.html</id><summary type="html">&lt;p&gt;Python 标准库中有很多实用的工具类，但是在具体使用时，标准库文档上对使用细节描述的并不清楚，比如 urllib2 这个 HTTP 客户端库。这里总结了一些 urllib2 的使用细节。&lt;/p&gt;
+</summary><category term="javascript"></category><category term="web"></category></entry><entry><title>Python 标准库 urllib2 的使用细节</title><link href="http://zhuoqiang.me/python-urllib2-usage.html" rel="alternate"></link><updated>2010-07-05T21:28:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-07-05:python-urllib2-usage.html</id><summary type="html">&lt;p&gt;Python 标准库中有很多实用的工具类，但是在具体使用时，标准库文档上对使用细节描述的并不清楚，比如 urllib2 这个 HTTP 客户端库。这里总结了一些 urllib2 的使用细节。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#proxy" id="id1"&gt;Proxy 的设置&lt;/a&gt;&lt;/li&gt;
@@ -2484,7 +2484,7 @@ a=1&amp;amp;_method=DELETE
 &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;http://www.google.com&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
-</summary><category term="python"></category><category term="web"></category></entry><entry><title>密码传输问题</title><link href="http://zhuoqiang.bitbucket.org/password-transport.html" rel="alternate"></link><updated>2010-06-30T02:50:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-06-30:password-transport.html</id><summary type="html">&lt;p&gt;说了 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/password-storage-and-python-example.html"&gt;密码的存储&lt;/a&gt; 问题，接下来再聊聊密码的传输问题。&lt;/p&gt;
+</summary><category term="python"></category><category term="web"></category></entry><entry><title>密码传输问题</title><link href="http://zhuoqiang.me/password-transport.html" rel="alternate"></link><updated>2010-06-30T02:50:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-06-30:password-transport.html</id><summary type="html">&lt;p&gt;说了 &lt;a class="reference external" href="http://zhuoqiang.me/password-storage-and-python-example.html"&gt;密码的存储&lt;/a&gt; 问题，接下来再聊聊密码的传输问题。&lt;/p&gt;
 &lt;p&gt;对于在线系统，密码的传输要经过下面几个步骤：&lt;/p&gt;
 &lt;ol class="arabic simple"&gt;
 &lt;li&gt;用户在浏览器中输入原始密码：键盘 &lt;tt class="docutils literal"&gt;——&amp;gt;&lt;/tt&gt; 操作系统 &lt;tt class="docutils literal"&gt;——&amp;gt;&lt;/tt&gt; 浏览器内存&lt;/li&gt;
@@ -2586,7 +2586,7 @@ a=1&amp;amp;_method=DELETE
 &lt;/div&gt;
 &lt;div class="section" id="id7"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id14"&gt;小结&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;密码的传输比 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/password-storage-and-python-example.html"&gt;密码的存储&lt;/a&gt; 更加敏感和不安全，大致有三个层次的传输策略：&lt;/p&gt;
+&lt;p&gt;密码的传输比 &lt;a class="reference external" href="http://zhuoqiang.me/password-storage-and-python-example.html"&gt;密码的存储&lt;/a&gt; 更加敏感和不安全，大致有三个层次的传输策略：&lt;/p&gt;
 &lt;ol class="arabic simple"&gt;
 &lt;li&gt;使用 HTTPS 加密传输，非常安全。HTTPS 对服务器性能要求高，也影响登录速度。一般用在高安全性的登录上面。Google 和微软的登录都强制使用 HTTPS 确保安全第一&lt;/li&gt;
 &lt;li&gt;使用随机密钥对密码进行变换后再传输，相对安全。密码明文很安全，但仍可能发生重放攻击。这种方式是性能和安全性的折中。一般的服务使用足亦，例如国内的开心网&lt;/li&gt;
@@ -2599,7 +2599,7 @@ a=1&amp;amp;_method=DELETE
 &lt;p&gt;最近在使用浦发银行的 400 电话服务时，惊奇地发现当系统提示输入密码时，除了听到自己的按键音外，听筒里还有其它的按键音随机的响起。因为这些背景音的干扰，居然让人输入密码时有点手足无措（声音也是种 UI 界面，只是一直被忽略，其实它对用户的重要性一点也不比图形 UI 来的低）&lt;/p&gt;
 &lt;p&gt;略一思考，这不正是防止电话按键音泄露银行密码的安全措施吗。浦发连这点都想到了，真是魔高一层道高一丈！&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="security"></category><category term="web"></category></entry><entry><title>“一”夫当关：boost::property_tree 的 i18n Bug</title><link href="http://zhuoqiang.bitbucket.org/i18n-bug-in-boost-property_tree.html" rel="alternate"></link><updated>2010-06-16T22:20:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-06-16:i18n-bug-in-boost-property_tree.html</id><summary type="html">&lt;p&gt;i18n 测试常要选用特殊字符。这些字符之所以特殊，全是拜这些字符的编码所赐，比如简单的“一”字。&lt;/p&gt;
+</summary><category term="security"></category><category term="web"></category></entry><entry><title>“一”夫当关：boost::property_tree 的 i18n Bug</title><link href="http://zhuoqiang.me/i18n-bug-in-boost-property_tree.html" rel="alternate"></link><updated>2010-06-16T22:20:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-06-16:i18n-bug-in-boost-property_tree.html</id><summary type="html">&lt;p&gt;i18n 测试常要选用特殊字符。这些字符之所以特殊，全是拜这些字符的编码所赐，比如简单的“一”字。&lt;/p&gt;
 &lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id6"&gt;问题&lt;/a&gt;&lt;/li&gt;
@@ -2681,7 +2681,7 @@ a=1&amp;amp;_method=DELETE
 &lt;li&gt;UTF-8 编码与 ASCII 兼容，这个特性让程序更容易迁移到 Unicode。也许正因此，wxWidget 3.0 将会使用 UTF-8 来同时支持 Unicode 和窄字符接口，统一原来的宽窄两套 API&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</summary><category term="boost"></category><category term="c++"></category><category term="i18n"></category></entry><entry><title>用户密码的存储与 Python 示例</title><link href="http://zhuoqiang.bitbucket.org/password-storage-and-python-example.html" rel="alternate"></link><updated>2010-06-13T02:31:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-06-13:password-storage-and-python-example.html</id><summary type="html">&lt;p&gt;在各种线上应用中，用户名密码是用户身份认证的关键，它的重要性不言而喻。一方面，作为保护用户敏感数据的钥匙来说，一旦被破解，系统将敞开大门完全不设防。另一方面，密码这把钥匙本身就是非常敏感的数据：大多数用户会在不同应用中使用近似甚至完全相同的密码。一旦某一个应用的密码被破解，很可能坏人就此掌握了用户的“万能钥匙”，这个用户的其它应用也相当危险了。&lt;/p&gt;
+</summary><category term="boost"></category><category term="c++"></category><category term="i18n"></category></entry><entry><title>用户密码的存储与 Python 示例</title><link href="http://zhuoqiang.me/password-storage-and-python-example.html" rel="alternate"></link><updated>2010-06-13T02:31:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-06-13:password-storage-and-python-example.html</id><summary type="html">&lt;p&gt;在各种线上应用中，用户名密码是用户身份认证的关键，它的重要性不言而喻。一方面，作为保护用户敏感数据的钥匙来说，一旦被破解，系统将敞开大门完全不设防。另一方面，密码这把钥匙本身就是非常敏感的数据：大多数用户会在不同应用中使用近似甚至完全相同的密码。一旦某一个应用的密码被破解，很可能坏人就此掌握了用户的“万能钥匙”，这个用户的其它应用也相当危险了。&lt;/p&gt;
 &lt;p&gt;这篇博文就重点讨论对于密码本身的存储的安全性考虑，而系统自身的安全性不在此文的范围之内。&lt;/p&gt;
 &lt;p&gt;对于如此重要的用户密码，究竟该怎样在系统中存储呢？&lt;/p&gt;
 &lt;p&gt;“君子不立危墙”，对于用户密码这个烫手山芋，一个极端的选择是系统完全不接触密码，用户的身份认证转交受信任的第三方来处理。例如 OpenID 这样的解决方案。系统向受信任的第三方求证用户身份的合法性，用户通过密码向第三方证明自己的身份。&lt;/p&gt;
@@ -2764,8 +2764,8 @@ a=1&amp;amp;_method=DELETE
 &lt;li&gt;如果非要自己认证，也只能存 &lt;strong&gt;不可逆的有损密码信息&lt;/strong&gt; 。通过单向 hash 和 salt 来保证只有用户知道密码明文&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;绝对不能存可还原密码原文的信息&lt;/strong&gt; 。如果因为种种原因一定要可还原密码原文，请使用非对称加密，并保管好私钥&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;说完了密码的存储，后面有空会接着聊聊 &lt;a class="reference external" href="http://zhuoqiang.bitbucket.org/password-transport.html"&gt;密码的传输&lt;/a&gt;&lt;/p&gt;
-</summary><category term="security"></category><category term="python"></category><category term="web"></category></entry><entry><title>在 Pylons 中使用 MongoDB 的例子</title><link href="http://zhuoqiang.bitbucket.org/use-mongodb-in-pylons.html" rel="alternate"></link><updated>2010-06-01T23:21:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-06-01:use-mongodb-in-pylons.html</id><summary type="html">&lt;p&gt;Pylons 经过漫长的开发，终于放出了 1.0 版本。对于正规的产品开发来说，1.0 版本的意义很大，这表明 Pylons 的 API 终于稳定下来了。&lt;/p&gt;
+&lt;p&gt;说完了密码的存储，后面有空会接着聊聊 &lt;a class="reference external" href="http://zhuoqiang.me/password-transport.html"&gt;密码的传输&lt;/a&gt;&lt;/p&gt;
+</summary><category term="security"></category><category term="python"></category><category term="web"></category></entry><entry><title>在 Pylons 中使用 MongoDB 的例子</title><link href="http://zhuoqiang.me/use-mongodb-in-pylons.html" rel="alternate"></link><updated>2010-06-01T23:21:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-06-01:use-mongodb-in-pylons.html</id><summary type="html">&lt;p&gt;Pylons 经过漫长的开发，终于放出了 1.0 版本。对于正规的产品开发来说，1.0 版本的意义很大，这表明 Pylons 的 API 终于稳定下来了。&lt;/p&gt;
 &lt;p&gt;Pylons 虽是山寨 Rails 而生，但作为一个纯 Python 的 Web 框架，它有一个鲜明的特点：可定制性强。框架每一层都没重新发明轮子，而是尽量整合现有的 Python 库。在 MVC 的 Model 层，Pylons 默认支持 SQLAlchemy。现在 NoSQL 很火 MongoDB 很热。在 Pylons 中应用 MongoDB 也很简单。下面是一个简单的示例。&lt;/p&gt;
 &lt;p&gt;在 &lt;tt class="docutils literal"&gt;PROJECT/model/__init__.py&lt;/tt&gt; 中定义 MongoDB 初始化函数和映射对象：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;ming&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Session&lt;/span&gt;
@@ -2847,7 +2847,7 @@ a=1&amp;amp;_method=DELETE
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;这里使用了 Ming 库来连接 MongoDB 并做简单的 ORM。Ming 库是对 PyMongo 的 ORM 包装库。它是 SourceForge 用 TurboGears 和 MongoDB 对网站进行重构的副产物。使用起来有点象 SQLAlchemy ORM 。在上面的示例中，也可以把 Ming 替换成 MongoKit 或其它 MongoDB 的 ORM 库，甚至直接用 PyMongo 也无不可。&lt;/p&gt;
 &lt;p&gt;有种感觉，MongoDB 会火。&lt;/p&gt;
-</summary><category term="database"></category><category term="python"></category><category term="web"></category></entry><entry><title>DllMain 中的死锁问题</title><link href="http://zhuoqiang.bitbucket.org/deadlock-in-dllmain.html" rel="alternate"></link><updated>2010-05-31T00:46:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-05-31:deadlock-in-dllmain.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
+</summary><category term="database"></category><category term="python"></category><category term="web"></category></entry><entry><title>DllMain 中的死锁问题</title><link href="http://zhuoqiang.me/deadlock-in-dllmain.html" rel="alternate"></link><updated>2010-05-31T00:46:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-05-31:deadlock-in-dllmain.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id5"&gt;问题&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id2" id="id6"&gt;原因&lt;/a&gt;&lt;/li&gt;
@@ -3012,7 +3012,7 @@ a=1&amp;amp;_method=DELETE
 &lt;/ul&gt;
 &lt;p&gt;好设计必须充分权衡收益和代价。换言之，本就没有  &lt;cite&gt;好的&lt;/cite&gt; 设计，只有 &lt;cite&gt;合适的&lt;/cite&gt; 设计。&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="c++"></category><category term="concurrent"></category></entry><entry><title>setlocale 与 mbstowcs 的问题</title><link href="http://zhuoqiang.bitbucket.org/setlocale-and-mbstowcs-problem.html" rel="alternate"></link><updated>2010-05-21T00:41:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.bitbucket.org,2010-05-21:setlocale-and-mbstowcs-problem.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
+</summary><category term="c++"></category><category term="concurrent"></category></entry><entry><title>setlocale 与 mbstowcs 的问题</title><link href="http://zhuoqiang.me/setlocale-and-mbstowcs-problem.html" rel="alternate"></link><updated>2010-05-21T00:41:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.me,2010-05-21:setlocale-and-mbstowcs-problem.html</id><summary type="html">&lt;div class="contents local topic" id="contents"&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id1" id="id5"&gt;问题&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#id2" id="id6"&gt;原因&lt;/a&gt;&lt;/li&gt;

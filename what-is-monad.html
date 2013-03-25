@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width">
     <meta name="author" content="Qiang">
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-        <link href="http://zhuoqiang.bitbucket.org/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="./theme/css/app.css">
-    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+        <link href="http://zhuoqiang.me/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
+    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
       </head>
   <body>
         <header>
       <hgroup>
-        <a href=".">
+        <a href="http://zhuoqiang.me">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,7 +25,7 @@
     <section>
       <article>
   <header>
-  <h1><a href="./what-is-monad.html">Monad 最简介绍</a></h1>
+  <h1><a href="http://zhuoqiang.me/what-is-monad.html">Monad 最简介绍</a></h1>
 </header>  <div>
     <section>
       <p>Haskell 是一门特殊的编程语言，哪怕在函数语言中也很特立独行。它以彻底的纯函数和强大的类型系统闻名。Monad 概念就是由 Haskell 第一个引入编程世界的，它也许是编程领域最难理解的概念。几乎所有费心尽力最终理解了 Monad 的人都会有一种恍然顿悟的感觉，这里简单说说我悟到的 Monad。</p>
@@ -60,7 +60,7 @@
 </pre></div>
 <p>可以看到 <tt class="docutils literal">&gt;&gt;=</tt> 操作实际上是受限的类型下降（或拆箱）操作，只有当后面的函数返回值也是 IO 类型时才进行下降操作。这样既充分隔离纯函数与副作用函数，又能让函数相互复用。</p>
 <p>通过 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 两个平行世界 (范畴) 就有了可控的交流通道。下图直观的反映 Monad 的作用，A 与 IO A 是分属两个不同的世界，A 是纯洁类型，IO A 是带 IO 操作的类型。为了保证整个程序的质量，两个世界的交流只能以图上的方式进行</p>
-<img alt="|filename|/images/monad.png" src="./static/images/monad.png" />
+<img alt="|filename|/images/monad.png" src="http://zhuoqiang.me/static/images/monad.png" />
 <ul class="simple">
 <li><tt class="docutils literal">return</tt> 是最自然的类型提升函数，将 a 提升为 a'</li>
 <li><tt class="docutils literal">a <span class="pre">-&gt;</span> b'</tt> 是普通的提升函数</li>
@@ -93,11 +93,11 @@
   </div>
   <footer>
   <p>
-    <time datetime="2012-06-20T23:52:00" pubdate>2012-06-20</time><a href="./category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2012-06-20T23:52:00" pubdate>2012-06-20</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-        <li><a href="./tag/design.html"><span class="tag" i18n>design</span></i></a>
-        <li><a href="./tag/haskell.html"><span class="tag" i18n>haskell</span></i></a>
+        <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
+        <li><a href="http://zhuoqiang.me/tag/haskell.html"><span class="tag" i18n>haskell</span></i></a>
       </ul>
 </footer>  <section id="disqus_thread"></section>
 <script>
@@ -115,11 +115,11 @@
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="./theme/js/vendor/moment.min.js"></script>
-    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="./theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
+    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
             <script>
       var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
