@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Goslate 免费谷歌翻译 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+        <link href="http://zhuoqiang.me/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="./theme/css/app.css">
+    <script src="./theme/js/vendor/custom.modernizr.js"></script>
+      </head>
+  <body>
+        <header>
+      <hgroup>
+        <a href=".">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+      <article>
+  <header>
+  <h1><a href="./goslate-free-google-translate-api.html">Goslate 免费谷歌翻译</a></h1>
+</header>  <div>
+    <section>
+      <div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id11">起因</a></li>
+<li><a class="reference internal" href="#id2" id="id12">使用</a></li>
+<li><a class="reference internal" href="#id4" id="id13">原理</a></li>
+<li><a class="reference internal" href="#id6" id="id14">优化</a></li>
+<li><a class="reference internal" href="#id7" id="id15">设计</a></li>
+<li><a class="reference internal" href="#id8" id="id16">开源</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id11">起因</a></h2>
+<p>机器翻译虽然质量差，但胜在省时省力。网上常见的翻译系统中，谷歌的质量算好的。谷歌翻译不但提供在线界面，还开放了 API 让程序直接调用翻译。美中不足的是从 2012 年开始谷歌翻译 API 收费了。可这难不倒聪明的程序员，只要谷歌网站上的翻译是免费使用的，你总是可以写个爬虫自动从网站抓取翻译结果。我花了点功夫写了个爬虫，又把爬虫封装成了简单高效的 Python 库来免费使用谷歌翻译，这就是 <a class="reference external" href="http://pythonhosted.org/goslate/">Goslate</a> (<em>Go</em>ogle Tran<em>slate</em>) 。</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id12">使用</a></h2>
+<p>Goslate 支持 Python2.6 以上版本，包括 Python3！你可以通过 <tt class="docutils literal">pip</tt> 或 <tt class="docutils literal">easy_install</tt> 安装</p>
+<div class="highlight"><pre><span class="nv">$ </span>pip install goslate
+</pre></div>
+<p>Goslate 目前只包含单个 python 文件，你也可以直接下载<a class="reference external" href="https://bitbucket.org/zhuoqiang/goslate/raw/tip/goslate.py">最新版本的 goslate.py</a> 。使用很简单，下面是英译德的例子</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">goslate</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">gs</span> <span class="o">=</span> <span class="n">goslate</span><span class="o">.</span><span class="n">Goslate</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">gs</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s">&#39;hello world&#39;</span><span class="p">,</span> <span class="s">&#39;de&#39;</span><span class="p">)</span>
+<span class="n">hallo</span> <span class="n">welt</span>
+</pre></div>
+<p><tt class="docutils literal">goslate.py</tt> 不仅是一个 python 模块，它还是个命令行工具，你可以直接使用</p>
+<ul>
+<li><p class="first">通过标准输入英译汉输出到屏幕</p>
+<div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello world&quot;</span> | goslate.py -t zh-CN
+</pre></div>
+</li>
+<li><p class="first">翻译两个文件，将结果用 UTF-8 编码保存到 out.txt</p>
+<div class="highlight"><pre><span class="nv">$ </span>goslate.py -t zh-CN -o utf-8 src/1.txt <span class="s2">&quot;src 2.txt&quot;</span> &gt; out.txt
+</pre></div>
+</li>
+</ul>
+<p>更多高级用法参看<a class="reference external" href="http://pythonhosted.org/goslate/">文档</a>。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id13">原理</a></h2>
+<p>要使用谷歌翻译官方 API 需要先付费获得 Key。如果 Key 非法，谷歌 API 就会返回错误禁止使用。那么 Goslate 怎么绕过 Key 的验证呢，难道走了后门？恰恰相反，Goslate 光明正大地走前门，也就是直接抓取谷歌翻译网站的结果。</p>
+<p>我们用浏览器去谷歌翻译 hello world，抓包发现，浏览器访问了这个 URL：</p>
+<blockquote>
+<a class="reference external" href="http://translate.google.com/translate_a/t?client=t&amp;hl=en&amp;sl=en&amp;tl=zh-CN&amp;ie=UTF-8&amp;oe=UTF-8&amp;multires=1&amp;prev=conf&amp;psl=en&amp;ptl=en&amp;otf=1&amp;it=sel.2016&amp;ssel=0&amp;tsel=0&amp;prev=enter&amp;oc=3&amp;ssel=0&amp;tsel=0&amp;sc=1&amp;text=hello%20world">http://translate.google.com/translate_a/t?client=t&amp;hl=en&amp;sl=en&amp;tl=zh-CN&amp;ie=UTF-8&amp;oe=UTF-8&amp;multires=1&amp;prev=conf&amp;psl=en&amp;ptl=en&amp;otf=1&amp;it=sel.2016&amp;ssel=0&amp;tsel=0&amp;prev=enter&amp;oc=3&amp;ssel=0&amp;tsel=0&amp;sc=1&amp;text=hello%20world</a></blockquote>
+<p>很容易看出源文本是作为 text 参数直接编码在 URL 中的。而相应的 tl 参数表示 translate language，这里是 zh-CN （简体中文）。</p>
+<p>谷歌翻译返回：</p>
+<blockquote>
+{&quot;sentences&quot;:[{&quot;trans&quot;:&quot;世界，你好！&quot;,&quot;orig&quot;:&quot;hello world!&quot;,&quot;translit&quot;:&quot;Shìjiè, nǐ hǎo!&quot;,&quot;src_translit&quot;:&quot;&quot;},{&quot;trans&quot;:&quot;认识你很高兴。&quot;,&quot;orig&quot;:&quot;nice to meet you.&quot;,&quot;translit&quot;:&quot;Rènshi nǐ hěn gāoxìng.&quot;,&quot;src_translit&quot;:&quot;&quot;}],&quot;src&quot;:&quot;en&quot;,&quot;server_time&quot;:48}</blockquote>
+<p>格式类似 JSON，但不标准。其中不但有翻译结果，还包含汉语拼音和源文本的语言等附加信息，猜测这些可能是为了客户端的某些特殊功能。</p>
+<p>这个过程很简单，我们的爬虫逻辑是</p>
+<ol class="arabic simple">
+<li>先把源文本和目标语言组成类似上面的 URL</li>
+<li>再用 python 的 <tt class="docutils literal">urllib2</tt> 去到谷歌翻译站点上 <tt class="docutils literal">HTTP GET</tt> 结果</li>
+<li>拿到返回数据后再把翻译结果单独抽取出来</li>
+</ol>
+<p>有一点要注意，谷歌很不喜欢 python 爬虫：） 它会禁掉所有 <tt class="docutils literal"><span class="pre">User-Agent</span></tt> 是 <tt class="docutils literal"><span class="pre">Python-urllib/2.7</span></tt> 的 HTTP 请求。我们要<a class="reference external" href="http://zhuoqiang.me/python-urllib2-usage.html#http-request-header">伪装成浏览器</a> <tt class="docutils literal"><span class="pre">User-Agent:</span> Mozilla/4.0</tt> 来让谷歌放心。另外还有一个小窍门，URL 中可将参数 <tt class="docutils literal">client</tt> 从 <tt class="docutils literal">t</tt> 改成其它值，返回的就是标准 JSON 格式，方便解析结果。</p>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id14">优化</a></h2>
+<p>爬虫虽然工作正常，但有两个问题：</p>
+<ul class="simple">
+<li>短：受限于 URL 长度，只能翻译不超过 2000 字节的短文本。长文本需要手工分隔多次翻译</li>
+<li>慢：每次翻译都要一个 HTTP 网络应答，时间接近 1 秒，开销很大。以 8000 个短句的翻译为例，全部翻完就需要近 2 个小时</li>
+</ul>
+<p>短的问题可用自动分拆，多次查询解决：对于长文本，Goslate 会在标点换行等分隔处把文本分拆为若干接近 2000 字节的子文本，再一一查询，最后将翻译结果拼接后返回用户。通过这种方式，Goslate 突破了文本长度的限制。</p>
+<p>慢的问题比较难，性能卡在网络延迟上。谷歌官方 API 可以一次传入多个文本进行批量翻译，大大减少了 HTTP 网络应答。Goslate 也支持批量翻译，既然一次查询最大允许 2000 字节的文本，那就尽量用足。用户传入多个文本后 Goslate 会把若干小文本尽量拼接成不超过 2000 字节的大文本，再通过一次 HTTP 请求进行翻译，最后将结果分拆成相应的若干翻译文本返回。</p>
+<p>这里可以看到，批量查询和长文本支持正好相反，批量查询是要拼接成大块后一次翻译再分拆结果，长文本支持是要拆分后多次翻译再拼接结果。如果批量查询中有某个文本过长，那它本身就要先被拆分，然后再和前后的小文本合并。看起来逻辑有些复杂，但其实只要功能合理分层实现就好了：</p>
+<ol class="arabic simple">
+<li>最底层的 <tt class="docutils literal">Goslate._basic_translate()</tt> 具体负责通过 HTTP 请求翻译单个文本，不支持长文本分拆</li>
+<li><tt class="docutils literal">Goslate._translate_single_text()</tt> 在 <tt class="docutils literal">_basic_translate()</tt> 基础上通过自动分拆多次查询支持长文本</li>
+<li>最后外部 API <tt class="docutils literal">Goslate.translate()</tt> 通过拼接后调用 <tt class="docutils literal">_translate_single_text()</tt> 来支持批量翻译</li>
+</ol>
+<p>通过三层递进，复杂的拆分拼接逻辑就完美表达出来了。All problems in computer science can be solved by another level of indirection 额外的间接层解决一切，诚不余欺也。</p>
+<p>另一个加速方法是利用并发。Goslate 内部用线程池并发多个 HTTP 请求，大大加快查询的速度。这里没有选择重新发明轮子，而是直接用 <a class="reference external" href="https://pypi.python.org/pypi/futures">futures</a> 库提供的线程池。</p>
+<p>批量加并发后效果非常明显，8000 个短句的翻译时间从 2 小时缩短到 10 秒钟。速度提升了 700 倍。看来 Goslate 不但免费，还比谷歌官方 API 要高效得多。</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id15">设计</a></h2>
+<p>能工作，性能高，再进一步的要求就是好用了。这就涉及到 API 设计问题。Goslate API 总的设计原则是简约但不简陋 （Make things as simple as possible, but not simpler）</p>
+<p>Goslate 功能虽然简单，但魔鬼在细节中。比如出入参数的字符编码，proxy 设定，超时处理，并发线程数等该怎么合理组织规划？按设计原则，我们把灵活性分为三大类，Goslate 区别对待：</p>
+<ul class="simple">
+<li>必需的灵活，比如待翻译的源文本，目标语言等。这些是基本功能，将做为 API 的入参</li>
+<li>高级场景下才需要的灵活，比如 proxy 地址，出错后重试的次数，并发线程数等。通常用户不会关心，但特殊场景下又希望能控制。Goslate 用参数默认值解决这个两难问题。为了进一步简化和性能考虑，这类灵活性都放在了 Goslate 对象的构造中 <tt class="docutils literal">Goslate.__init__()</tt> 一次性设定</li>
+<li>无意义的灵活，例如文本的编码等。对这种灵活性要敢于说不，过度设计只会增加不必要的复杂度。Goslate 的入参只支持 Unicode 字串或 UTF-8 编码的字节流，返回值一律是 Unicode 字符串，需要什么编码自己转去。为什么说这些灵活性毫无意义？因为用户本来就有更自然的方式实现同样的功能。拒绝无意义的灵活反而能让用户达到真正的灵活</li>
+</ul>
+<p>设计上还有其它考虑点：</p>
+<ul class="simple">
+<li>消灭全局状态，所有状态都在 Goslate 对象中。如果想的话，urllib2 提供的 HTTP opener 甚至线程池你都可以替换定制。</li>
+<li>应用依赖注入原则，所有的灵活性设置都本着最少知道原则 (Law of Demeter) 依赖于直接的外部功能接口。例如，proxy 地址不直接通过参数传入 Goslate，而是需要构造一个支持 proxy 的 <tt class="docutils literal">urllib2.opener</tt> 传给 Goslate 的构造函数。这么做的直接好处是参数少了。更本质的好处是解耦。内部实现依赖的是 opener 的接口，而不是具体的 opener 实现，更加不是 proxy 的配置。你可以配一个支持 proxy 的 <tt class="docutils literal">opener</tt> 来实现 proxy 转发访问，也可以配一个支持用户认证的 <tt class="docutils literal">opener</tt> 来应对复杂的网络环境。极端情况下，甚至可以自己从头定制一个 opener 实现来完成特殊的需求</li>
+<li>批量查询的入参出参使用 <tt class="docutils literal">generator</tt> 而不是 <tt class="docutils literal">list</tt>。这样就可以按照 pipeline 的方式组织代码：批量翻译的源文本序列可以是 generator，翻译一条就可以通过返回的 generator 实时拿到一个结果进行后面的处理，不用等着全部批量操作完成，增加了整个流程的效率。</li>
+<li>额外提供了命令行界面，简单的翻译任务可以直接用命令行完成。命令行参数的设计也遵照 Unix 设计哲学：从标准输入读取源文本，输出到标准输出。方便与其它工具集成使用</li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id16">开源</a></h2>
+<p>如果只是自己使用，API 完全不用考虑的这么周全。之所以精雕细琢，目标就是开源！Python 社区对开源支持的非常好，开源库只要按照一定的规范去操作就好了：</p>
+<ol class="arabic simple">
+<li>选版权：挑了半天，选择了自由的 MIT</li>
+<li>代码管理: Goslate 托管在 Bitbucket 上，虽然名气没有 Github 响，但胜在可以用我喜欢的 hg</li>
+<li>单元测试: 自动化单元测试很有必要，既是对用户负责，也让自己能放手做优化。Python 标准的 <tt class="docutils literal">unittest</tt> 框架很好用。同时 Goslate 也在 <tt class="docutils literal">docstring</tt> 中加入了 <tt class="docutils literal">doctest</tt></li>
+<li>文档: 使用 Python 社区标准的文档工具 sphinx 生成，它可以自动从代码中抽取信息生成文档。文档生成好了后还可以免费上传到 <a class="reference external" href="http://pythonhosted.org/goslate/">pythonhosted</a> 托管</li>
+<li>部署: 按规矩在 <tt class="docutils literal">setup.py</tt> 中写好元信息，将代码打包上传到 pypi 就成了 (<a class="reference external" href="https://jamiecurle.co.uk/blog/my-first-experience-adding-package-pypi/">这里有详细步骤</a>) 。这样全世界的用户就可以用 <tt class="docutils literal">pip</tt> 或 <tt class="docutils literal">easy_install</tt> 安装使用了。为了让受众更广，Goslate 还花了点力气同时支持 python2，python3</li>
+<li>宣传: 酒香也怕巷深，何况我这个小小的开源库呢。这也是本文的初衷</li>
+</ol>
+<p>回过头看，Goslate 代码共 700 行，其中只有 300 行是实际功能代码，剩下的 400 行包括 150 行的文档注释和 250 行的单元测试。库虽小，但每样都要做好的话工作量比预想的要大很多，算起来写功能代码的时间远没有做开源周边辅助工作的时间长。</p>
+<p>天下事必做于细，信哉！</p>
+</div>
+
+    </section>
+  </div>
+  <footer>
+  <p>
+    <time datetime="2013-07-18T22:55:00" pubdate>2013-07-18</time><a href="./category/programming.html"><span class="category" i18n>programming</span></a> 
+  </p>
+  <ul>
+        <li><a href="./tag/python.html"><span class="tag" i18n>python</span></i></a>
+        <li><a href="./tag/design.html"><span class="tag" i18n>design</span></i></a>
+        <li><a href="./tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
+      </ul>
+</footer>  <section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'goslate-free-google-translate-api';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="./theme/js/vendor/moment.min.js"></script>
+    <script src="./theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="./theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="./theme/js/main.js"></script>
+            <script>
+      var _gaq=[['_setAccount','UA-16424043-4'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+            <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+          </body>
+</html>
