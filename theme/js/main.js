@@ -45,7 +45,8 @@ var i18nResource = {
             'review':'品评',
             'essay':'随笔',
             'life':'生活',
-            'mobile':'移动'
+            'mobile':'移动',
+            'algorithm':'算法',
         }
     }
 };
