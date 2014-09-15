@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+  <head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | 逆世界：让 C++ 走进 Python </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
+    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+  </head>
+  <body>
+    <header>
+      <hgroup>
+        <a href="http://zhuoqiang.me">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+<article>
+<header>
+  <h1><a href="http://zhuoqiang.me/bring-cpp-class-to-python-through-cython.html">逆世界：让 C++ 走进 Python</a></h1>
+</header>  <div>
+    <section>
+      <p><em>本文首发程序员杂志 2014 年 8 月刊</em></p>
+<p>要想实现 C 语言与 Python 之间的交互，业界已有不少成熟的解决方案。但如果希望实现 C++ 与 Python 之间的水乳交融，现有的这些解决方案却又都不那么完美：Boost.Python 失之环境复杂; Cython 对 C++ 支持有限; 易于上手的 ctypes 则干脆不支持 C++。</p>
+<p>下面将会向大家介绍一种基于 Cython 的解决方案，可以轻松实现 C++ 与 Python 之间的跨语言多态，也算是补足了 Cython 对 C++ 支持的短板吧。</p>
+<div class="section" id="id1">
+<h2>跨语言多态的问题</h2>
+<p>首先让我们来看问题：如果要把下面的 C++ 类 <tt class="docutils literal">CppFoo</tt> 包装成一个 Python 类，应该怎么做？</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFoo</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">fun</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;CppFoo::fun()&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">CppFoo</span><span class="p">()</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">call_fun</span><span class="p">(</span><span class="n">CppFoo</span><span class="o">*</span> <span class="n">foo</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">foo</span><span class="o">-&gt;</span><span class="n">fun</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+<p>我们可以使用 Cython 提供的 C++ 绑定机制，直接将 <tt class="docutils literal">CppFoo</tt> 类包装成 Python 中的 <tt class="docutils literal">foo.PyFoo</tt></p>
+<div class="highlight"><pre><span class="c"># 在 Cython 中引入 C++ 类定义</span>
+<span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s">&quot;CppFoo.hpp&quot;</span><span class="p">:</span>
+    <span class="n">cdef</span> <span class="n">cppclass</span> <span class="n">CppFoo</span><span class="p">:</span>
+        <span class="n">void</span> <span class="n">fun</span><span class="p">()</span>
+
+    <span class="n">void</span> <span class="n">call_fun</span><span class="p">(</span><span class="n">CppFoo</span><span class="o">*</span> <span class="n">foo</span><span class="p">)</span>
+
+<span class="c"># C++ 类 CppFoo 的 Python 包装类</span>
+<span class="n">cdef</span> <span class="k">class</span> <span class="nc">PyFoo</span><span class="p">:</span>
+    <span class="n">cdef</span> <span class="n">CppFoo</span><span class="o">*</span> <span class="n">_this</span>
+
+    <span class="k">def</span> <span class="nf">__cinit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_this</span> <span class="o">=</span> <span class="n">new</span> <span class="n">CppFoo</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__dealloc__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_this</span>
+
+    <span class="c"># 转发调用</span>
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_this</span><span class="o">.</span><span class="n">fun</span><span class="p">()</span>
+
+<span class="c"># C++ 函数 call_fun() 的 Python 包装</span>
+<span class="n">cpdef</span> <span class="n">py_call_fun</span><span class="p">(</span><span class="n">PyFoo</span> <span class="n">foo</span><span class="p">):</span>
+    <span class="n">call_fun</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">_this</span><span class="p">)</span>
+</pre></div>
+<p>用 Cython 将上面的文件编译成 Python 扩展 <tt class="docutils literal">foo</tt> 后，让我们来看看测试结果：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">foo</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">PyFoo</span><span class="p">()</span>
+
+<span class="n">base</span><span class="o">.</span><span class="n">fun</span><span class="p">()</span>
+<span class="c"># 输出 &quot;CppFoo::fun()&quot;</span>
+
+<span class="n">foo</span><span class="o">.</span><span class="n">py_call_fun</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+<span class="c"># 输出 &quot;CppFoo::fun()&quot;</span>
+</pre></div>
+<p>我们可以看到 C++ 成员函数被 Python 正确地调用了。</p>
+<p>接着让我们更进一步：如果需要在 Python 中继承 <tt class="docutils literal">PyFoo</tt> 并且改写 <tt class="docutils literal"><span class="pre">CppFoo::fun()</span></tt> 虚函数又会发生什么呢？</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">PyDerivedFoo</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">PyFoo</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;PyDerivedFoo.fun()&#39;</span>
+
+<span class="n">derived</span> <span class="o">=</span> <span class="n">PyDerivedFoo</span><span class="p">()</span>
+
+<span class="n">derived</span><span class="o">.</span><span class="n">fun</span><span class="p">()</span>
+<span class="c"># 正确输出 &#39;PyDerivedFoo.fun()&#39;</span>
+
+<span class="n">foo</span><span class="o">.</span><span class="n">py_call_fun</span><span class="p">(</span><span class="n">derived</span><span class="p">)</span>
+<span class="c"># 哎！为什么输出了 &quot;CppFoo::fun()&quot;？</span>
+</pre></div>
+<p>看到了吗？我们在 Python 中改写的 <tt class="docutils literal">PyDerived.fun()</tt> 被忽略了，<tt class="docutils literal">py_call_fun()</tt> 调用的仍然是 C++ 父类的实现。看来 Cython 并不支持跨语言多态。</p>
+</div>
+<div class="section" id="id2">
+<h2>解决跨语言多态问题</h2>
+<p>如何将跨语言多态引入 Cython 中呢？谚云：额外间接层解决一切。我们可以通过增加一层中间代理来连接 C++ 和 Python 的多态机制，从而实现跨语言多态。</p>
+<p>首先让我们明确一点，C++ 的虚函数只能在 C++ 继承类中被改写。那么我们的代理类顺理成章的应该要继承 <tt class="docutils literal">CppFoo</tt>。</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFooProxy</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CppFoo</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">fun</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+<p>我们还需要改写代理类的 <tt class="docutils literal">fun()</tt> 函数，让它转去调用 Python 对象的 <tt class="docutils literal">fun()</tt> 方法，从而完成跨语言多态。</p>
+<div class="highlight"><pre>void CppFooProxy::fun()
+{
+    if (has_python_override_method(self, &quot;fun&quot;)) {
+        return call_python_method_fun(self);
+    }
+    else {
+        return CppFoo::fun();
+    }
+}
+</pre></div>
+<p>在上面的代码中，我们先通过 <tt class="docutils literal">has_python_override_method()</tt> 函数来判断 Python 对象是否改写了 <tt class="docutils literal">fun()</tt> 方法。如果我们检测发现 Python 对象确实含有 <tt class="docutils literal">fun()</tt> 方法，我们就将调用转发到 Python 中重新定义的那个 <tt class="docutils literal">fun</tt> 方法上。反之，如果 Python 对象并没有改写 <tt class="docutils literal">fun()</tt> 那就转去调用父类的默认实现 <tt class="docutils literal"><span class="pre">CppFoo::fun()</span></tt>。最终实现跨语言多态。</p>
+<p>这里还有个特殊情况没有在代码中表现出来：如果父类方法是纯虚函数，而 Python 也没有提供任何实现，那要怎么办呢？ 简单的处理方案可以直接抛出异常来报错，让纯虚函数跨界调用在运行时出错。</p>
+<p>上面这段程序里的 <tt class="docutils literal">self</tt> 又是什么呢？ 它是一个实实在在的 Python 对象。通过 <tt class="docutils literal">self</tt>, 我们可以在 C++ 的世界中操作彼端 Python 世界里的那个对象</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFooProxy</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CppFoo</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">CppFooProxy</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">self</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">assert</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+
+        <span class="c1">// 增加 Python 对象引用计数</span>
+        <span class="n">Py_XINCREF</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="o">~</span><span class="n">CppFooProxy</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 减少 Python 对象引用计数</span>
+        <span class="n">Py_XDECREF</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">fun</span><span class="p">();</span>
+
+<span class="nl">private:</span>
+   <span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+<p>那么 <tt class="docutils literal">has_python_override_method()</tt> 该如何实现呢？ 我们可以用 Python 提供的 C API 直接在 C++ 代码中实现这个功能。但这里我们选择用 Cython 来实现，然后通过 Cython 的 <tt class="docutils literal">public api</tt> 机制暴露 C 接口再给 C++ 调用。这样的好处是我们可以很简洁地用类似 Python 语法实现这个功能。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">types</span>
+
+<span class="n">cdef</span> <span class="n">public</span> <span class="n">api</span> <span class="nb">bool</span> <span class="n">has_python_override_method</span><span class="p">(</span>
+        <span class="nb">object</span> <span class="bp">self</span><span class="p">,</span>
+        <span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">method_name</span><span class="p">):</span>
+
+    <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">)</span>
+</pre></div>
+<p><tt class="docutils literal">getattr()</tt> 方法能通过名字找到对象中相应的属性对象。在尝试获得 <tt class="docutils literal">self</tt> 中与方法名想同名称的子对象后，我们再判断这个子对象的类型是不是一个方法。</p>
+<p>下面 <tt class="docutils literal">call_python_method_fun()</tt> 的实现就更简单了，一旦找到方法我们就直接转发调用</p>
+<div class="highlight"><pre><span class="n">cdef</span> <span class="n">public</span> <span class="n">api</span> <span class="n">void</span> <span class="n">call_python_method_fun</span><span class="p">(</span><span class="nb">object</span> <span class="bp">self</span><span class="p">):</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+    <span class="n">method</span><span class="p">()</span>
+</pre></div>
+<p>搞清了 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 的实现细节后，下一步就是看如何将 Python 对象 <tt class="docutils literal">self</tt> 塞进 <tt class="docutils literal">CppFooProxy</tt> 中</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">cpython.ref</span> <span class="nn">cimport</span> <span class="nn">PyObject</span>
+
+<span class="c"># 在 Cython 中引入 C++ 类 CppFoo 的定义</span>
+<span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s">&quot;CppFoo.hpp&quot;</span><span class="p">:</span>
+    <span class="n">cdef</span> <span class="n">cppclass</span> <span class="n">CppFoo</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">void</span> <span class="n">call_fun</span><span class="p">(</span><span class="n">CppFoo</span><span class="o">*</span> <span class="n">foo</span><span class="p">)</span>
+
+<span class="c"># 在 Cython 中引入 C++ 类 CppFooProxy 的定义</span>
+<span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s">&quot;CppFooProxy.hpp&quot;</span><span class="p">:</span>
+    <span class="n">cdef</span> <span class="n">cppclass</span> <span class="n">CppFooProxy</span><span class="p">(</span><span class="n">CppFoo</span><span class="p">):</span>
+        <span class="n">void</span> <span class="n">fun</span><span class="p">()</span>
+
+<span class="c"># 改变我们的 Python 包装类</span>
+<span class="n">cdef</span> <span class="k">class</span> <span class="nc">PyFoo</span><span class="p">:</span>
+    <span class="n">cdef</span> <span class="n">CppFooProxy</span><span class="o">*</span> <span class="n">_this</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># 将 self 放入 CppFooProxy 中</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_this</span> <span class="o">=</span> <span class="n">new</span> <span class="n">CppFooProxy</span><span class="p">(</span><span class="o">&lt;</span><span class="n">PyObject</span><span class="o">*&gt;</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__dealloc__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_this</span>
+
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_this</span><span class="o">.</span><span class="n">fun</span><span class="p">()</span>
+
+
+<span class="c"># C++ 函数 call_fun() 的 Python 包装</span>
+<span class="n">cpdef</span> <span class="n">py_call_fun</span><span class="p">(</span><span class="n">PyFoo</span> <span class="n">foo</span><span class="p">):</span>
+    <span class="n">call_fun</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">_this</span><span class="p">)</span>
+</pre></div>
+<p>可以看到，我们先把要包装导出的 C++ 目标类 <tt class="docutils literal">CppFoo</tt> 和我们刚刚实现的代理类 <tt class="docutils literal">CppFooProxy</tt> 的定义导出到 Cython 中，再构造 Python 类 <tt class="docutils literal">PyFoo</tt> 来包装我们的代理类 <tt class="docutils literal">CppFooProxy</tt>。<tt class="docutils literal">PyFoo</tt> 在内部维护了一个 <tt class="docutils literal">CppFooProxy</tt> 代理类的对象，而 <tt class="docutils literal">PyFoo.foo()</tt> 调用会被转发到代理类的  <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 函数上。当创建 <tt class="docutils literal">CppFooProxy</tt> 对象时，<tt class="docutils literal">PyFoo</tt> 也会将自己通过 <tt class="docutils literal">self</tt> 传入到 <tt class="docutils literal">CppFooProxy</tt> 中。这样一来，<tt class="docutils literal">PyFoo</tt> 与 <tt class="docutils literal">CppFooProxy</tt> 就彼此拥有对方。他们一起合作来完成 C++ 和 Python 这两个世界的连接。</p>
+<object data="http://zhuoqiang.me/images/cpp-py-classes.svg" type="image/svg+xml">
+C++ 与 Python 的跨语言多态实现原理 http://yuml.me/diagram/plain/class/[CppFoo|fun(){bg:orange}]^-[CppFooProxy|fun(){bg:orange}], [PyFoo|fun(){bg:green}]->[CppFooProxy], [CppFooProxy]->[PyFoo], [PyFoo]^-[PyDerivedFoo|fun(){bg:green}].svg</object>
+<p>细心的朋友可能意识到了，上面 <tt class="docutils literal">foo()</tt> 函数调用转发隐藏着一个问题。<tt class="docutils literal">PyFoo.fun()</tt> 会去调用 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt>，而 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 又会去调用 Python 对象中的 <tt class="docutils literal">fun()</tt> 方法，这不是一个死循环吗？ 幸运的是在 <tt class="docutils literal">has_python_override_method()</tt> 中，我们是用 <tt class="docutils literal">types.MethodType</tt> 来做比较，去判定对象是否改写了 <tt class="docutils literal">fun()</tt> 方法。而 <tt class="docutils literal">types.MethodType</tt> 只会匹配纯 Python 方法，它不包含内建函数 (built-in functions)。我们知道，Python 扩展中的方法类型都是属于内建函数类型。这样恰好排除掉了 <tt class="docutils literal">PyFoo</tt> 自己那个属于内建函数的 <tt class="docutils literal">fun()</tt> 方法，从而避免了危险的死循环。</p>
+<p>至此，我们的 C++ 类 <tt class="docutils literal">CppFoo</tt> 就成功地通过 <tt class="docutils literal">PyFoo</tt> 类转移到了 Python 世界中了。来检验一下成果吧：</p>
+<div class="highlight"><pre><span class="n">derived</span><span class="o">.</span><span class="n">fun</span><span class="p">()</span>
+<span class="c"># 输出 &#39;PyDerivedFoo.fun()&#39;</span>
+
+<span class="n">foo</span><span class="o">.</span><span class="n">py_call_fun</span><span class="p">(</span><span class="n">derived</span><span class="p">)</span>
+<span class="c"># 同样输出 &#39;PyDerivedFoo.fun()&#39;！</span>
+</pre></div>
+<p>一切正常，在 <tt class="docutils literal">CppFooProxy</tt> 这个额外的间接层牵线搭桥下，C++ 和 Python 终于实现了跨语言多态。</p>
+</div>
+<div class="section" id="id3">
+<h2>自动代码生成</h2>
+<p>问题虽然解决了。但回头看看，为了包装上面例子中的 C++ 类，我们要做的事情太多：</p>
+<ol class="arabic simple">
+<li>定义 C++ Proxy 类</li>
+<li>实现 C++ Proxy 类和相关的虚函数</li>
+<li>在 Cython 中实现相关的 Python 方法的检测和转发功能，以供 C++ Proxy 类使用</li>
+<li>在 Cyhton 中引入 C++ 类定义</li>
+<li>在 Cyhton 中引入 C++ Proxy 类定义</li>
+<li>在 Cython 中把 C++ Proxy 类包装成 Python 扩展类</li>
+</ol>
+<p>这还只是包装导出 1 个类的 1 个方法。假设有 10 个类，100 个方法需要包装导出，这工作量想想就头疼。虽说这里面并没任何技术难度，我们只要照葫芦画瓢就好了。但如果靠人手工来做的话，因为步骤繁琐会很容易出错。</p>
+<p>对程序员这种一心偷懒的生物来说，类似的重复工作都是写个程序来自动完成。下面介绍下我写的 <a class="reference external" href="https://bitbucket.org/zhuoqiang/cppython">cppython</a> 工具，它就是干这活儿的。</p>
+<p>还是上面的例子，让我们来包装导出 <tt class="docutils literal">CppFoo</tt> 类。这次我们通过 cppython 来生成所有的包装导出代码：</p>
+<div class="highlight"><pre><span class="nv">$ </span>python cppython.py cpp_foo.hpp out/foo
+generating out/cpp_foo.pxd ...
+generating out/foo.pyx ...
+generating out/foo_cppython.cpp ...
+generating out/foo_cppython.hpp ...
+generating out/foo.pxi ...
+generating out/foo_cppython.pxd ...
+generating out/setup.py ...
+<span class="k">done</span>.
+<span class="nv">$ </span><span class="nb">cd </span>out/ <span class="o">&amp;&amp;</span> python setup.py build_ext --inplace
+</pre></div>
+<p>可以看到，<tt class="docutils literal">cppython</tt> 通过解析 <tt class="docutils literal">cpp_foo.hpp</tt> 自动生成了 7 个文件</p>
+<ul class="simple">
+<li><tt class="docutils literal">cpp_foo.pxd</tt> 将 <tt class="docutils literal">CppFoo</tt> 类定义引入 Cython</li>
+<li><tt class="docutils literal">foo_cppython.hpp</tt> 是 C++ 代理类的定义</li>
+<li><tt class="docutils literal">foo_cppython.cpp</tt> 是 C++ 代理类的实现</li>
+<li><tt class="docutils literal">foo_cppython.pxd</tt> 将代理类的 C++ 定义引入 Cython</li>
+<li><tt class="docutils literal">foo.pyx</tt> 包含 python 扩展类 <tt class="docutils literal">Foo</tt> 的定义</li>
+<li><tt class="docutils literal">foo.pxi</tt> 包含代理类所需要的 Python 对象交互方法实现</li>
+<li><tt class="docutils literal">setup.py</tt> 编译 Python 扩展模块的启动脚本</li>
+</ul>
+<p>这下好了，一声令下，程序就乖乖帮我们完成了繁琐机械的工作。偷懒改变世界啊！</p>
+<p>当然，把复杂的 C++ 类框架丝毫不差地一一映射到 Python 并不现实，也没有必要。毕竟 Python 和 C++ 各自有不同的惯用模式和编程习惯。建议在使用 <tt class="docutils literal">cython</tt> 和 <a class="reference external" href="https://bitbucket.org/zhuoqiang/cppython">cppython</a> 之前，先把 C++ 类的模块功能做一定的切分和包装，有选择的导出到 Python，这样效果会更好。</p>
+</div>
+<div class="section" id="cppython">
+<h2>cppython 原理与实现</h2>
+<p>通过上面的描述，我们已经了解了 cppython 的主要功能。它的输入是 C++ 头文件，里面包含了待导出的 C++ 类定义。根据输入，cppython 会自动生成代理类实现和一堆 Cython 文件。可是 cppython 究竟是如何实现这些功能的呢？ 让我们来深入了解一下。</p>
+<p>在 cppython 内部，我们首先会对输入的 C++ 文件进行语法分析，生成语法树。接着通过遍历语法树来生成所需要的包装导出代码。这里我们用访问者 (Visitor) 设计模式来解耦，把语法树的遍历逻辑和不同文件的代码生成逻辑区分开来，彼此独立实现。</p>
+<object data="http://zhuoqiang.me/images/cppython-visitors.svg" type="image/svg+xml">
+cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
+<!-- [IVisitor|on_class_begin();on_method();on_...()]^-[BaseVisitor{bg:orange}], [BaseVisitor]^-[PyxVisitor{bg:green}],[BaseVisitor]^-[CppVisitor{bg:green}], [BaseVisitor]^-[HppVisitor{bg:green}], [BaseVisitor]^-[PxdVisitor{bg:green}], [BaseVisitor]^-[PxdProxyVisitor{bg:green}], [BaseVisitor]^-[PxiVisitor{bg:green}], [BaseVisitor]^-[SetupVisitor{bg:green}], [IVisitor]^-[VisitorGroup{bg:green}] -->
+<!-- [IVisitor|on_class_begin();on_method();on_...()]^-[BaseVisitor{bg:orange}], , [BaseVisitor]^-[... Visitor], [BaseVisitor]^-[CppVisitor{bg:green}],  [BaseVisitor]^-[PyxVisitor{bg:green}], , [IVisitor]^-[VisitorGroup{bg:green}] -->
+<p>这里还偷了个懒，图中的 <tt class="docutils literal">IVisitor</tt> 接口其实只存在于概念中，并没有任何代码。访问者类的多态完全依靠 Python 鸭子类型 (duck typing) 机制。在实际的遍历时，程序会生成 7 个不同的访问者实例，分别负责 7 个将要生成的目标代码文件。为了减少解析遍历的次数，所有访问者都会被放入到一个 GroupVisitor 容器中，一次性遍历完毕。</p>
+<p>按道理我们还应该增加一个上下文对象，用来在代码生成过程当中做记录和协调。但在现阶段 cppython 只是依靠着惯例来协调不同访问者生成的代码。例如，所有的代理类名字都生成为 <tt class="docutils literal">原始类名_proxy</tt>。</p>
+<p>了解完了 cppython 的工作流程，让我们看看 cppython 究竟是怎么解析 C++ 文件的。众所周知，C++ 语法以繁复难以解析著称。这里我们有 3 个选择</p>
+<ul class="simple">
+<li>手写解析器，对 C++ 语法有选择地分析。但这样做耗时耗力，而且很难避免出错</li>
+<li>使用 <tt class="docutils literal">pyparsing</tt> 等解析库，帮助我们实现简单的 C++ 语法解析器。这只比纯手写好上一点，难点还是在于 C++ 语法实在不是一般的复杂</li>
+<li>利用真正的 C++ 编译器来解析。例如 g++ 就可以把解析后的语法树输出为 XML 结构，方便其它程序进一步利用。不少代码生成器就是这么做的</li>
+</ul>
+<p>在比较权衡后 cppython 最终选择了第三种方式，使用一个真正的 C++ 编译器来帮助解析。但这里没有使用老牌的 g++，而是选择了另一位新晋明星: Clang。</p>
+<p>Clang 是苹果基于 LLVM 架构开发的 C++/Objective C 编译器，在被苹果 Xcode 加持后，又被 FreeBSD 选为默认编译器。势头正旺，大有取代 g++ 的架式。它不但对 C++ 新标准有完美的支持，更重要的是它把自己内部的语法解析功能通过 libclang 暴露出来，让用户能够直接使用。象 Xcode 集成开发环境的智能提示，还有一些第三方的 C++ 重构工具就是利用 Clang 本身提供的解析功能实现的。cppython 也正是利用 Clang 官方的 Python 扩展来实现 C++ 解析功能的。</p>
+<p>一行程序胜过千言万语。下面的代码示范了如何利用 Clang 来解析我们上文中的 <tt class="docutils literal">CppFoo</tt> 类定义</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">clang.cindex</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">print_cpp_parse_tree</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="s">&#39;递归打印 C++ 语法树&#39;</span>
+    <span class="k">print</span> <span class="n">indent</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">spelling</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">spelling</span>
+
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">get_children</span><span class="p">():</span>
+        <span class="n">print_cpp_parse_tree</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">indent</span><span class="o">+</span><span class="s">&#39;  &#39;</span><span class="p">)</span>
+
+
+<span class="n">tu</span> <span class="o">=</span> <span class="n">TranslationUnit</span><span class="o">.</span><span class="n">from_source</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s">&#39;CppFoo.hpp&#39;</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;-x&#39;</span><span class="p">,</span> <span class="s">&#39;c++&#39;</span><span class="p">])</span>
+
+<span class="n">print_cpp_parse_tree</span><span class="p">(</span><span class="n">tu</span><span class="o">.</span><span class="n">cursor</span><span class="p">)</span>
+</pre></div>
+<p>下面是解析后的输出结果，大家可以直观感受一下 clang Python 扩展的威力</p>
+<div class="highlight"><pre>CursorKind.TRANSLATION_UNIT  CppFoo.hpp
+  CursorKind.TYPEDEF_DECL __int128_t __int128_t
+  CursorKind.TYPEDEF_DECL __uint128_t __uint128_t
+  CursorKind.TYPEDEF_DECL __builtin_va_list __builtin_va_list
+    CursorKind.TYPE_REF __va_list_tag __va_list_tag
+  CursorKind.CLASS_DECL CppFoo CppFoo
+    CursorKind.CXX_ACCESS_SPEC_DECL
+    CursorKind.CXX_METHOD void <span class="o">()</span> fun
+      CursorKind.COMPOUND_STMT
+    CursorKind.DESTRUCTOR void <span class="o">()</span> ~CppFoo
+      CursorKind.COMPOUND_STMT
+  CursorKind.FUNCTION_DECL void <span class="o">(</span>CppFoo *<span class="o">)</span> call_fun
+    CursorKind.PARM_DECL CppFoo * foo
+      CursorKind.TYPE_REF CppFoo class CppFoo
+    CursorKind.COMPOUND_STMT
+      CursorKind.CALL_EXPR void fun
+        CursorKind.MEMBER_REF_EXPR &lt;bound member <span class="k">function </span><span class="nb">type</span>&gt; fun
+          CursorKind.UNEXPOSED_EXPR CppFoo * foo
+            CursorKind.DECL_REF_EXPR CppFoo * foo
+</pre></div>
+<p>有了 Clang 的强力支持后，cppython 不费吹灰之力就能解析任意 C++ 代码了。</p>
+<p>现在 cppython 还处于 alpha 阶段，虽然基本框架已经完成，但仍有很多改进的空间。除了继续完善 Cython 包装代码生成功能外，在现有架构下，cppython 也能很容易地支持 Boost.Python 的包装代码生成。我们甚至可以抛开 Cython 和 Boost.Python，直接生成基于 Python C API 的扩展代码。更进一步，C++ 与其它语言 (例如 Ruby) 的交互代码也可以用类似方式自动生成，毕竟对 cppython 来说，这些改进都只需要添加新的访问类而已。</p>
+</div>
+<div class="section" id="id4">
+<h2>总结</h2>
+<p>本文介绍了 C++ 与 Python 之间跨语言多态的一种可行方案，并且提供了 cppython 代码生成器来自动完成包装工作。cppython 的实现依赖于开源项目 Cython 和 Clang。而 cppython 本身也已经在 <a class="reference external" href="https://bitbucket.org/zhuoqiang/cppython">https://bitbucket.org/zhuoqiang/cppython</a> 上开源了。感兴趣的朋友可以动手玩一玩，也欢迎参与改进。</p>
+</div>
+
+    </section>
+  </div>
+<footer>
+  <p>
+    <time datetime="2014-09-15T20:39:00" pubdate>2014-09-15</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+  </p>
+  <ul>
+    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
+    <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>
+    <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
+  </ul>
+</footer><section id="disqus_thread"></section>
+<script>
+  var disqus_shortname = 'zhuoqiang';
+  var disqus_identifier = 'bring-cpp-class-to-python-through-cython';
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+</article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
+    </footer>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
+    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+  </body>
+</html>
