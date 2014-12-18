@@ -78,7 +78,7 @@
 <p>API 隐藏依赖关系是不好的，这意谓着外部环境能通过潜规则来影响 API 的功能。这降低了 API 的复用性、可测性。运行时更容易出现意外错误。进一步设想，如果环境原来的 locale 是被其它代码块故意设置的，为了修正打开中文名文件的 bug 冒然修改全局 locale ，很可能会让依赖于原 locale 工作的代码出现 bug 。在这样的 API 设计下，如果要尽量避免顾此失彼的发生，我们可以在修改 locale 前保存当前的 locale 状态，用完后再将 locale 恢复。我们用 RAII 手法来封装这样的逻辑</p>
 <div class="highlight"><pre><span class="k">class</span>  <span class="nc">scoped_locale</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
     <span class="n">scoped_locale</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">loc_name</span><span class="p">)</span>
         <span class="o">:</span> <span class="n">_new_locale</span><span class="p">(</span><span class="n">loc_name</span><span class="p">)</span>
         <span class="p">,</span> <span class="n">_setted</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span>
@@ -118,7 +118,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_new_locale</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_old_locale</span><span class="p">;</span>
     <span class="kt">bool</span> <span class="n">_setted</span><span class="p">;</span>
@@ -159,7 +159,7 @@
   </div>
 <footer>
   <p>
-    <time datetime="2010-05-21T00:41:00" pubdate>2010-05-21</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2010-05-21T00:41:00+08:00" pubdate>2010-05-21</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
     <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>

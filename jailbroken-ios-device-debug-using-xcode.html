@@ -104,7 +104,7 @@ sudo vi Info.plist
 <p>替换其中的 <tt class="docutils literal">XCiPhoneOSCodeSignContext</tt> 为 <tt class="docutils literal">XCCodeSignContext</tt></p>
 <p>最后，我们要修改 Xcode 的 iPhone 开发 plugin</p>
 <div class="highlight"><pre><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/PrivatePlugIns/iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.xcplugin/Contents/MacOS/
-dd <span class="k">if</span><span class="o">=</span>iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support <span class="nv">of</span><span class="o">=</span>working <span class="nv">bs</span><span class="o">=</span>500 <span class="nv">count</span><span class="o">=</span>255
+dd <span class="k">if</span><span class="o">=</span>iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support <span class="nv">of</span><span class="o">=</span>working <span class="nv">bs</span><span class="o">=</span><span class="m">500</span> <span class="nv">count</span><span class="o">=</span>255
 <span class="nb">printf</span> <span class="s2">&quot;\xc3\x26\x00\x00&quot;</span> &gt;&gt; working
 mv -n iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.original
 mv working iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support
@@ -157,13 +157,13 @@ chmod a+x iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>Syste
 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 <p>假定脚本保存在 <tt class="docutils literal">/Developer/iphoneentitlements401/gen_entitlements.py</tt>，设为可执行</p>
-<div class="highlight"><pre>chmod 777 /Developer/iphoneentitlements401/gen_entitlements.py
+<div class="highlight"><pre>chmod <span class="m">777</span> /Developer/iphoneentitlements401/gen_entitlements.py
 </pre></div>
 <p>最后，在每一个需要设备调试的工程里都要指定运行该脚本。选中工程文件，在 <tt class="docutils literal">Build Phases</tt> 页中点击右下角的 <tt class="docutils literal">Add Build Phase</tt> 按钮。在 <tt class="docutils literal">Shell</tt> 框中输入下面的脚本:</p>
 <div class="highlight"><pre><span class="nb">export </span><span class="nv">CODESIGN_ALLOCATE</span><span class="o">=</span>/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
-<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;${PLATFORM_NAME}&quot;</span> <span class="o">==</span> <span class="s2">&quot;iphoneos&quot;</span> <span class="o">]</span>; <span class="k">then</span>
-/Developer/iphoneentitlements401/gen_entitlements.py <span class="s2">&quot;my.company.${PROJECT_NAME}&quot;</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot;</span>;
-codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlements <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot;</span> <span class="s2">&quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/&quot;</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">PLATFORM_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">==</span> <span class="s2">&quot;iphoneos&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+/Developer/iphoneentitlements401/gen_entitlements.py <span class="s2">&quot;my.company.</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">.xcent&quot;</span><span class="p">;</span>
+codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlements <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">.xcent&quot;</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/&quot;</span>
 <span class="k">fi</span>
 </pre></div>
 </div>
@@ -189,7 +189,7 @@ codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlemen
   </div>
 <footer>
   <p>
-    <time datetime="2012-04-10T22:40:00" pubdate>2012-04-10</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2012-04-10T22:40:00+08:00" pubdate>2012-04-10</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
     <li><a href="http://zhuoqiang.me/tag/ios.html"><span class="tag" i18n>ios</span></i></a>

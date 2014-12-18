@@ -36,7 +36,7 @@
 <p>首先让我们来看问题：如果要把下面的 C++ 类 <tt class="docutils literal">CppFoo</tt> 包装成一个 Python 类，应该怎么做？</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFoo</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="n">fun</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;CppFoo::fun()&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
@@ -111,27 +111,27 @@
 <p>首先让我们明确一点，C++ 的虚函数只能在 C++ 继承类中被改写。那么我们的代理类顺理成章的应该要继承 <tt class="docutils literal">CppFoo</tt>。</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFooProxy</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CppFoo</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">fun</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>
 <p>我们还需要改写代理类的 <tt class="docutils literal">fun()</tt> 函数，让它转去调用 Python 对象的 <tt class="docutils literal">fun()</tt> 方法，从而完成跨语言多态。</p>
-<div class="highlight"><pre>void CppFooProxy::fun()
-{
-    if (has_python_override_method(self, &quot;fun&quot;)) {
-        return call_python_method_fun(self);
-    }
-    else {
-        return CppFoo::fun();
-    }
-}
+<div class="highlight"><pre><span class="kt">void</span> <span class="n">CppFooProxy</span><span class="o">::</span><span class="n">fun</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">has_python_override_method</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="s">&quot;fun&quot;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">call_python_method_fun</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">CppFoo</span><span class="o">::</span><span class="n">fun</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>在上面的代码中，我们先通过 <tt class="docutils literal">has_python_override_method()</tt> 函数来判断 Python 对象是否改写了 <tt class="docutils literal">fun()</tt> 方法。如果我们检测发现 Python 对象确实含有 <tt class="docutils literal">fun()</tt> 方法，我们就将调用转发到 Python 中重新定义的那个 <tt class="docutils literal">fun</tt> 方法上。反之，如果 Python 对象并没有改写 <tt class="docutils literal">fun()</tt> 那就转去调用父类的默认实现 <tt class="docutils literal"><span class="pre">CppFoo::fun()</span></tt>。最终实现跨语言多态。</p>
 <p>这里还有个特殊情况没有在代码中表现出来：如果父类方法是纯虚函数，而 Python 也没有提供任何实现，那要怎么办呢？ 简单的处理方案可以直接抛出异常来报错，让纯虚函数跨界调用在运行时出错。</p>
 <p>上面这段程序里的 <tt class="docutils literal">self</tt> 又是什么呢？ 它是一个实实在在的 Python 对象。通过 <tt class="docutils literal">self</tt>, 我们可以在 C++ 的世界中操作彼端 Python 世界里的那个对象</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">CppFooProxy</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CppFoo</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
     <span class="n">CppFooProxy</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">)</span>
         <span class="o">:</span> <span class="n">self</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
     <span class="p">{</span>
@@ -149,7 +149,7 @@
 
     <span class="kt">void</span> <span class="n">fun</span><span class="p">();</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
    <span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
@@ -306,7 +306,7 @@ cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
       CursorKind.TYPE_REF CppFoo class CppFoo
     CursorKind.COMPOUND_STMT
       CursorKind.CALL_EXPR void fun
-        CursorKind.MEMBER_REF_EXPR &lt;bound member <span class="k">function </span><span class="nb">type</span>&gt; fun
+        CursorKind.MEMBER_REF_EXPR &lt;bound member <span class="k">function</span> <span class="nb">type</span>&gt; fun
           CursorKind.UNEXPOSED_EXPR CppFoo * foo
             CursorKind.DECL_REF_EXPR CppFoo * foo
 </pre></div>
@@ -322,7 +322,7 @@ cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
   </div>
 <footer>
   <p>
-    <time datetime="2014-09-15T20:39:00" pubdate>2014-09-15</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2014-09-15T20:39:00+08:00" pubdate>2014-09-15</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
     <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>

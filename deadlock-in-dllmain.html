@@ -41,7 +41,7 @@
 <p>某程序要在动态加载的 DLL 里创建线程，并希望 DLL 在被 <tt class="docutils literal">FreeLibrary</tt> 时能自动销毁线程，以实现安全退出。DLL 的实现代码可简写为</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Worker</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
     <span class="n">Worker</span><span class="p">()</span>
         <span class="o">:</span> <span class="n">quit_</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
     <span class="p">{}</span>
@@ -73,7 +73,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">DoWork</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="n">quit_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
@@ -198,7 +198,7 @@
   </div>
 <footer>
   <p>
-    <time datetime="2010-05-31T00:46:00" pubdate>2010-05-31</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2010-05-31T00:46:00+08:00" pubdate>2010-05-31</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
     <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>
