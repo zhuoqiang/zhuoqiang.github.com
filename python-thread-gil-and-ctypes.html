@@ -30,7 +30,7 @@
     <section>
       <div class="section" id="gil-python">
 <h2>GIL 与 Python 线程的纠葛</h2>
-<p>GIL 是什么东西？它对我们的 python 程序会产生什么样的影响？我们先来看一个问题。运行下面这段 python 程序，CPU 占用率是多少？</p>
+<p>GIL 是什么？它对 python 程序会产生怎样的影响？我们先来看一个问题。运行下面这段 python 代码，CPU 占用率是多少？</p>
 <div class="highlight"><pre><span class="c"># 请勿在工作中模仿，危险:)</span>
 <span class="k">def</span> <span class="nf">dead_loop</span><span class="p">():</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
@@ -130,7 +130,7 @@
 </div>
 <div class="section" id="id2">
 <h2>结语</h2>
-<p>虽然 CPython 的线程库封装了操作系统的原生线程，但却因为 GIL 的存在导致多线程不能利用多个 CPU 内核的计算能力。好在现在 Python 有了易经筋（multiprocessing）, 吸星大法（C 语言扩展机制）和独孤九剑（ctypes），足以应付多核时代的挑战，GIL 切还是不切已经不重要了，不是吗。</p>
+<p>虽然 CPython 的线程库封装了操作系统的原生线程，但却因为 GIL 的存在导致多线程不能利用多个 CPU 内核的计算能力。好在现在 Python 有了易筋经（multiprocessing）, 吸星大法（C 语言扩展机制）和独孤九剑（ctypes），足以应付多核时代的挑战，GIL 切还是不切已经不重要了，不是吗。</p>
 </div>
 
     </section>
@@ -158,7 +158,7 @@
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
