@@ -29,7 +29,7 @@
 </header>  <div>
     <section>
       <p>在进行 i18n 相关的开发时，经常遇到字符编码转换的错误。这时如果能把相关字符串用十六进制的形式打印出来，例如，<tt class="docutils literal">&quot;abc&quot;</tt> 输出成 <tt class="docutils literal"><span class="pre">&quot;\\x61\\x62\\x63&quot;</span></tt> 这对于 i18n 的除错来说是很有帮助的。Python 里面，只需要使用 <tt class="docutils literal">repr()</tt> 函数就行了。可在 C++ 中如何做到这点呢？下面是用 <tt class="docutils literal">ostream</tt> 的格式化功能的一个简单的实现：</p>
-<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">out</span><span class="p">;</span>
     <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
@@ -43,17 +43,17 @@
 <span class="p">}</span>
 </pre></div>
 <p>看上去简单直接，但很可惜这段代码不能实现我们的意图。它还是按字面输出了每个字符。可我们明明指定了使用 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 来格式化输出啊！？问题原来是出在 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 只是一个针对整数类型的输出格式设置，当输出字符类型时，C++ 流还是按照字面输出。到 <tt class="docutils literal">ostream</tt> 的文档去细查才知，原来 C++ 标准输出流对于格式化输出的控制很弱，只能提供有限的几种格式定制，而且大部分都是针对整数和浮点数类型的，对于字符类型完全没有参数可以控制。有点讽刺的是， <tt class="docutils literal">ostream</tt> 利用了 C++ 的函数重载和强类型机制做到了在表达力不输于 C 的同时，又杜绝了臭名昭著的 <tt class="docutils literal">printf</tt> 带来的无穷的麻烦，大大增加了安全。可在这里，强类型安全反而是我们达到目的的障碍：我就是想让 <tt class="docutils literal">ostream</tt> 把字符当成整数打印啊！还好，C++ 还有类型强转这招可以让我们绕过强类型匹配这道安全闸门：</p>
-<div class="highlight"><pre><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">);</span>
 </pre></div>
 <p>好了，这下字符都按整数来输出了，而 <tt class="docutils literal"><span class="pre">std::hex</span></tt> 又指示 <tt class="docutils literal">ostream</tt> 用十六进制表示去输出整数。问题解决了。且慢，为什么输出 UTF-8 中文编码的时候会变成这样：</p>
-<div class="highlight"><pre><span class="s">&quot;</span><span class="se">\xffff</span><span class="s">ffe4</span><span class="se">\xffff</span><span class="s">ffb8</span><span class="se">\xffff</span><span class="s">ffad&quot;</span> <span class="c1">// get_raw_string(&quot;中&quot;)</span>
+<div class="highlight"><pre><span></span><span class="s">&quot;</span><span class="se">\xffff</span><span class="s">ffe4</span><span class="se">\xffff</span><span class="s">ffb8</span><span class="se">\xffff</span><span class="s">ffad&quot;</span> <span class="c1">// get_raw_string(&quot;中&quot;)</span>
 </pre></div>
 <p>这么多的 <tt class="docutils literal">F</tt> word 太影响市容了。能不能把它们去掉？其实原因在于，我们输出的是强制类型转换成 <tt class="docutils literal">int</tt> 的整形数值，而 <tt class="docutils literal">int</tt> 是 32 bit 长，所以会多出前面这么多位来。如果要去掉，只要转成 8 bit 的整数不就行了吗。可惜 C/C++ 中没有 8 bit 的整数，你唯一能做到的是</p>
-<div class="highlight"><pre><span class="k">typedef</span> <span class="kt">char</span> <span class="kt">int8_t</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">char</span> <span class="kt">int8_t</span><span class="p">;</span>
 </pre></div>
 <p>可是用这样得来的 <tt class="docutils literal">int8_t</tt> 去转也还是不行，因为在 C++ 中，<tt class="docutils literal">typedef</tt> 并没有产生一个新的类型，而只是定义了一个原来类型的别名。而这个别名是不参与到函数重载的匹配计算当中的。换言之，<tt class="docutils literal">ostream</tt> 说了，别以为你披上件 <tt class="docutils literal">int8_t</tt> 的马甲我就不认识你了，我还是把你当 <tt class="docutils literal">char</tt> 来输出。此路不通！</p>
 <p>那我们就放弃利用 <tt class="docutils literal">ostream</tt> 了吗？且慢，其实 <tt class="docutils literal">ostream</tt> 默认是不会输出前面的 0 的，那只要把最后 8 bit 之前的位都抹成 0 不就能达到我们的要求了吗。好了，下面就是无错最终版：</p>
-<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_raw_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">out</span><span class="p">;</span>
     <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span><span class="p">;</span>
@@ -70,7 +70,7 @@
 </pre></div>
 <p>经历了几番波折，终于成功利用了 ostream 提供的十六进制输出的功能实现了打印字符串十六进制的功能。其实细究起来，之所以那么绕，还是因为 <tt class="docutils literal">ostream</tt> 本身在格式化输出控制方面太弱了。进一步的，C++ 里还有更好的工具做这件事吗？ <tt class="docutils literal"><span class="pre">boost::format</span></tt> 看起来象是，但它依然不能正确处理我们上面遇到的两难境地。好在，另一个 boost 库给出了合适的答案: <tt class="docutils literal"><span class="pre">boost::spirit::karma</span></tt></p>
 <p>Karma 是 <tt class="docutils literal"><span class="pre">boost::spirit</span></tt> 库的一部分。大家可能比较熟悉的是用 spirit 库做 parser 来解析字符串。而 spirit 通过 Karma 提供的功能就恰好相反，它是专门用来将 C++ 数据结构格式化为字符流的。我们恰好就需要它，下面就是用 karma 库重写的代码：</p>
-<div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">OutputIterator</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">OutputIterator</span><span class="o">&gt;</span>
 <span class="kt">bool</span> <span class="n">generate_raw</span><span class="p">(</span><span class="n">OutputIterator</span> <span class="n">sink</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">spirit</span><span class="o">::</span><span class="n">karma</span><span class="o">::</span><span class="n">hex</span><span class="p">;</span>
@@ -91,17 +91,17 @@
 <span class="p">}</span>
 </pre></div>
 <p>这里面最主要就是利用了 karma 内置的一个输出模块 <tt class="docutils literal"><span class="pre">karam::hex</span></tt> 来帮我们完成工作，而这个 <tt class="docutils literal">hex</tt> 是一个多态的生成器。它不象 <tt class="docutils literal">ostream</tt> 的类型重载，只能针对某些类型输出 hex 格式，而是针对所有类型都能输出 hex 格式，包括 <tt class="docutils literal">char</tt> 。还有一个优点，代码的表达力更强了，输出的格式完全在一行代码中体现：</p>
-<div class="highlight"><pre><span class="c1">// 输出格式为 &quot;\x61\x62\x63&quot;，方便直接贴到 python 或 C++ 的代码中</span>
+<div class="highlight"><pre><span></span><span class="c1">// 输出格式为 &quot;\x61\x62\x63&quot;，方便直接贴到 python 或 C++ 的代码中</span>
 <span class="sc">&#39;\&quot;&#39;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">x&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span>
 </pre></div>
 <p>如果想要改变输出格式，只需要改这行代码即可，例如：</p>
-<div class="highlight"><pre><span class="c1">// 输出格式变为 &quot;0x61 0x62 0x63 &quot;</span>
+<div class="highlight"><pre><span></span><span class="c1">// 输出格式变为 &quot;0x61 0x62 0x63 &quot;</span>
 <span class="sc">&#39;\&quot;&#39;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="s">&quot;0x&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\&quot;&#39;</span>
 </pre></div>
 <p>那么效率方面有没有任何性能损失呢？下面是一段测试代码，分别用两种算法转换相同的字符串:</p>
-<div class="highlight"><pre><span class="cp">#include &quot;boost/test/unit_test.hpp&quot;</span>
-<span class="cp">#include &quot;boost/../libs/spirit/optimization/measure.hpp&quot;</span>
-<span class="cp">#include &quot;string.hpp&quot; </span><span class="c1">// The function for test</span>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;boost/test/unit_test.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;boost/../libs/spirit/optimization/measure.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;string.hpp&quot; // The function for test</span><span class="cp"></span>
 
 <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;hex output performance test data 中文&quot;</span><span class="p">;</span>
 
@@ -168,22 +168,28 @@
     <li><a href="http://zhuoqiang.me/tag/performance.html"><span class="tag" i18n>performance</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/spirit.html"><span class="tag" i18n>spirit</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'string-hex-format-output-in-cpp';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "string-hex-format-output-in-cpp",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

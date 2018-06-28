@@ -39,7 +39,7 @@
 <div class="section" id="id1">
 <h2><a class="toc-backref" href="#id5">问题</a></h2>
 <p>某程序要在动态加载的 DLL 里创建线程，并希望 DLL 在被 <tt class="docutils literal">FreeLibrary</tt> 时能自动销毁线程，以实现安全退出。DLL 的实现代码可简写为</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Worker</span>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Worker</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
     <span class="n">Worker</span><span class="p">()</span>
@@ -99,7 +99,7 @@
 <div class="section" id="id2">
 <h2><a class="toc-backref" href="#id6">原因</a></h2>
 <p>死锁最常见的原因就是多个线程彼此拥有了对方需要的资源，大家都在等对方释放资源好继续运行。从代码层面上来说，就是多个锁的获取顺序不一致：</p>
-<div class="highlight"><pre><span class="c1">// A 和 B 拿刀叉的顺序不一样，如果只有一副刀叉，他俩可能都得饿死</span>
+<div class="highlight"><pre><span></span><span class="c1">// A 和 B 拿刀叉的顺序不一样，如果只有一副刀叉，他俩可能都得饿死</span>
 <span class="n">Thread_A</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">lock_guard</span> <span class="n">lock</span><span class="p">(</span><span class="n">mutex_for_fork</span><span class="p">);</span>
@@ -131,7 +131,7 @@
 </li>
 </ul>
 <p>换句话说，主线程退出就是先拿了叉子（loader lock），再要拿刀（ <tt class="docutils literal">WaitForSingleObject</tt> ）。而工作线程退出就是要先拿叉子（loader lock）才能给你刀（唤醒 <tt class="docutils literal">WaitForSingleObject</tt> ）。死锁发生了！</p>
-<div class="highlight"><pre><span class="c1">// 伪代码</span>
+<div class="highlight"><pre><span></span><span class="c1">// 伪代码</span>
 <span class="n">Main_Thread</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">Lock</span><span class="p">(</span><span class="n">loader_lock</span><span class="p">);</span>
@@ -149,13 +149,13 @@
 <div class="section" id="id3">
 <h2><a class="toc-backref" href="#id7">解</a></h2>
 <p>没有漂亮的解。建议不提供自动释放线程的功能。既然导出了创建工作线程的函数，那就再导出一个停止线程的函数。Client 要在 <tt class="docutils literal">FreeLibrary</tt> 之前主动调用。</p>
-<div class="highlight"><pre><span class="kr">__declspec</span><span class="p">(</span><span class="n">dllexport</span><span class="p">)</span> <span class="kt">void</span> <span class="n">StopThread</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="kr">__declspec</span><span class="p">(</span><span class="n">dllexport</span><span class="p">)</span> <span class="kt">void</span> <span class="n">StopThread</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">gWorker</span><span class="p">.</span><span class="n">Stop</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
 <p>如果仍然希望提供自动清除线程这种安全的便利性，需要的改动是：在主线程 <tt class="docutils literal">DllMain</tt> 中不等待工作线程退出，而是等待工作线程进行必要的清理动作后发出通知再强行终止工作线程；同时，工作线程在通知发出后还要进行无限等待以避免过早退出后进入 <tt class="docutils literal">DllMain</tt> 导致死锁。</p>
-<div class="highlight"><pre><span class="kt">bool</span> <span class="n">gQuit</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">gQuit</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
 <span class="n">Event</span> <span class="n">gEvent</span><span class="p">;</span>
 
 <span class="kt">void</span> <span class="nf">WorkerThread</span><span class="p">()</span>
@@ -204,22 +204,28 @@
     <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/concurrent.html"><span class="tag" i18n>concurrent</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'deadlock-in-dllmain';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "deadlock-in-dllmain",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

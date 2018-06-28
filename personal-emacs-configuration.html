@@ -56,22 +56,28 @@
     <li><a href="http://zhuoqiang.me/tag/english.html"><span class="tag" i18n>english</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'personal-emacs-configuration';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "personal-emacs-configuration",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

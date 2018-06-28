@@ -32,7 +32,7 @@
 <p>Raphaël 对于交互事件也有一定的支持，比如常用的鼠标拖放操作等。可惜在官网上虽然有拖放操作的例子，但例子的写法只对 circle，rect 有效，对 path 却不起作用。经过一番实践，终于了解了 Raphaël 对于拖放支持的原理，找到了一个通用的拖放操作方法，能支持所有的矢量对象，也包括 path。</p>
 <p>官方例子之所以对 path 不起作用是因为：path 没有象 circle 里面的 <tt class="docutils literal">cx</tt> 和 <tt class="docutils literal">cy</tt> 属性，要移动 path，只能使用 <tt class="docutils literal">Path.translate()</tt> 方法。还要注意的是，Path 必须要先 <tt class="docutils literal">fill</tt> 才能移动。</p>
 <p>仿照官网的例子，下面是一个 Path 移动的代码示例：</p>
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">260</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">260</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;M0 0L100 0L50 80Z&#39;</span><span class="p">);</span>
 
 <span class="nx">p</span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span>
@@ -71,7 +71,7 @@
 <li>开始就要设置 <tt class="docutils literal">fill</tt> 属性，否则就不能进行移动操作</li>
 </ul>
 <p>这个例子不但能工作，而且因为所有的 Raphael 矢量对象都有 <tt class="docutils literal">translate</tt> 方法。所以它不仅对 path 有效，也对所有的 Raphael 矢量对象有效。那是不是能做出来类似 <tt class="docutils literal">jQuery.ui</tt> 里面的 <tt class="docutils literal">draggble</tt> 之类的函数呢。下面就是一个简单的扩展，为 Raphael 对象加入了 <tt class="docutils literal">draggable</tt> 方法</p>
-<div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">R</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">R</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">R</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">draggable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">move</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">up</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ui</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -105,7 +105,7 @@
 <span class="p">})(</span><span class="nx">Raphael</span><span class="p">);</span>
 </pre></div>
 <p>上面的一段代码，扩展了 Raphael 对象的方法，让它们拥有了类似 <tt class="docutils literal">jquery.ui</tt> 里 <tt class="docutils literal">draggable</tt> 的能力。下面是用利用这个扩展重写的拖放 Path 的例子</p>
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
 <span class="nx">R</span><span class="p">.</span><span class="nx">rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
 
 <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">R</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;M0 0L100 0L50 80Z&#39;</span><span class="p">);</span>
@@ -125,22 +125,28 @@
     <li><a href="http://zhuoqiang.me/tag/javascript.html"><span class="tag" i18n>javascript</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/web.html"><span class="tag" i18n>web</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'make-raphael-path-draggable';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "make-raphael-path-draggable",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

@@ -45,28 +45,28 @@
 <h2><a class="toc-backref" href="#id8">Emacs 中文字体配置</a></h2>
 <p>这是最让我恼火的配置之一，在 Emacs 23 以前，由于底层不是 Unicode，经常会遇到中文乱码的问题。好在 Emacs 23 底层统一用 Unicode 重新实现了，现在不会再有乱码的问题，可字体的配置却仍然很麻烦，网上有很多例子和文档，但都或多或少有些问题，总是不够尽善尽美。</p>
 <p>最简单的字体设置方式是：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">set-default-font</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">set-default-font</span>
  <span class="s">&quot;-outline-Lucida Console-normal-normal-normal-mono-*-*-*-*-*-*-iso10646-1&quot;</span><span class="p">)</span>
 </pre></div>
 <p>它的问题是只对初始的窗口（frame）有效，对于新窗口如 speedbar 或用快捷键 <span class="kbd">ctrl-x</span> <span class="kbd">5</span> <span class="kbd">2</span> 分出来的窗口无效。改成下面的设置方法，字体设置对初始窗口和后面的新窗口就都会生效了。</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;Lucida Console 12&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;Lucida Console 12&quot;</span><span class="p">))</span>
 </pre></div>
 <p>再就是对中英文混排文本的支持，可以使用同时包含中文和英文的字体来解决。网上有人把中文和等宽英文字体合并为新的字体以方便编程使用。比如我以前配置里用的 <tt class="docutils literal">微软雅黑Monaco</tt> 字体就很不错</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;微软雅黑Monaco 12&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span> <span class="p">(</span><span class="nf">font</span> <span class="o">.</span> <span class="s">&quot;微软雅黑Monaco 12&quot;</span><span class="p">))</span>
 </pre></div>
 <p>这种方法的缺点在于你没办法单独换英文字体或中文字体，要换只能新做一个字体整体换掉。而且网上做的字体里面，并没有包含斜体，样式不够丰富。其实 Emacs 本身就支持根据字符编码去找合适的字体，不过需要按编码详细的设置，让 Emacs 明白遇到汉字编码要用宋体，而不是 <tt class="docutils literal">楷体</tt> 或 <tt class="docutils literal">Lucida Console</tt> 。</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
                   <span class="ss">&#39;han</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="s">&quot;Microsoft Yahei&quot;</span>
                                   <span class="nv">:size</span> <span class="mi">12</span><span class="p">))</span>
 </pre></div>
 <p>除了 <tt class="docutils literal">han</tt> 以外，还有 <tt class="docutils literal">kana</tt>， <tt class="docutils literal">symbol</tt> ， <tt class="docutils literal"><span class="pre">cjk-misc</span></tt> ， <tt class="docutils literal">bopomofo</tt> 这些编码集也要一并设置好。可以用 elisp 的 <tt class="docutils literal">dolist</tt> 循环操作减少不必要的代码重复：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">charset</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">kana</span> <span class="nv">han</span> <span class="nv">symbol</span> <span class="nv">cjk-misc</span> <span class="nv">bopomofo</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">charset</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">kana</span> <span class="nv">han</span> <span class="nv">symbol</span> <span class="nv">cjk-misc</span> <span class="nv">bopomofo</span><span class="p">))</span>
   <span class="p">(</span><span class="nf">set-fontset-font</span> <span class="p">(</span><span class="nf">frame-parameter</span> <span class="nv">nil</span> <span class="ss">&#39;font</span><span class="p">)</span>
                     <span class="nv">charset</span> <span class="p">(</span><span class="nf">font-spec</span> <span class="nv">:family</span> <span class="s">&quot;Microsoft Yahei&quot;</span>
                                        <span class="nv">:size</span> <span class="mi">12</span><span class="p">)))</span>
 </pre></div>
 <p>切记不能图省事，直接把 Unicode 字体设成中文，否则在 Windows 上原来的英文字体设置就失效了。还有对英文字体的设置方法要改成下面这样才能和中文的配合，不然 Emacs 会乎略英文字体的设置（至少在 Windows 平台上是这样）所以最终版本是</p>
-<div class="highlight"><pre><span class="c1">;; Setting English Font</span>
+<div class="highlight"><pre><span></span><span class="c1">;; Setting English Font</span>
 <span class="p">(</span><span class="nf">set-face-attribute</span> <span class="ss">&#39;default</span> <span class="nv">nil</span> <span class="nv">:font</span> <span class="s">&quot;Consolas 12&quot;</span><span class="p">)</span>
 
 <span class="c1">;; Chinese Font</span>
@@ -79,19 +79,19 @@
 <p>这样 Emacs 的字体设置算是赶上其它的编辑器了。可 Emacs 作为神一般的存在，只是赶上其它编辑器这也太丢人。下面要挑战一下自我，让神器发挥它应有的威力：如何能够根据用户的喜好和操作系统的字体库来做最符合用户心意的字体设定呢？</p>
 <p>换言之，我想要的功能是：如果系统有雅黑字体，就请帮忙用雅黑，否则（如 Linux 上默认没有雅黑）就请用开源字体文泉驿微米黑。查了一下，网上没有现成的例子，只好挽起袖子，自己研究 elisp 动手写了一个设置字体的函数。</p>
 <p>首先，我们要能判断某个字体在系统中是否存在：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-font-existsp</span> <span class="p">(</span><span class="nf">font</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-font-existsp</span> <span class="p">(</span><span class="nf">font</span><span class="p">)</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">null</span> <span class="p">(</span><span class="nf">x-list-fonts</span> <span class="nv">font</span><span class="p">))</span>
       <span class="nv">nil</span>
     <span class="nv">t</span><span class="p">))</span>
 </pre></div>
 <p>其次，要到用户预定义的字体列表中找出首个存在的字体：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">defvar</span> <span class="nv">font-list</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Microsoft Yahei&quot;</span> <span class="s">&quot;文泉驿等宽微米黑&quot;</span> <span class="s">&quot;黑体&quot;</span> <span class="s">&quot;新宋体&quot;</span> <span class="s">&quot;宋体&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defvar</span> <span class="nv">font-list</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Microsoft Yahei&quot;</span> <span class="s">&quot;文泉驿等宽微米黑&quot;</span> <span class="s">&quot;黑体&quot;</span> <span class="s">&quot;新宋体&quot;</span> <span class="s">&quot;宋体&quot;</span><span class="p">))</span>
 
 <span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;cl</span><span class="p">)</span> <span class="c1">;; find-if is in common list package</span>
 <span class="p">(</span><span class="nf">find-if</span> <span class="o">#</span><span class="ss">&#39;qiang-font-existsp</span> <span class="nv">font-list</span><span class="p">)</span>
 </pre></div>
 <p>还要有个辅助函数，用来产生带上字体大小信息的字体描述文本：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-make-font-string</span> <span class="p">(</span><span class="nf">font-name</span> <span class="nv">font-size</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-make-font-string</span> <span class="p">(</span><span class="nf">font-name</span> <span class="nv">font-size</span><span class="p">)</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">stringp</span> <span class="nv">font-size</span><span class="p">)</span>
            <span class="p">(</span><span class="nf">equal</span> <span class="s">&quot;:&quot;</span> <span class="p">(</span><span class="nb">string </span><span class="p">(</span><span class="nf">elt</span> <span class="nv">font-size</span> <span class="mi">0</span><span class="p">))))</span>
       <span class="p">(</span><span class="nf">format</span> <span class="s">&quot;%s%s&quot;</span> <span class="nv">font-name</span> <span class="nv">font-size</span><span class="p">)</span>
@@ -99,7 +99,7 @@
 </pre></div>
 <p>这里比较绕的地方是，如果传入的 <tt class="docutils literal"><span class="pre">font-size</span></tt> 是 <tt class="docutils literal">:pixelsize=18</tt> 这样的话，字体名称和它之间不能有空格。如果是普通的数字的话，例如 12 或“12”，需要有个空格分隔字体名称和字体大小。</p>
 <p>有了这些函数，下面出场的就是自动设置字体函数了：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-set-font</span> <span class="p">(</span><span class="nf">english-fonts</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-set-font</span> <span class="p">(</span><span class="nf">english-fonts</span>
                        <span class="nv">english-font-size</span>
                        <span class="nv">chinese-fonts</span>
                        <span class="nv">&amp;optional</span> <span class="nv">chinese-font-size</span><span class="p">)</span>
@@ -130,7 +130,7 @@
                         <span class="nv">charset</span> <span class="nv">zh-font</span><span class="p">))))</span>
 </pre></div>
 <p>利用这个函数，Emacs 字体设置就是小菜一碟了：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">qiang-set-font</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">qiang-set-font</span>
  <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Consolas&quot;</span> <span class="s">&quot;Monaco&quot;</span> <span class="s">&quot;DejaVu Sans Mono&quot;</span> <span class="s">&quot;Monospace&quot;</span> <span class="s">&quot;Courier New&quot;</span><span class="p">)</span> <span class="s">&quot;:pixelsize=18&quot;</span>
  <span class="o">&#39;</span><span class="p">(</span><span class="s">&quot;Microsoft Yahei&quot;</span> <span class="s">&quot;文泉驿等宽微米黑&quot;</span> <span class="s">&quot;黑体&quot;</span> <span class="s">&quot;新宋体&quot;</span> <span class="s">&quot;宋体&quot;</span><span class="p">))</span>
 </pre></div>
@@ -146,7 +146,7 @@
 </ul>
 <p>更酷的是，如果要放大或缩小多次，在第二次直接按 <span class="kbd">+</span>， <span class="kbd">-</span>， <span class="kbd">0</span> 就可以了。比如，放大 3 次： <span class="kbd">ctrl x</span> <span class="kbd">ctrl =</span> <span class="kbd">=</span> <span class="kbd">=</span>。另外， <span class="kbd">shift 鼠标左键</span> 也能唤出调整字体大小的弹出菜单。</p>
 <p>不过，能不能象浏览器和 Visual Studio 2010 那样，用 <span class="kbd">ctrl</span> 加上鼠标滚轮操作来调整字体大小呢，毕竟大部分人已经习惯了这种方式。既然是无所不能的 Emacs，那当然没问题了，把下面的配置加入 .emacs 里再试试看</p>
-<div class="highlight"><pre><span class="c1">;; For Linux</span>
+<div class="highlight"><pre><span></span><span class="c1">;; For Linux</span>
 <span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-mouse-4&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-increase</span><span class="p">)</span>
 <span class="p">(</span><span class="nf">global-set-key</span> <span class="p">(</span><span class="nf">kbd</span> <span class="s">&quot;&lt;C-mouse-5&gt;&quot;</span><span class="p">)</span> <span class="ss">&#39;text-scale-decrease</span><span class="p">)</span>
 
@@ -164,7 +164,7 @@
 <li>好在有一个 <span class="kbd">alt ;</span> 的快捷键，默认绑定了 <tt class="docutils literal"><span class="pre">comment-dwim</span></tt> 能注释反注释当前激活的区域。如果没有激活区域，就在当前行末加注释</li>
 </ul>
 <p><span class="kbd">alt ;</span> 默认绑定的 <tt class="docutils literal"><span class="pre">comment-dwim</span></tt> 已经很理想了，可还是不够 dwim（Do What I Mean）。能不能变成，如果没有激活的区域就注释反注释当前行，仅当在行尾的时候才在行尾加注释呢？下面的配置就是参考别人配置写的 “照我说的做”注释函数：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-comment-dwim-line</span> <span class="p">(</span><span class="nf">&amp;optional</span> <span class="nv">arg</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">qiang-comment-dwim-line</span> <span class="p">(</span><span class="nf">&amp;optional</span> <span class="nv">arg</span><span class="p">)</span>
   <span class="s">&quot;Replacement for the comment-dwim command.</span>
 <span class="s">If no region is selected and current line is not blank and</span>
 <span class="s">we are not at the end of the line, then comment current line.</span>
@@ -199,7 +199,7 @@
 <li><span class="kbd">ctrl /</span> 撤消上一次的操作，该行重现</li>
 </ol>
 <p>可以看到，方案二比方案一省一次按键，而且 <span class="kbd">ctrl</span> 键不用松开。不过如此基本的操作要按三个键还是太麻烦了，而且方案二会让文件变成被编辑过的状态。其实，可以发挥一下“按我说的做”的精神。为什么不把 <span class="kbd">alt w</span> 变的更聪明一些，当没有激活的区域时就复制当前的一整行呢？说做就做：</p>
-<div class="highlight"><pre><span class="c1">;; Smart copy, if no region active, it simply copy the current whole line</span>
+<div class="highlight"><pre><span></span><span class="c1">;; Smart copy, if no region active, it simply copy the current whole line</span>
 <span class="p">(</span><span class="nf">defadvice</span> <span class="nv">kill-line</span> <span class="p">(</span><span class="nf">before</span> <span class="nv">check-position</span> <span class="nv">activate</span><span class="p">)</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">member </span><span class="nv">major-mode</span>
               <span class="o">&#39;</span><span class="p">(</span><span class="nv">emacs-lisp-mode</span> <span class="nv">scheme-mode</span> <span class="nv">lisp-mode</span>
@@ -240,7 +240,7 @@
 <div class="section" id="id6">
 <h2><a class="toc-backref" href="#id12">拷贝代码自动格式化</a></h2>
 <p>Emacs 里对代码格式化支持的非常好，不但可以在编辑的时候自动帮你格式化，还可以选中一块代码，按 <span class="kbd">ctrl alt \ </span> 对这块代码重新进行格式化。如果要粘贴一块代码的话，粘贴完了紧接着按 <span class="kbd">ctrl alt \ </span> 就可以把新加入的代码格式化好。可对于这种粘贴加上重新格式化的机械操作，Emacs 应该可以将它自动化才能配得上它的名气，把下面的代码加到配置文件里，你的 Emacs 就会拥有这种能力了：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">command</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">yank</span> <span class="nv">yank-pop</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">dolist</span> <span class="p">(</span><span class="nf">command</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">yank</span> <span class="nv">yank-pop</span><span class="p">))</span>
   <span class="p">(</span><span class="nf">eval</span>
    <span class="o">`</span><span class="p">(</span><span class="nf">defadvice,</span> <span class="nv">command</span> <span class="p">(</span><span class="nf">after</span> <span class="nv">indent-region</span> <span class="nv">activate</span><span class="p">)</span>
       <span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nb">not </span><span class="nv">current-prefix-arg</span><span class="p">)</span>
@@ -257,27 +257,27 @@
 <div class="section" id="emacs-windows">
 <h2><a class="toc-backref" href="#id13">Emacs 与 Windows 系统的整合</a></h2>
 <p>在注册表中加入下面的项，右键上下文菜单中就会多出 <tt class="docutils literal">Emacs</tt> ，这样你可以快速用 Emacs 编辑任意文件，而不用事先和一堆文件类型相关联：</p>
-<div class="highlight"><pre><span class="n">Windows</span> <span class="n">Registry</span> <span class="n">Editor</span> <span class="n">Version</span> <span class="mf">5.00</span>
+<div class="highlight"><pre><span></span><span class="n">Windows</span> <span class="n">Registry</span> <span class="n">Editor</span> <span class="n">Version</span> <span class="mf">5.00</span>
 
 <span class="p">[</span><span class="n">HKEY_CLASSES_ROOT</span>\<span class="n">AllFilesystemObjects</span>\<span class="n">Shell</span>\<span class="n">Emacs</span>\<span class="n">command</span><span class="p">]</span>
-<span class="err">@</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">D:</span><span class="se">\\</span><span class="s">emacs</span><span class="se">\\</span><span class="s">bin</span><span class="se">\\</span><span class="s">emacsclientw.exe</span><span class="se">\&quot;</span><span class="s"> -n -a </span><span class="se">\&quot;</span><span class="s">D:</span><span class="se">\\</span><span class="s">emacs</span><span class="se">\\</span><span class="s">bin</span><span class="se">\\</span><span class="s">runemacs.exe</span><span class="se">\&quot;</span><span class="s"> </span><span class="se">\&quot;</span><span class="s">%1</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+<span class="err">@</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">D:</span><span class="se">\\</span><span class="s2">emacs</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2">emacsclientw.exe</span><span class="se">\&quot;</span><span class="s2"> -n -a </span><span class="se">\&quot;</span><span class="s2">D:</span><span class="se">\\</span><span class="s2">emacs</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2">runemacs.exe</span><span class="se">\&quot;</span><span class="s2"> </span><span class="se">\&quot;</span><span class="s2">%1</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
 </pre></div>
 <p>这里调用 <tt class="docutils literal">emacsclientw.exe</tt> 是为了使用 <tt class="docutils literal"><span class="pre">server-mode</span></tt> 来避免再打开一个 Emacs 实例。 <tt class="docutils literal"><span class="pre">-n</span></tt> 参数指明不需要等待 emacs server 编辑结束就直接返回， <tt class="docutils literal"><span class="pre">-a</span></tt> 指明一个替代品：如果找不到 emacs server，那就运行 <tt class="docutils literal">runemacs.exe</tt> 启动一个 emacs 实例来编辑。不要忘了在 <tt class="docutils literal">.emacs</tt> 里加入</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">server-mode</span> <span class="mi">1</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">server-mode</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 <p>来自动启动 emacs server。</p>
 <p>有些工具在使用外部工具时命令行不能带任何参数，遇到这种情况，只能写一个批处理文件把上面的命令包装一下：</p>
-<div class="highlight"><pre>D:\emacs\bin\emacsclientw.exe -n -a <span class="s2">&quot;D:\emacs\bin\runemacs.exe&quot;</span> %*
+<div class="highlight"><pre><span></span>D<span class="p">:</span><span class="nl">\emacs\bin\emacsclientw.exe</span><span class="c1"> -n -a &quot;D:\emacs\bin\runemacs.exe&quot; %*</span>
 </pre></div>
 <p>如果装了 Visual Studio，那么，在 Visual Studio 的菜单 <tt class="docutils literal">Tools</tt> 下面可以通过 <tt class="docutils literal">External Tools</tt> 加入一个自定义的外部工具。外部工具的命令可以使用上面定义的 <tt class="docutils literal">emacsclientw.exe</tt> ，参数那栏加上</p>
-<div class="highlight"><pre>-n -a <span class="s2">&quot;D:\emacs\bin\runemacs.exe&quot;</span> +$(CurLine) $(ItemPath)
+<div class="highlight"><pre><span></span>-n -a <span class="s2">&quot;D:\emacs\bin\runemacs.exe&quot;</span> +$(CurLine) $(ItemPath)
 </pre></div>
 <p>将这个外部工具设上一个方便的快捷键，比如我就设成 <span class="kbd">alt f1</span> ，这样每次用 Visual Studio 浏览代码时，如果看到想编辑的内容，直接 <span class="kbd">alt f1</span> 就可以把 emasc 呼出，光标会自动放在文件刚刚看的那行上面。编辑完了后再 <span class="kbd">alt tab</span> 就可以切会 Visual Studio 了。你可能还需要设置 Visual Studio 自动重新载入改过的文件，避免每次都弹出对话框让你确认是否重新载入。</p>
 </div>
 <div class="section" id="id7">
 <h2><a class="toc-backref" href="#id14">Emacs 的配色</a></h2>
 <p>我以前的 Emacs 配色非常简单，黑底白字。用时间长了会腻，而且 Emacs 默认的代码高亮配色只能说相当的一般。</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq</span> <span class="nv">default-frame-alist</span>
       <span class="o">&#39;</span><span class="p">((</span><span class="nf">cursor-color</span> <span class="o">.</span> <span class="s">&quot;purple&quot;</span><span class="p">)</span>
         <span class="p">(</span><span class="nf">cursor-type</span> <span class="o">.</span> <span class="nv">box</span><span class="p">)</span>
         <span class="p">(</span><span class="nf">foreground-color</span> <span class="o">.</span> <span class="s">&quot;white&quot;</span><span class="p">)</span>
@@ -291,7 +291,7 @@
 <li>当前行高亮色改为深蓝色，不让它太明显</li>
 </ul>
 <p>下面是我调整后的主题：</p>
-<div class="highlight"><pre><span class="c1">;; Blackboard Colour Theme for Emacs.</span>
+<div class="highlight"><pre><span></span><span class="c1">;; Blackboard Colour Theme for Emacs.</span>
 <span class="c1">;;</span>
 <span class="c1">;; Defines a colour scheme resembling that of the original TextMate Blackboard colour theme.</span>
 <span class="c1">;; To use add the following to your .emacs file (requires the color-theme package):</span>
@@ -359,7 +359,7 @@
      <span class="p">(</span><span class="nf">zmacs-region</span> <span class="p">((</span><span class="nf">t</span> <span class="p">(</span><span class="nf">:background</span> <span class="s">&quot;snow&quot;</span> <span class="nv">:foreground</span> <span class="s">&quot;ble&quot;</span><span class="p">)))))))</span>
 </pre></div>
 <p>使用的话需要先安装 <tt class="docutils literal"><span class="pre">color-theme</span></tt> 包，将上面的配色存为 <tt class="docutils literal"><span class="pre">color-theme-blackboard.el</span></tt> 放在 emacs 的 load path 中，再加入下面的配置就好了：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;color-theme</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">require</span> <span class="ss">&#39;color-theme</span><span class="p">)</span>
 <span class="p">(</span><span class="nf">eval-after-load</span> <span class="s">&quot;color-theme&quot;</span>
   <span class="o">&#39;</span><span class="p">(</span><span class="nv">progn</span>
      <span class="p">(</span><span class="nf">color-theme-initialize</span><span class="p">)</span>
@@ -381,22 +381,28 @@
     <li><a href="http://zhuoqiang.me/tag/config.html"><span class="tag" i18n>config</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/emacs.html"><span class="tag" i18n>emacs</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'torture-emacs';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "torture-emacs",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

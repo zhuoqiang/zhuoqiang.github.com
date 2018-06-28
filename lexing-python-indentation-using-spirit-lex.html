@@ -38,7 +38,7 @@
 <p>At the end of the input, an <tt class="docutils literal">END</tt> token is generated for each indentation level remains on the stack (until only 0 remains).</p>
 <p>For simplicity let's handle just spaces for now and ignore tabs</p>
 <p>The first shot is to match zero or more spaces at the beginning of the line and then calculate the total length of the spaces in a semantic action</p>
-<div class="highlight"><pre><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">indent_</span><span class="p">(</span><span class="s">&quot;^[ ]*&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">indent_</span><span class="p">(</span><span class="s">&quot;^[ ]*&quot;</span><span class="p">);</span>
 <span class="n">token_def</span><span class="o">&lt;&gt;</span> <span class="n">identifier_</span><span class="p">(</span><span class="s">&quot;[a-zA-Z_]</span><span class="se">\\</span><span class="s">w*&quot;</span><span class="p">);</span>
 <span class="k">this</span><span class="o">-&gt;</span><span class="n">self</span>
     <span class="o">=</span> <span class="n">indent_</span><span class="p">[</span><span class="n">_val</span><span class="o">=</span><span class="n">_end</span><span class="o">-</span><span class="n">_begin</span><span class="p">]</span>
@@ -46,11 +46,11 @@
     <span class="p">;</span>
 </pre></div>
 <p>However, this won't work for lines without spaces at the beginning.</p>
-<div class="highlight"><pre><span class="n">a_variable_without_any_indent</span>
+<div class="highlight"><pre><span></span><span class="n">a_variable_without_any_indent</span>
 </pre></div>
 <p>The above will only match <tt class="docutils literal">identifier_</tt> but not zero length <tt class="docutils literal">indent_</tt>. It seems there is no way to match the pseudo <tt class="docutils literal">beginning of line</tt> anchors with Spirit.Lex</p>
 <p>The workaround is to match newline manually and switch to another lexer state dedicating for indentation.</p>
-<div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Lexer</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Lexer</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">Tokens</span> <span class="o">:</span> <span class="k">public</span> <span class="n">lex</span><span class="o">::</span><span class="n">lexer</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
   <span class="n">Tokens</span><span class="p">()</span>
@@ -102,7 +102,7 @@
 </pre></div>
 <p>Here we use the default <tt class="docutils literal">INITIAL</tt> lexer state for indentation handling and <tt class="docutils literal">NORMAL</tt> state for other token matching. Actually the indentation handling must be the <tt class="docutils literal">INITIAL</tt> state in order to handle the first line since there is no newline before it.</p>
 <p>We use a stack <tt class="docutils literal">scopeLevels_</tt> to help store indentation levels:</p>
-<div class="highlight"><pre><span class="k">enum</span> <span class="n">TokenIds</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">TokenIds</span> <span class="p">{</span>
   <span class="n">kTokenBegin</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
   <span class="n">kTokenEnd</span> <span class="o">=</span> <span class="mi">1001</span><span class="p">,</span>
 <span class="p">};</span>
@@ -192,14 +192,14 @@
 </pre></div>
 <p>Notice how we apply the <cite>zero-length matching</cite> trick to generate multiple tokens.</p>
 <p>Now, let's try lex some python code:</p>
-<div class="highlight"><pre><span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">c</span>
 <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
     <span class="n">e</span>
 </pre></div>
 <p>Here's the result:</p>
-<div class="highlight"><pre><span class="k">if</span>
+<div class="highlight"><pre><span></span><span class="k">if</span>
 <span class="n">a</span>
 <span class="o">==</span>
 <span class="mi">1</span>
@@ -254,22 +254,28 @@
     <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/spirit.html"><span class="tag" i18n>spirit</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'lexing-python-indentation-using-spirit-lex';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "lexing-python-indentation-using-spirit-lex",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

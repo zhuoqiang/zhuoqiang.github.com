@@ -28,7 +28,7 @@
   <h1><a href="http://zhuoqiang.me/goslate-free-google-translate-api.html">Goslate 免费谷歌翻译</a></h1>
 </header>  <div>
     <section>
-      <div class="note">
+      <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">重要更新: 谷歌刚升级了在线翻译系统, 新加入的 ticket 机制能有效地防止类似 goslate 这样简单的爬虫系统的访问. 技术上来说, 更加复杂的爬虫仍有可能成功抓取翻译, 但这么做已经越过了红线. Goslate 不会再继续更新去破解 Google 的 ticket 机制. 免费午餐结束.</p>
 </div>
@@ -49,22 +49,22 @@
 <div class="section" id="id2">
 <h2><a class="toc-backref" href="#id12">使用</a></h2>
 <p>Goslate 支持 Python2.6 以上版本，包括 Python3！你可以通过 <tt class="docutils literal">pip</tt> 或 <tt class="docutils literal">easy_install</tt> 安装</p>
-<div class="highlight"><pre><span class="nv">$ </span>pip install goslate
+<div class="highlight"><pre><span></span>$ pip install goslate
 </pre></div>
 <p>Goslate 目前只包含单个 python 文件，你也可以直接下载<a class="reference external" href="https://bitbucket.org/zhuoqiang/goslate/raw/tip/goslate.py">最新版本的 goslate.py</a> 。使用很简单，下面是英译德的例子</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">goslate</span>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">goslate</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">gs</span> <span class="o">=</span> <span class="n">goslate</span><span class="o">.</span><span class="n">Goslate</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">gs</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s">&#39;hello world&#39;</span><span class="p">,</span> <span class="s">&#39;de&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">gs</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">,</span> <span class="s1">&#39;de&#39;</span><span class="p">)</span>
 <span class="n">hallo</span> <span class="n">welt</span>
 </pre></div>
 <p><tt class="docutils literal">goslate.py</tt> 不仅是一个 python 模块，它还是个命令行工具，你可以直接使用</p>
 <ul>
 <li><p class="first">通过标准输入英译汉输出到屏幕</p>
-<div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello world&quot;</span> <span class="p">|</span> goslate.py -t zh-CN
+<div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;hello world&quot;</span> <span class="p">|</span> goslate.py -t zh-CN
 </pre></div>
 </li>
 <li><p class="first">翻译两个文件，将结果用 UTF-8 编码保存到 out.txt</p>
-<div class="highlight"><pre><span class="nv">$ </span>goslate.py -t zh-CN -o utf-8 src/1.txt <span class="s2">&quot;src 2.txt&quot;</span> &gt; out.txt
+<div class="highlight"><pre><span></span>$ goslate.py -t zh-CN -o utf-8 src/1.txt <span class="s2">&quot;src 2.txt&quot;</span> &gt; out.txt
 </pre></div>
 </li>
 </ul>
@@ -151,22 +151,28 @@
     <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'goslate-free-google-translate-api';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "goslate-free-google-translate-api",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

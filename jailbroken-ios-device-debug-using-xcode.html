@@ -83,28 +83,28 @@
 <h3><a class="toc-backref" href="#id12">告诉 Xcode 不需要签名</a></h3>
 <p>因为需要更改 Xcode 的配置文件，我们首先要关闭 Xcode。为了安全起见，在修改配置文件之前请备份原始文件。</p>
 <p>以下的设置是以 Xcode 4.3 和 iOS SDK 5.0 为例。其它版本的路径略有不同，请自行修改。</p>
-<div class="highlight"><pre><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/
 sudo cp Info.plist Info.plist.orig
 sudo vi Info.plist
 </pre></div>
 <p>找到</p>
-<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>CODE_SIGNING_REQUIRED<span class="nt">&lt;/key&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;key&gt;</span>CODE_SIGNING_REQUIRED<span class="nt">&lt;/key&gt;</span>
 <span class="nt">&lt;string&gt;</span>YES<span class="nt">&lt;/string&gt;</span>
 </pre></div>
 <p>将 <tt class="docutils literal">YES</tt> 改为 <tt class="docutils literal">NO</tt> 。</p>
 <p>再找</p>
-<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>ENTITLEMENTS_REQUIRED<span class="nt">&lt;/key&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;key&gt;</span>ENTITLEMENTS_REQUIRED<span class="nt">&lt;/key&gt;</span>
 <span class="nt">&lt;string&gt;</span>YES<span class="nt">&lt;/string&gt;</span>
 </pre></div>
 <p>也将 <tt class="docutils literal">YES</tt> 改为 <tt class="docutils literal">NO</tt></p>
 <p>再用同样方法，先备份 <tt class="docutils literal">/Developer/Platforms/iPhoneOS.platform/Info.plist</tt> 配置文件，然后修改其中所有的</p>
-<div class="highlight"><pre><span class="nt">&lt;key&gt;</span>CODE_SIGN_CONTEXT_CLASS<span class="nt">&lt;/key&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;key&gt;</span>CODE_SIGN_CONTEXT_CLASS<span class="nt">&lt;/key&gt;</span>
 <span class="nt">&lt;string&gt;</span>XCiPhoneOSCodeSignContext<span class="nt">&lt;/string&gt;</span>
 </pre></div>
 <p>替换其中的 <tt class="docutils literal">XCiPhoneOSCodeSignContext</tt> 为 <tt class="docutils literal">XCCodeSignContext</tt></p>
 <p>最后，我们要修改 Xcode 的 iPhone 开发 plugin</p>
-<div class="highlight"><pre><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/PrivatePlugIns/iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.xcplugin/Contents/MacOS/
-dd <span class="k">if</span><span class="o">=</span>iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support <span class="nv">of</span><span class="o">=</span>working <span class="nv">bs</span><span class="o">=</span><span class="m">500</span> <span class="nv">count</span><span class="o">=</span>255
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/PrivatePlugIns/iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.xcplugin/Contents/MacOS/
+dd <span class="k">if</span><span class="o">=</span>iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support <span class="nv">of</span><span class="o">=</span>working <span class="nv">bs</span><span class="o">=</span><span class="m">500</span> <span class="nv">count</span><span class="o">=</span><span class="m">255</span>
 <span class="nb">printf</span> <span class="s2">&quot;\xc3\x26\x00\x00&quot;</span> &gt;&gt; working
 mv -n iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support.original
 mv working iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>System<span class="se">\ </span>Support
@@ -120,47 +120,47 @@ chmod a+x iPhoneOS<span class="se">\ </span>Build<span class="se">\ </span>Syste
 <div class="section" id="xcode-app">
 <h3><a class="toc-backref" href="#id14">指示 Xcode 使用私有签名签发 App</a></h3>
 <p>保存下面的 python 脚本:</p>
-<div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&quot;Usage: </span><span class="si">%s</span><span class="s"> appname dest_file.xcent&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s2">&quot;Usage: </span><span class="si">%s</span><span class="s2"> appname dest_file.xcent&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">APPNAME</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">DEST</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-<span class="k">if</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xml&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xcent&#39;</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot;Dest must be .xml (for ldid) or .xcent (for codesign)&quot;</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xcent&#39;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s2">&quot;Dest must be .xml (for ldid) or .xcent (for codesign)&quot;</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">entitlements</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-<span class="s">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
-<span class="s">&lt;plist version=&quot;1.0&quot;&gt;</span>
-<span class="s">&lt;dict&gt;</span>
-<span class="s">    &lt;key&gt;application-identifier&lt;/key&gt;</span>
-<span class="s">    &lt;string&gt;</span><span class="si">%s</span><span class="s">&lt;/string&gt;</span>
-<span class="s">    &lt;key&gt;get-task-allow&lt;/key&gt;</span>
-<span class="s">    &lt;true/&gt;</span>
-<span class="s">&lt;/dict&gt;</span>
-<span class="s">&lt;/plist&gt;</span>
-<span class="s">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">APPNAME</span>
+<span class="n">entitlements</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s2">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="s2">&lt;plist version=&quot;1.0&quot;&gt;</span>
+<span class="s2">&lt;dict&gt;</span>
+<span class="s2">    &lt;key&gt;application-identifier&lt;/key&gt;</span>
+<span class="s2">    &lt;string&gt;</span><span class="si">%s</span><span class="s2">&lt;/string&gt;</span>
+<span class="s2">    &lt;key&gt;get-task-allow&lt;/key&gt;</span>
+<span class="s2">    &lt;true/&gt;</span>
+<span class="s2">&lt;/dict&gt;</span>
+<span class="s2">&lt;/plist&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">APPNAME</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">DEST</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.xcent&#39;</span><span class="p">):</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\xfa\xde\x71\x71</span><span class="s">&quot;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&gt;L&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">entitlements</span><span class="p">)</span> <span class="o">+</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">DEST</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">DEST</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xcent&#39;</span><span class="p">):</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\xfa\xde\x71\x71</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;L&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">entitlements</span><span class="p">)</span> <span class="o">+</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">entitlements</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 <p>假定脚本保存在 <tt class="docutils literal">/Developer/iphoneentitlements401/gen_entitlements.py</tt>，设为可执行</p>
-<div class="highlight"><pre>chmod <span class="m">777</span> /Developer/iphoneentitlements401/gen_entitlements.py
+<div class="highlight"><pre><span></span>chmod <span class="m">777</span> /Developer/iphoneentitlements401/gen_entitlements.py
 </pre></div>
 <p>最后，在每一个需要设备调试的工程里都要指定运行该脚本。选中工程文件，在 <tt class="docutils literal">Build Phases</tt> 页中点击右下角的 <tt class="docutils literal">Add Build Phase</tt> 按钮。在 <tt class="docutils literal">Shell</tt> 框中输入下面的脚本:</p>
-<div class="highlight"><pre><span class="nb">export </span><span class="nv">CODESIGN_ALLOCATE</span><span class="o">=</span>/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">CODESIGN_ALLOCATE</span><span class="o">=</span>/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
 <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">PLATFORM_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">==</span> <span class="s2">&quot;iphoneos&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
 /Developer/iphoneentitlements401/gen_entitlements.py <span class="s2">&quot;my.company.</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">.xcent&quot;</span><span class="p">;</span>
 codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlements <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">PROJECT_NAME</span><span class="si">}</span><span class="s2">.xcent&quot;</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILT_PRODUCTS_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">WRAPPER_NAME</span><span class="si">}</span><span class="s2">/&quot;</span>
@@ -195,22 +195,28 @@ codesign -f -s <span class="s2">&quot;iPhone Developer&quot;</span> --entitlemen
     <li><a href="http://zhuoqiang.me/tag/ios.html"><span class="tag" i18n>ios</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/mobile.html"><span class="tag" i18n>mobile</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'jailbroken-ios-device-debug-using-xcode';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "jailbroken-ios-device-debug-using-xcode",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

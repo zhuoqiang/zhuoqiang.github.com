@@ -48,15 +48,15 @@
 <p>函数之间要协作，就必须以各种形式交互连接。因为 Haskell 使用静态强类型系统，函数间的连接受限于入参与返回值类型，这大大增强了程序的安全性，同时也带来一个问题：如何既充分隔离纯函数与副作用函数，又能让两类函数相互复用？</p>
 <p>我们拿 IO 操作做例子分析，Haskell 中专门有一个类型类（类型类有点象 C++ 中的 Concept） <tt class="docutils literal">IO</tt> 用来标示某类型附带有 IO 动作。</p>
 <p>为了充分隔离纯函数与 IO 函数，Haskell 中不能实现 <tt class="docutils literal">IO Char <span class="pre">-&gt;</span> Char</tt> 这样一种输入是 IO 类型返回值却是普通类型的函数。否则副作用函数就能很容易变身为纯函数了</p>
-<div class="highlight"><pre><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Char</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="kt">IO</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Char</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="kt">IO</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Char</span><span class="p">)</span>
 </pre></div>
 <p>事实上一旦参数中有 IO，返回值必有 IO，这就保证了充分隔离。</p>
 <p>那如何让纯函数与 IO 函数相互复用呢？这就要靠 IO Monad 中定义的 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 这两个函数了。<tt class="docutils literal">return</tt> （在 Haskell 中不是关键字，只是一般的函数名）的作用是将某个类型为 A 的值 a 以最自然的方式提升（装箱）为类型为 IO A 的值 <tt class="docutils literal">Char <span class="pre">-&gt;</span> IO Char</tt> 。后面会看到所谓“最自然”的方式是有严格定义的。有了这个函数后，纯函数就可以通过与 <tt class="docutils literal">return</tt> 复合变成返回值为 <tt class="docutils literal">IO</tt> 带副作用的函数了，当然，实际的 IO 动作是 Haskell 内建的，<tt class="docutils literal">return</tt> 的主要意义在于类型提升。</p>
 <p>有了提升可没有下降操作，怎么复合 <tt class="docutils literal">putChar :: Char <span class="pre">-&gt;</span> IO()</tt> 与 <tt class="docutils literal">getChar :: IO Char</tt> 呢。 <tt class="docutils literal">getChar</tt> 从 IO 读取一个字符， <tt class="docutils literal">putChar</tt> 把字符写入 IO。但 <tt class="docutils literal">getChar</tt> 返回的是 <tt class="docutils literal">IO Char</tt> 类型，而 <tt class="docutils literal">putChar</tt> 需要的是普通的 <tt class="docutils literal">Char</tt> 类型，两者不匹配怎么办？ <tt class="docutils literal">&gt;&gt;=</tt> 函数出马了！ <tt class="docutils literal">&gt;&gt;=</tt> 的类型是</p>
-<div class="highlight"><pre><span class="kt">IO</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span>
+<div class="highlight"><pre><span></span><span class="kt">IO</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span>
 </pre></div>
 <p>这样 <tt class="docutils literal">&gt;&gt;=</tt> 就可以连接 <tt class="docutils literal">getChar</tt> 与 <tt class="docutils literal">putChar</tt> ，把输入复写到输出中</p>
-<div class="highlight"><pre><span class="nf">echo</span> <span class="ow">=</span> <span class="p">(</span><span class="n">getChar</span> <span class="o">&gt;&gt;=</span> <span class="n">putChar</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="nf">echo</span> <span class="ow">=</span> <span class="p">(</span><span class="n">getChar</span> <span class="o">&gt;&gt;=</span> <span class="n">putChar</span><span class="p">)</span>
 </pre></div>
 <p>可以看到 <tt class="docutils literal">&gt;&gt;=</tt> 操作实际上是受限的类型下降（或拆箱）操作，只有当后面的函数返回值也是 IO 类型时才进行下降操作。这样既充分隔离纯函数与副作用函数，又能让函数相互复用。</p>
 <p>通过 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 两个平行世界 (范畴) 就有了可控的交流通道。下图直观的反映 Monad 的作用，A 与 IO A 是分属两个不同的世界，A 是纯洁类型，IO A 是带 IO 操作的类型。为了保证整个程序的质量，两个世界的交流只能以图上的方式进行</p>
@@ -75,12 +75,12 @@
 <p>前面说了，<tt class="docutils literal">return</tt> 是最自然的提升方式，这里“最自然”是有明确意义的。指的是 <tt class="docutils literal">return</tt> 和 <tt class="docutils literal">&gt;&gt;=</tt> 这对函数必需满足下面的公理</p>
 <ul>
 <li><p class="first"><tt class="docutils literal">return</tt> 与 <tt class="docutils literal">&gt;&gt;=</tt> 互为逆操作</p>
-<div class="highlight"><pre><span class="p">(</span><span class="n">return</span> <span class="n">x</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f</span> <span class="n">x</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="n">return</span> <span class="n">x</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f</span> <span class="n">x</span>
 <span class="nf">m</span> <span class="o">&gt;&gt;=</span> <span class="n">return</span> <span class="o">==</span> <span class="n">m</span>
 </pre></div>
 </li>
 <li><p class="first"><tt class="docutils literal">&gt;&gt;=</tt> 满足结合律</p>
-<div class="highlight"><pre><span class="p">(</span><span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="o">==</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="o">==</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">))</span>
 </pre></div>
 </li>
 </ul>
@@ -99,22 +99,28 @@
     <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/haskell.html"><span class="tag" i18n>haskell</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'what-is-monad';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "what-is-monad",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

@@ -66,10 +66,10 @@
 <p>一般 CHM 文件都会有目录，有些还会有索引。ChmFox 提供了专门的侧栏来显示它们。你可以通过菜单 <tt class="docutils literal">查看 <span class="pre">--&gt;</span> 侧栏 <span class="pre">--&gt;</span> ChmFox</tt> 来打开和关闭。方便起见，ChmFox 同时提供了打开侧栏的快捷键 <span class="kbd">alt shift m</span> 侧栏的使用也很直观，直接点击侧栏上的某个条目就可以转到相关页面。</p>
 <p>在阅读时，你也可以将页面直接加入收藏夹。下次可以直接通过收藏夹中的链接打开相应的文件的页面。</p>
 <p>ChmFox 对 CHM 使用了自定义的 URI schema, 形如：</p>
-<div class="highlight"><pre>chm:///c:/path/to/file.chm!/page_url.html
+<div class="highlight"><pre><span></span>chm:///c:/path/to/file.chm!/page_url.html
 </pre></div>
 <p>在命令行中，也可以使用 Firefox 直接打开这种 CHM 的 URI：</p>
-<div class="highlight"><pre>firefox.exe chm:<span class="n">///c:/hello.chm!/home.html</span>
+<div class="highlight"><pre><span></span>firefox.exe chm:///c:/hello.chm!/home.html
 </pre></div>
 <p>如果觉得字的大小不合适，还可以使用 Firefox 提供的页面缩放功能进行调整。</p>
 </div>
@@ -97,11 +97,11 @@
 <li><p class="first">下载最新的 <a class="reference external" href="https://bitbucket.org/zhuoqiang/chmfox">ChmFox 源代码</a></p>
 </li>
 <li><p class="first">修改 ChmFox 源码中的 <tt class="docutils literal">chrome.manifest</tt> ，增加平台说明，例如</p>
-<div class="highlight"><pre>binary-component platform<span class="n">/Darwin_x86_64-gcc3/components/libchm.dylib</span> ABI<span class="o">=</span>Darwin_x<span class="m">86</span>_<span class="m">64</span>-gcc<span class="m">3</span>
+<div class="highlight"><pre><span></span>binary-component platform/Darwin_x86_64-gcc3/components/libchm.dylib ABI=Darwin_x86_64-gcc3
 </pre></div>
 </li>
 <li><p class="first">将 Gecko SDK 解压到某个目录，打开命令行，进入 ChmFox 源代码根目录，执行:</p>
-<div class="highlight"><pre>GECKO_SDK<span class="o">=</span><span class="n">/full/path/to/gecko_sdk</span> scons xpi
+<div class="highlight"><pre><span></span>GECKO_SDK=/full/path/to/gecko_sdk scons xpi
 </pre></div>
 </li>
 </ul>
@@ -148,22 +148,28 @@
     <li><a href="http://zhuoqiang.me/tag/firefox.html"><span class="tag" i18n>firefox</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'chmfox';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "chmfox",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    

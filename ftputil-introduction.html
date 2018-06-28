@@ -32,13 +32,13 @@
 <p>但 Python 标准库对 FTP 的封装太底层，很不好用。在自己动手改进之前先放狗搜了一下，果然早有人忍不住，不但封装了 FTP 客户端，而且开源了。这就是 <a class="reference external" href="http://ftputil.sschwarzer.net">ftputil</a> ，一个 Python 高层次接口 FTP 客户端库。</p>
 <p>ftputil 的接口非常简单易用。一个 <tt class="docutils literal">ftputil.FTPHost</tt> 对象就包括了 FTP 的上传下载和查询。整个接口还刻意模仿标准模块 <tt class="docutils literal">os</tt> 的本地文件操作接口，上手不费吹灰之力。与 <tt class="docutils literal">os</tt> 模块的文件操作接口保持一致还有个好处: 多态。本地文件和 FTP 远程文件操作接口一模一样，这样对已有的程序添加 FTP 存储支持，只需要把 os 模块换成 FTPHost 对象就成了。FTP 的操作对调用端代码是透明的，非常方便。</p>
 <p>ftputil 还有个隐藏功能：对本地和远程 FTP 文件夹进行同步。也许作者认为这个功能还不成熟，并没在文档中提及。不过文件夹同步恰好是我需要的，自然毫不客气直接拿来使用！ftputil 源代码中的 <tt class="docutils literal">ftp_sync</tt> 实现了同步功能。下面几行代码就实现了将本地文件夹同步到 FTP 服务器</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">ftputil</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ftputil</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">ftputil.ftp_error</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">ftputil.ftp_sync</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="n">local_directory</span><span class="p">,</span> <span class="n">ftp_host</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">FTPHost</span><span class="p">(</span><span class="n">ftp_host</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="k">as</span> <span class="n">remote</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&#39;Login to FTP </span><span class="si">%s</span><span class="s"> successfully as user </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span> <span class="ow">and</span> <span class="n">user</span> <span class="ow">or</span> <span class="s">&#39;anonymous&#39;</span><span class="p">))</span>
+        <span class="k">print</span> <span class="s1">&#39;Login to FTP </span><span class="si">%s</span><span class="s1"> successfully as user </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span> <span class="ow">and</span> <span class="n">user</span> <span class="ow">or</span> <span class="s1">&#39;anonymous&#39;</span><span class="p">))</span>
         <span class="n">local</span> <span class="o">=</span> <span class="n">LocalHost</span><span class="p">()</span>
         <span class="n">syncer</span> <span class="o">=</span> <span class="n">Syncer</span><span class="p">(</span><span class="n">local</span><span class="p">,</span> <span class="n">remote</span><span class="p">)</span>
         <span class="n">syncer</span><span class="o">.</span><span class="n">sync</span><span class="p">(</span><span class="n">local_directory</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span>
@@ -63,22 +63,28 @@
     <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
     <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
   </ul>
-</footer><section id="disqus_thread"></section>
-<script>
-  var disqus_shortname = 'zhuoqiang';
-  var disqus_identifier = 'ftputil-introduction';
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-</article>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "ftputil-introduction",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
     </section>
     <footer>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
     <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
