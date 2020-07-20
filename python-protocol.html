@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
+  <head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>道可叨 | Python 中的接口 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Qiang">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
+  </head>
+  <body>
+    <header>
+      <hgroup>
+        <a href="https://zhuoqiang.github.io">
+          <h1 i18n>道可叨</h1>
+          <h2>Free Will</h2>
+        </a>
+      </hgroup>
+    </header>
+    <section>
+<article>
+<header>
+  <h1><a href="https://zhuoqiang.github.io/python-protocol.html">Python 中的接口</a></h1>
+</header>  <div>
+    <section>
+      <p>Python 是动态类型语言, 只在运行时做 Duck Typing 检查.</p>
+<ul>
+<li>利: 灵活, 方便</li>
+<li>弊: 代码混乱, 缺少规范</li>
+</ul>
+<p>标准自带两类接口支持: <code>abc</code> 和 <code>typing.Protocol</code>, 有他们协助给天马行空的程序员套上枷锁, Python 的大工程才可以"上道"</p>
+<h2><a href="https://docs.python.org/3/library/abc.html"><code>abc</code></a></h2>
+<p>abc 就是 Abstract Base Class, 虚基类. 跟 Java, C++ 中的虚基类是一个意思, 可以对派生类提供实例化时的动态检查, 确保虚拟接口 (<code>abstractmethod</code>) 都有实现</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">abc</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;abc interface demo</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Invalid</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Child</span><span class="p">()</span>
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Base</span><span class="p">)</span>
+
+<span class="c1"># TypeError: Can&#39;t instantiate abstract class Invalid with abstract methods foo</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">Invalid</span><span class="p">()</span>
+</code></pre></div>
+
+
+<p>也提供了非侵入式的虚基类关联方法</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+
+<span class="k">class</span> <span class="nc">MyABC</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">MyABC</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">MyABC</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">((),</span> <span class="n">MyABC</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>检查时机: 在运行中当派生类实例化时</li>
+<li>检查范围: 只确保 <code>abstractmethod</code> 是否在派生类中有相同函数名实现, 并不检查实现的参数和返回值是否相同. 只看名字不比签名</li>
+<li>代码影响: 侵入式, 需要继承. 也有手工非侵入式方案</li>
+</ul>
+<h2><a href="https://docs.python.org/3/library/typing.html#typing.Protocol"><code>typing.Protocol</code></a></h2>
+<p>structure subtyping (static duck-typing)</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">typing</span>
+
+
+<span class="k">class</span> <span class="nc">Countable</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">who</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;support count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Counter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">who</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;bill&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>检查时机: 静态类型检查接口使用方, 例如 mypy</li>
+<li>检查范围: 确保实现类按照签名实现了接口的全部函数</li>
+<li>代码影响: 非侵入式, 不需要继承</li>
+</ul>
+<h2>比较</h2>
+<p><code>abc</code> 类似 c++ 中的虚基类, <code>typing.Protocol</code> 则好比 c++ 中的 concept.</p>
+<p>当然, Python 是动态语言, 在 <a href="https://docs.python.org/3/library/typing.html#typing.runtime_checkable"><code>typing.runtime_checkable</code></a> 和 <code>abc.abstractmethod</code> 加成后, <code>typing.Protocol</code> 动静两相宜</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">typing</span>
+
+
+<span class="nd">@typing</span><span class="o">.</span><span class="n">runtime_checkable</span>
+<span class="k">class</span> <span class="nc">Countable</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">who</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;support count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Counter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">who</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">Counter</span><span class="p">,</span> <span class="n">Countable</span><span class="p">)</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Countable</span><span class="p">)</span>
+
+
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Countable</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;bill&quot;</span><span class="p">))</span>
+
+<span class="n">f</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">InvalidCounter</span><span class="p">(</span><span class="n">Countable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="c1"># TypeError: Can&#39;t instantiate abstract class InvalidCounter with abstract methods count</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">InvalidCounter</span><span class="p">()</span>
+</code></pre></div>
+
+
+<p>上面这个终极解决方案兼有两者的优点:</p>
+<ul>
+<li>静态类型检查时会确保是否在派生类中有相同签名的实现</li>
+<li>动态运行时, 会检查是否同名函数存在</li>
+<li>代码影响: 自动非侵入式, 不需要继承, 也无需手工注册</li>
+</ul>
+    </section>
+  </div>
+<footer>
+  <p>
+    <time datetime="2020-07-20T00:00:00+08:00" pubdate>2020-07-20</time><a href="https://zhuoqiang.github.io/category/content.html"><span class="category" i18n>content</span></a> 
+  </p>
+  <ul>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/design.html"><span class="tag" i18n>design</span></i></a>
+  </ul>
+</footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
+<div id="gitalk-container"></div>
+<script type="text/javascript">
+ var gitalk = new Gitalk({
+     clientID: "2f60008869581fd61d19",
+     clientSecret: "6b303dcf58c04cd35782bae82540921663cbfda8",
+     repo: "zhuoqiang.github.com",
+     owner: "zhuoqiang",
+     admin: ["zhuoqiang"],
+     id: "python-protocol",
+     title: "Python 中的接口",
+     perPage: 30,
+     distractionFreeMode: true,
+     pagerDirection: "last",
+ });
+ gitalk.render('gitalk-container');
+</script></article>
+    </section>
+    <footer>
+      <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
+    </footer>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
+    <script type="text/javascript">
+      var GoSquared = {};
+      GoSquared.acct = "GSN-743443-H";
+      (function(w){
+      function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+      }
+      w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+      })(window);
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,20 +25,20 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/push-and-pull.html">推与拉</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/push-and-pull.html">推与拉</a></h1>
 </header>  <div>
     <section>
       <p>推与拉是两种设计风格，各有优劣。本文略述一二，抛砖引玉。</p>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id2">
 <ul class="simple">
-<li><a class="reference internal" href="#id2" id="id6">如何推，怎么拉</a></li>
-<li><a class="reference internal" href="#id3" id="id7">网络编程中的推与拉</a></li>
-<li><a class="reference internal" href="#id4" id="id8">推拉转换</a></li>
-<li><a class="reference internal" href="#id5" id="id9">语言的支持</a></li>
+<li><a class="reference internal" href="#id3" id="id7">如何推，怎么拉</a></li>
+<li><a class="reference internal" href="#id4" id="id8">网络编程中的推与拉</a></li>
+<li><a class="reference internal" href="#id5" id="id9">推拉转换</a></li>
+<li><a class="reference internal" href="#id6" id="id10">语言的支持</a></li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h2><a class="toc-backref" href="#id6">如何推，怎么拉</a></h2>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id7">如何推，怎么拉</a></h2>
 <p>众所周知，程序＝数据＋算法。数据和算法互相配合的方式，决定了这段程序是推模型还是拉模型。</p>
 <ul class="simple">
 <li>推模型：数据源将数据推给算法，算法被动地等待数据的到来</li>
@@ -51,16 +51,16 @@
 <p>推模型的特点是性能好，但编写不容易，经常需要自己维护系统的状态。拉模型则相反，它符合人的直觉，状态由运行时的栈自动维护，理解容易，可惜往往性能不高，同时，单个栈也很难满足复杂的应用逻辑。</p>
 <p>“長短之相形也，高下之相呈也”，推与拉也是相生相克的一对。往往系统中某一个推模型需要另一个拉模型来支持，反之亦然。或言之，没有人推送，你又怎么能拉到数据呢。</p>
 </div>
-<div class="section" id="id3">
-<h2><a class="toc-backref" href="#id7">网络编程中的推与拉</a></h2>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id8">网络编程中的推与拉</a></h2>
 <p>让我们用上面的观点来分析一下 Windows 平台上不同的网络模型对于 socket 的读请求的处理方式。</p>
 <p>最简单的是阻塞模型，对一个 socket 发起读请求后，程序会阻塞直到读请求调用完成后再返回。这是一个直白的拉模型，编写最为方便，当然，效率也是最低的。程序会经常阻塞在 IO 事件上，不能充分利用 CPU。</p>
 <p>再好一点的是 select 模型：先用 select 函数判断 socket 是否可读，如可读则可安全的调用阻塞的读函数而不用等待 IO 数据了。如果 select 判定该 socket 不可读，程序可以做些别的事情（比如读另外一个可读的 socket，或做些计算等等），不用象阻塞模型一样一直等待下去。可以看出，select 模型比阻塞模型要复杂些，但本质上，它还是一个拉模型。有趣的是，常有人把它包装成 Reactor 模式：当有事件到来时，Reactor 会调用预先注册的回调函数来处理。可以看出，推与拉在这里做了一次转换，select 做为拉模型，将数据从底层拉过来，Reactor 做为推模型，又将拉来的数据推送到相应的回调函数上。</p>
 <p>Windows 平台上性能最好的当数完成端口（IOCP）模型了。它是开发高并发网络服务器程序的不二选择。这是一个编写起来有些困难的拉模型：当网络事件完成后，系统会把事件投递到完成端口的工作队列中，等待在队列另一端的处理线程会被唤醒进行相应的处理。</p>
 <p>为什么完成端口的性能高呢？从最底层看，所有的 IO 事件都是通过网络推过来的。操作系统通过中断相量（可以理解为最底层的回调函数）响应网络包数据。系统内核在一系列协议栈解析和系统内核对象映射之后，若干 IO 事件被构建成一个 socket 句柄的上的读事件。select 模型这时就需要在用户层遍历所有的 <tt class="docutils literal">fd_set</tt> 中的 socket 句柄来找到可读的 socket，（没错，Windows 平台的 select 就是简单的 for 循环）这无疑浪费了 CPU 资源，如果 socket 数量成千上万的话，select 模型的大部份消耗都将花费在内部的傻瓜循环上。完成端口模型则相反，它不需要在用户空间由应用层再次遍历，反而会在内核直接把 socket 上读到的数据拷入用户缓冲区中，再唤醒一个工作线程处理读到的数据。虽然完成端口是拉模型，但从逻辑上看，它更象一个推模型（预先准备好的用户空间的缓冲区，阻塞在完成端口上等待被调度的工作线程）。事实上，它一般被封装成名为 Proactor 的推模型。</p>
 </div>
-<div class="section" id="id4">
-<h2><a class="toc-backref" href="#id8">推拉转换</a></h2>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id9">推拉转换</a></h2>
 <p>从上面的分析可以看出，推模型与拉模型并非泾渭分明，却是互为表里。可谓“推拉之相合也”，两者各有优劣，常常需要相互转换。在上面分析网络模型里，select 的拉模型就转换成了 Reactor 的推模型。而操作系统内核的推模型也被装点成了拉模型的完成端口 API 供用户空间调用。</p>
 <p>拉模型转换成推模型比较容易，只需要将拉取数据的部分与处理数据的部分分开来。拉数据的部分还是使用拉模型，如 for 循环，阻塞调用等，而处理数据的部分变成回调函数，由下层的拉模型将数据推送给回调函数。下面是个简单例子：</p>
 <div class="highlight"><pre><span></span><span class="c1">// C++ 0x</span>
@@ -89,8 +89,8 @@
 </ul>
 <p>Visitor 式的推模型能转换成 Iterator 式的拉模型吗？答案是可以，但需要一个线程队列做辅助。在队列的一端，一个回调函数不断的将收到的数据再推送到线程队列中，而在队列另一端，通过 API 暴露一个读取并移除数据的阻塞调用。通过这样一个生产者消费者模型，就可以将生产者端的推模型转化成消费者端的拉模型。实际上，上面分析的 Windows 完成端口 API 正是这么做的。</p>
 </div>
-<div class="section" id="id5">
-<h2><a class="toc-backref" href="#id9">语言的支持</a></h2>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id10">语言的支持</a></h2>
 <p>既然推与拉这么的普遍，为何不在语言层面给以直接的支持呢。实际上，确实有很多语言这么做了，比如 Python。Python 通过 <tt class="docutils literal">yield</tt> 关键字既可以方便的将数据推送给调用者，也可以从调用者那拉来数据。实际上 <tt class="docutils literal">yield</tt> 关键字只是协程（Coroutine）不完全实现, 而协程恰恰是实现推拉互动的所谓非抢占式协作的关键。不过，哪怕是不完整的实现，也让 Python 在数据推拉相关的程序上的表达力丰富了许多，以至于很多人觉得有必要在 Python 中实现完整的协程支持。当然，那又是另外一个话题了。</p>
 </div>
 
@@ -98,12 +98,12 @@
   </div>
 <footer>
   <p>
-    <time datetime="2011-06-13T22:19:00+08:00" pubdate>2011-06-13</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2011-06-13T22:19:00+08:00" pubdate>2011-06-13</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/c.html"><span class="tag" i18n>c++</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/design.html"><span class="tag" i18n>design</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -128,11 +128,11 @@
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";

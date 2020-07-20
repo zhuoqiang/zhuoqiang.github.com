@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,7 +25,7 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/machine-learning-notes.html">机器学习笔记</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/machine-learning-notes.html">机器学习笔记</a></h1>
 </header>  <div>
     <section>
       <style type="text/css">/*!
@@ -33,9 +33,124 @@
 * IPython notebook
 *
 */
-/* CSS font colors for translated ANSI colors. */
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
 .ansibold {
   font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
 }
 /* use dark versions for foreground, to improve visibility */
 .ansiblack {
@@ -114,12 +229,20 @@ div.cell {
   /* This acts as a spacer between cells, that is outside the border */
   margin: 0px;
   outline: none;
-  border-left-width: 1px;
-  padding-left: 5px;
-  background: linear-gradient(to right, transparent -40px, transparent 1px, transparent 1px, transparent 100%);
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
 }
 div.cell.jupyter-soft-selected {
-  border-left-color: #90CAF9;
   border-left-color: #E3F2FD;
   border-left-width: 1px;
   padding-left: 5px;
@@ -132,27 +255,39 @@ div.cell.jupyter-soft-selected {
     border-color: transparent;
   }
 }
-div.cell.selected {
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
   border-color: #ababab;
-  border-left-width: 0px;
-  padding-left: 6px;
-  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 5px, transparent 5px, transparent 100%);
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
 }
 @media print {
-  div.cell.selected {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
     border-color: transparent;
   }
 }
-div.cell.selected.jupyter-soft-selected {
-  border-left-width: 0;
-  padding-left: 6px;
-  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 7px, #E3F2FD 7px, #E3F2FD 100%);
-}
 .edit_mode div.cell.selected {
   border-color: #66BB6A;
-  border-left-width: 0px;
-  padding-left: 6px;
-  background: linear-gradient(to right, #66BB6A -40px, #66BB6A 5px, transparent 5px, transparent 100%);
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
 }
 @media print {
   .edit_mode div.cell.selected {
@@ -348,7 +483,9 @@ div.input_area > div.highlight > pre {
 .CodeMirror-lines {
   /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
   /* we have set a different line-height and want this to scale with that. */
-  padding: 0.4em;
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
 }
 .CodeMirror-linenumber {
   padding: 0 8px 0 4px;
@@ -358,11 +495,24 @@ div.input_area > div.highlight > pre {
   border-top-left-radius: 2px;
 }
 .CodeMirror pre {
-  /* In CM3 this went to 4px from 0 in CM2. We need the 0 value because of how we size */
-  /* .CodeMirror-lines */
-  padding: 0;
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
   border: 0;
   border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
 }
 /*
 
@@ -610,6 +760,9 @@ div.output_area img.unconfined,
 div.output_area svg.unconfined {
   max-width: none;
 }
+div.output_area .mglyph > img {
+  max-width: none;
+}
 /* This is needed to protect the pre formating from global settings such
    as that of bootstrap */
 .output {
@@ -648,7 +801,7 @@ div.output_area svg.unconfined {
 }
 div.output_area pre {
   margin: 0;
-  padding: 0;
+  padding: 1px 0 1px 0;
   border: 0;
   vertical-align: baseline;
   color: black;
@@ -770,6 +923,10 @@ div.output_unrecognized a:hover {
 .rendered_html h6:first-child {
   margin-top: 1em;
 }
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
 
 
 
@@ -786,16 +943,24 @@ div.output_unrecognized a:hover {
 }
 
 
+
+
+
 .rendered_html pre,
+
 
 
 
 .rendered_html tr,
 .rendered_html th,
 
-.rendered_html td,
 
-
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 .rendered_html * + table {
   margin-top: 1em;
 }
@@ -811,6 +976,11 @@ div.output_unrecognized a:hover {
 
 .rendered_html img.unconfined,
 
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
 div.text_cell {
   /* Old browsers */
   display: -webkit-box;
@@ -861,8 +1031,15 @@ h6:hover .anchor-link {
   display: none;
 }
 .text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
 .text_cell.unrendered .text_cell_render {
   display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
 }
 .cm-header-1,
 .cm-header-2,
@@ -894,117 +1071,78 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 </style>
-<style type="text/css">.highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
-<style type="text/css">
-/* Temporary definitions which will become obsolete with Notebook release 5.0 */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-bold { font-weight: bold; }
-</style>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+<style type="text/css"> .highlight pre  .hll { background-color: #ffffcc }
+ .highlight pre   { background: #f8f8f8; }
+ .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
+ .highlight pre  .err { border: 1px solid #FF0000 } /* Error */
+ .highlight pre  .k { color: #008000; font-weight: bold } /* Keyword */
+ .highlight pre  .o { color: #666666 } /* Operator */
+ .highlight pre  .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+ .highlight pre  .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+ .highlight pre  .cp { color: #BC7A00 } /* Comment.Preproc */
+ .highlight pre  .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+ .highlight pre  .c1 { color: #408080; font-style: italic } /* Comment.Single */
+ .highlight pre  .cs { color: #408080; font-style: italic } /* Comment.Special */
+ .highlight pre  .gd { color: #A00000 } /* Generic.Deleted */
+ .highlight pre  .ge { font-style: italic } /* Generic.Emph */
+ .highlight pre  .gr { color: #FF0000 } /* Generic.Error */
+ .highlight pre  .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+ .highlight pre  .gi { color: #00A000 } /* Generic.Inserted */
+ .highlight pre  .go { color: #888888 } /* Generic.Output */
+ .highlight pre  .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+ .highlight pre  .gs { font-weight: bold } /* Generic.Strong */
+ .highlight pre  .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+ .highlight pre  .gt { color: #0044DD } /* Generic.Traceback */
+ .highlight pre  .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+ .highlight pre  .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+ .highlight pre  .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+ .highlight pre  .kp { color: #008000 } /* Keyword.Pseudo */
+ .highlight pre  .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+ .highlight pre  .kt { color: #B00040 } /* Keyword.Type */
+ .highlight pre  .m { color: #666666 } /* Literal.Number */
+ .highlight pre  .s { color: #BA2121 } /* Literal.String */
+ .highlight pre  .na { color: #7D9029 } /* Name.Attribute */
+ .highlight pre  .nb { color: #008000 } /* Name.Builtin */
+ .highlight pre  .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+ .highlight pre  .no { color: #880000 } /* Name.Constant */
+ .highlight pre  .nd { color: #AA22FF } /* Name.Decorator */
+ .highlight pre  .ni { color: #999999; font-weight: bold } /* Name.Entity */
+ .highlight pre  .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+ .highlight pre  .nf { color: #0000FF } /* Name.Function */
+ .highlight pre  .nl { color: #A0A000 } /* Name.Label */
+ .highlight pre  .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+ .highlight pre  .nt { color: #008000; font-weight: bold } /* Name.Tag */
+ .highlight pre  .nv { color: #19177C } /* Name.Variable */
+ .highlight pre  .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+ .highlight pre  .w { color: #bbbbbb } /* Text.Whitespace */
+ .highlight pre  .mb { color: #666666 } /* Literal.Number.Bin */
+ .highlight pre  .mf { color: #666666 } /* Literal.Number.Float */
+ .highlight pre  .mh { color: #666666 } /* Literal.Number.Hex */
+ .highlight pre  .mi { color: #666666 } /* Literal.Number.Integer */
+ .highlight pre  .mo { color: #666666 } /* Literal.Number.Oct */
+ .highlight pre  .sa { color: #BA2121 } /* Literal.String.Affix */
+ .highlight pre  .sb { color: #BA2121 } /* Literal.String.Backtick */
+ .highlight pre  .sc { color: #BA2121 } /* Literal.String.Char */
+ .highlight pre  .dl { color: #BA2121 } /* Literal.String.Delimiter */
+ .highlight pre  .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+ .highlight pre  .s2 { color: #BA2121 } /* Literal.String.Double */
+ .highlight pre  .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+ .highlight pre  .sh { color: #BA2121 } /* Literal.String.Heredoc */
+ .highlight pre  .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+ .highlight pre  .sx { color: #008000 } /* Literal.String.Other */
+ .highlight pre  .sr { color: #BB6688 } /* Literal.String.Regex */
+ .highlight pre  .s1 { color: #BA2121 } /* Literal.String.Single */
+ .highlight pre  .ss { color: #19177C } /* Literal.String.Symbol */
+ .highlight pre  .bp { color: #008000 } /* Name.Builtin.Pseudo */
+ .highlight pre  .fm { color: #0000FF } /* Name.Function.Magic */
+ .highlight pre  .vc { color: #19177C } /* Name.Variable.Class */
+ .highlight pre  .vg { color: #19177C } /* Name.Variable.Global */
+ .highlight pre  .vi { color: #19177C } /* Name.Variable.Instance */
+ .highlight pre  .vm { color: #19177C } /* Name.Variable.Magic */
+ .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */</style><body><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="机器学习-Machine-Learning">&#26426;&#22120;&#23398;&#20064; Machine Learning<a class="anchor-link" href="#机器学习-Machine-Learning">&#182;</a></h1><h2 id="简介">&#31616;&#20171;<a class="anchor-link" href="#简介">&#182;</a></h2><p>属人工智能(AI). 赋予电脑新能力:</p>
+<h1 id="&#26426;&#22120;&#23398;&#20064;-Machine-Learning">&#26426;&#22120;&#23398;&#20064; Machine Learning<a class="anchor-link" href="#&#26426;&#22120;&#23398;&#20064;-Machine-Learning">&#182;</a></h1><h2 id="&#31616;&#20171;">&#31616;&#20171;<a class="anchor-link" href="#&#31616;&#20171;">&#182;</a></h2><p>属人工智能(AI). 赋予电脑新能力:</p>
 <ul>
 <li>反垃圾邮件</li>
 <li>数据挖掘: 网络, 医疗, 生物</li>
@@ -1018,7 +1156,7 @@ h6:hover .anchor-link {
 <li>自助客服: 各种网络服务的推荐系统</li>
 <li>帮助理解人类学习和真正智能</li>
 </ul>
-<h2 id="定义">&#23450;&#20041;<a class="anchor-link" href="#定义">&#182;</a></h2><ul>
+<h2 id="&#23450;&#20041;">&#23450;&#20041;<a class="anchor-link" href="#&#23450;&#20041;">&#182;</a></h2><ul>
 <li>无需明确编程, 使电脑能自己学习</li>
 <li><p>随着<em>经验</em>的积累,完成<em>任务</em>的<em>成绩</em>越来越好</p>
 <ul>
@@ -1030,7 +1168,7 @@ h6:hover .anchor-link {
 </ul>
 <p>通过反馈误差, 不断拟合训练样本, 改进内部模型, 提高任务成绩. 
 学习已知, 预测未知. 博古而知今</p>
-<h2 id="分类">&#20998;&#31867;<a class="anchor-link" href="#分类">&#182;</a></h2><ul>
+<h2 id="&#20998;&#31867;">&#20998;&#31867;<a class="anchor-link" href="#&#20998;&#31867;">&#182;</a></h2><ul>
 <li><p>监督学习 (Supervised learning): 读书考试, 有正确答案来纠正训练</p>
 <ul>
 <li>回归 (Regression): 连续值, 房价预估</li>
@@ -1054,7 +1192,7 @@ h6:hover .anchor-link {
 </ul>
 </li>
 </ul>
-<h2 id="步骤">&#27493;&#39588;<a class="anchor-link" href="#步骤">&#182;</a></h2><p>关键是如何得到好模型 (类比人类心智模型)</p>
+<h2 id="&#27493;&#39588;">&#27493;&#39588;<a class="anchor-link" href="#&#27493;&#39588;">&#182;</a></h2><p>关键是如何得到好模型 (类比人类心智模型)</p>
 <p>计算主义: 宇宙就是一场计算, 它的模型就是自身. 所有理论只是宇宙原模型某角度某层面的简化.</p>
 <p>所谓神者, 就是某种拥有自指结构的模型. 通神, 就是通过自指达到内部的无限, 以贴近外部宇宙的无限. 自指可再分等级和结构.</p>
 <ol>
@@ -1117,7 +1255,7 @@ h6:hover .anchor-link {
 </ol>
 <p>骨架是基础, 纹理是皮毛. 骨架错则余皆不问.
 非线性网络通用但复杂</p>
-<h2 id="过拟合">&#36807;&#25311;&#21512;<a class="anchor-link" href="#过拟合">&#182;</a></h2><p>模型与学习样本高度拟合, 但面对新样本性能明显下降. 高分低能, 知识不能指导实践就不是真知.</p>
+<h2 id="&#36807;&#25311;&#21512;">&#36807;&#25311;&#21512;<a class="anchor-link" href="#&#36807;&#25311;&#21512;">&#182;</a></h2><p>模型与学习样本高度拟合, 但面对新样本性能明显下降. 高分低能, 知识不能指导实践就不是真知.</p>
 <p>原因: 样本有错误, 误差, 特例和噪音. 过度贴近样本会使模型变形, 连错误和噪音也一并学习.
 事物发展有偶然性与必然性, 模型要体现决定事物发展的必然性, 排除偶然性.</p>
 <p>如何减少:</p>
@@ -1134,9 +1272,8 @@ h6:hover .anchor-link {
 </li>
 </ul>
 <p>过拟合时图形曲折, 通常是 $|\theta|$ 过大的结果. 通过把 $\theta^2$ 加入代价函数,惩罚过大的 $\theta$ 来避免.</p>
-<p>$$ J_{R}(\theta) = J(\theta) + \lambda \sum \theta^2$$</p>
-<p>凡事过犹不及, 如果惩罚过重, 则会产生欠拟合, 低分低能. 这里的火候全在 $\lambda$</p>
-<h2 id="神经网络">&#31070;&#32463;&#32593;&#32476;<a class="anchor-link" href="#神经网络">&#182;</a></h2><p>脑神经回路特性:</p>
+$$ J_{R}(\theta) = J(\theta) + \lambda \sum \theta^2$$<p>凡事过犹不及, 如果惩罚过重, 则会产生欠拟合, 低分低能. 这里的火候全在 $\lambda$</p>
+<h2 id="&#31070;&#32463;&#32593;&#32476;">&#31070;&#32463;&#32593;&#32476;<a class="anchor-link" href="#&#31070;&#32463;&#32593;&#32476;">&#182;</a></h2><p>脑神经回路特性:</p>
 <ul>
 <li>通用算法: 听说读写... 轻松学习新技能</li>
 <li>大量神经元互联而成: 容错性, 冗余性</li>
@@ -1157,7 +1294,7 @@ h6:hover .anchor-link {
 </ul>
 </li>
 </ul>
-<h2 id="技巧">&#25216;&#24039;<a class="anchor-link" href="#技巧">&#182;</a></h2><p>过犹不及, 不偏不倚, 术也.</p>
+<h2 id="&#25216;&#24039;">&#25216;&#24039;<a class="anchor-link" href="#&#25216;&#24039;">&#182;</a></h2><p>过犹不及, 不偏不倚, 术也.</p>
 <ul>
 <li>学习速率 $\alpha$ <ul>
 <li>太大易发散</li>
@@ -1190,10 +1327,9 @@ h6:hover .anchor-link {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="练习">&#32451;&#20064;<a class="anchor-link" href="#练习">&#182;</a></h1><p>使用 NumPy, matplotlib, SymPy 等 Python 科学库实现</p>
+<h1 id="&#32451;&#20064;">&#32451;&#20064;<a class="anchor-link" href="#&#32451;&#20064;">&#182;</a></h1><p>使用 NumPy, matplotlib, SymPy 等 Python 科学库实现</p>
 
 </div>
 </div>
@@ -1203,15 +1339,15 @@ h6:hover .anchor-link {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">op</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
 
 <span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sp</span>
 
@@ -1222,16 +1358,15 @@ h6:hover .anchor-link {
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="线性回归">&#32447;&#24615;&#22238;&#24402;<a class="anchor-link" href="#线性回归">&#182;</a></h1><ol>
+<h1 id="&#32447;&#24615;&#22238;&#24402;">&#32447;&#24615;&#22238;&#24402;<a class="anchor-link" href="#&#32447;&#24615;&#22238;&#24402;">&#182;</a></h1><ol>
 <li>用线性函数拟合训练集 $X \to y$,</li>
 <li>得到线性模型 $h(\theta^T x)$ 以预测新样本.</li>
 <li>代价函数 $J(\theta_n) = \frac{1}{2m}\sum_m (h_m(\theta) - y_m)^2$ 做为性能指标, 最低值来确定权重 $\theta_n$<ul>
@@ -1351,7 +1486,7 @@ h6:hover .anchor-link {
 <span class="n">ex1</span><span class="p">(</span><span class="s1">&#39;ex1data1.txt&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1361,7 +1496,7 @@ h6:hover .anchor-link {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1611,14 +1746,15 @@ fYUyedLblAGN20bEERExmjJu4GLK2ITDIuLM6vRJSX3IswykNlKdRrhhZj5Qt34YZSKyt6kOJ1Am
 JVogM1+u2e5tYImuJgGKiD0pweCCzDy37rm1ADLz8dnUtVVm3hoR6wD3UE5hPC0z742ID1AmRDoT
 +GJmXlS9bg1KL8f+mfnUXP+DSOoxA4GkhouIoZ29CHXrh2XmG82oSRroDASSJMkxBJIkyUAgSZIw
 EEiSJAwEkiQJA4EkSQL+P5OoblS/0BZeAAAAAElFTkSuQmCC
-">
+"
+>
 </div>
 
 </div>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1631,7 +1767,7 @@ $$\theta_{梯度下降} = \begin{bmatrix}-3.63\\1.17\end{bmatrix}               
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2038,14 +2174,15 @@ wxGR/0x/AP4ZeCfp0kQtl9D1UD2zuufhdWY9TKU7PSL+mD3vD2zfF9O8ShoA9ImIt/Wat6TbSVPg
 3pY97xcRW/bwHCOA+0lT4PqGPNtvOdCbWelIOhJYDpwSETv28hwtwNcj4ntvaebMehgHejMzszrm
 m/HMzMzqmAO9mZlZHXOgNzMzq2MO9GZmZnXMgd7MzKyOOdCbmZnVsf8HUctJHUINxQQAAAAASUVO
 RK5CYII=
-">
+"
+>
 </div>
 
 </div>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2058,7 +2195,7 @@ $$h(3.5) = 0.45$$
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2071,7 +2208,7 @@ $$h(7) = 4.53$$
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3757,14 +3894,15 @@ TPv27escu+mmmyguLr6i+5s5cya/+93vIr+npKRc0fkEgquBEEyBQHDZ+Hw+9Hp9nWMGgwGv13tF
 lJG1/j4fGK4oyvhmuv/RwGZApyiKaOgVXDPEClMgEFwJu4F+KpXKWOvYSGBXc92hoiiZiqJohFgK
 rjVCMAUCwZWwBSgAlqpUqo4qleppYDiwokWjEgiaAVH0IxAILhtFURSVSvUbwgJ5lLB4PqAoSkFL
 xiUQNAdiD1MgEAgEgktApGQFAoFAILgEhGAKBAKBQHAJ/H+AB/2EAqSGgwAAAABJRU5ErkJggg==
-">
+"
+>
 </div>
 
 </div>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -4996,7 +5134,8 @@ FhGbmyxS0tIMdkl1E8A3MP9Y/h7gZWDnXDul135NI9VJGshgl1T3PXCq+nwX8H5mHgbOA05X7aeB
 dknD+AK4ovp8JTDdYC2S+jDYJQ3jU+CiiNgFzGTmkaYLktRbZGbTNUiSpLPEHrskSR1isEuS1CEG
 uyRJHWKwS5LUIQa7JEkdYrBLktQhBrskSR1isEuS1CEGuyRJHfIPM1WBJt2PYAcAAAAASUVORK5C
 YII=
-">
+"
+>
 </div>
 
 </div>
@@ -5006,10 +5145,9 @@ YII=
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="逻辑回归">&#36923;&#36753;&#22238;&#24402;<a class="anchor-link" href="#逻辑回归">&#182;</a></h1><ul>
+<h1 id="&#36923;&#36753;&#22238;&#24402;">&#36923;&#36753;&#22238;&#24402;<a class="anchor-link" href="#&#36923;&#36753;&#22238;&#24402;">&#182;</a></h1><ul>
 <li>用 Sigmoid 函数扩展线性回归, 得到简单两分法分类模型. </li>
 <li>使用一对多策略扩展到多于两个类别的分类模型</li>
 </ul>
@@ -5028,7 +5166,7 @@ YII=
 <span class="n">display</span><span class="p">(</span><span class="n">sigmoid</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5038,7 +5176,7 @@ YII=
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5269,14 +5407,15 @@ V0RE5JiMMa2BScA91tq1x9xW7V8REZGyGWPigSXAOmvt4ONtr5GqiIjI0Y0BEoA7yrOx9qmKiIiU
 wRhzIzAQ6A0kGWNqFXwr+2j7VdX+FRERKYMxZgFwPm7mb3ETrLVDynyMQlVERCQ0tE9VREQkRBSq
 IiIiIaJQFRERCRGFqoiISIgoVEVEREJEoSoiIhIiClUREZEQUaiKiIiEyP8HUd72W09+jCEAAAAA
 SUVORK5CYII=
-">
+"
+>
 </div>
 
 </div>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5292,8 +5431,7 @@ $$\frac{1}{1 + e^{- z}}$$
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>这个函数值在 0 与 1 之间, 用来表示预测的分类概率. 该函数需要用 $log$ 函数来使代价函数为凸起</p>
 
@@ -5361,7 +5499,7 @@ $$\frac{1}{1 + e^{- z}}$$
 <span class="n">ex2</span><span class="p">(</span><span class="s1">&#39;ex2data1.txt&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5371,7 +5509,7 @@ $$\frac{1}{1 + e^{- z}}$$
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -5382,7 +5520,7 @@ $$\frac{1}{1 + e^{- z}}$$
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5395,7 +5533,7 @@ $$\theta_{fmin} = \begin{bmatrix}-25.161\\0.206\\0.201\end{bmatrix}$$
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5804,14 +5942,15 @@ GEcJCwYMI/2o6iFeZd5gIHAoVPXxioNF/sWfoxg3M+GJuFEJB3+ISEPgMdyDv6eIDMb1W2gEtMU1
 WxiGcZSwITqGkX4oVUwnXEXeeJT57VBk4oYMLgAWA9NUdVcwg4j8BliHmyGxwE9FfB7wlt8eDkyD
 bBjGUcBGExiGkVBEJA83WqA40b4YRrpiwYBhGIZhpDnWTGAYhmEYaY4FA4ZhGIaR5lgwYBiGYRhp
 jgUDhmEYhpHmWDBgGIZhGGmOBQOGYRiGkeb8P6tC9hdhkXNUAAAAAElFTkSuQmCC
-">
+"
+>
 </div>
 
 </div>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -5827,7 +5966,7 @@ jgUDhmEYhpHmWDBgGIZhGGmOBQOGYRiGkeb8P6tC9hdhkXNUAAAAAElFTkSuQmCC
 </div>
  
 
-
+</body>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var mathjaxscript = document.createElement('script');
     mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
@@ -5861,12 +6000,12 @@ jgUDhmEYhpHmWDBgGIZhGGmOBQOGYRiGkeb8P6tC9hdhkXNUAAAAAElFTkSuQmCC
   </div>
 <footer>
   <p>
-    <time datetime="2014-07-04T20:30:00+08:00" pubdate>2014-07-04</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2014-07-04T20:30:00+08:00" pubdate>2014-07-04</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/review.html"><span class="tag" i18n>review</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/algorithm.html"><span class="tag" i18n>algorithm</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/review.html"><span class="tag" i18n>review</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/algorithm.html"><span class="tag" i18n>algorithm</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -5891,11 +6030,11 @@ jgUDhmEYhpHmWDBgGIZhGGmOBQOGYRiGkeb8P6tC9hdhkXNUAAAAAElFTkSuQmCC
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";

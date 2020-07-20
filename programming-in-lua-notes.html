@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,36 +25,36 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/programming-in-lua-notes.html">Programming in Lua 笔记</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/programming-in-lua-notes.html">Programming in Lua 笔记</a></h1>
 </header>  <div>
     <section>
       <p>最近花了两天读完了《Programming in Lua》。本书不但教授如何使用 Lua 语言，还顺带解释了为什么 Lua 会设计成现在这样子，很有价值。</p>
-<div class="contents local topic" id="contents">
+<div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#lua" id="id4">Lua 的特点: 小快灵</a></li>
-<li><a class="reference internal" href="#id1" id="id5">Lua 的缺点: 少活简</a></li>
-<li><a class="reference internal" href="#id2" id="id6">感想</a></li>
-<li><a class="reference internal" href="#id3" id="id7">总结</a></li>
+<li><a class="reference internal" href="#lua" id="id5">Lua 的特点: 小快灵</a></li>
+<li><a class="reference internal" href="#id2" id="id6">Lua 的缺点: 少活简</a></li>
+<li><a class="reference internal" href="#id3" id="id7">感想</a></li>
+<li><a class="reference internal" href="#id4" id="id8">总结</a></li>
 </ul>
 </div>
 <div class="section" id="lua">
-<h2><a class="toc-backref" href="#id4">Lua 的特点: 小快灵</a></h2>
+<h2><a class="toc-backref" href="#id5">Lua 的特点: 小快灵</a></h2>
 <ul class="simple">
 <li>小: 整个 Lua 包括标准库只有 2 万行代码，解释器大小 200 KB。占用的内存也很小</li>
 <li>快: 经过手工调优基于寄存器的虚拟机，加上增量式的标志清扫垃圾收集器。Lua 可算是运行速度最快的脚本语言了。另一方面，灵活的语法和数据结构也大大加快了开发速度</li>
 <li>灵: 使用方式灵活多样。可做为脚本语言直接使用;也可嵌入宿主程序中做脚本引擎 (如魔兽世界);还可直接调用 C 编写的扩展</li>
 </ul>
 </div>
-<div class="section" id="id1">
-<h2><a class="toc-backref" href="#id5">Lua 的缺点: 少活简</a></h2>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id6">Lua 的缺点: 少活简</a></h2>
 <ul class="simple">
 <li>少: 标准库的功能太少。自限于标准 C 的框框中，导致很多基本功能缺失，例如正则表达式，系统线程，目录操作等</li>
 <li>活: 灵活的语法和数据结构固然能加快开发速度，但往往也使人容易犯下不着边际的错误。非常考验团队的编码纪律。特别是变量使用前不用定义，变量默认全局范围，类型自动协变这些设定</li>
 <li>简: Lua 的哲学之一是只提供机制，而不提供设施。导致很多用法是靠着惯例和潜规则来支撑的。对普通应用来说是简约，但对稍复杂的就显得简陋了</li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h2><a class="toc-backref" href="#id6">感想</a></h2>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id7">感想</a></h2>
 <ul>
 <li><p class="first">Lua 太执着于标准 C 了，这种偏执让其保有极端的可移植性与可扩展性。例如 Lua 对库搜索路径的处理用巧妙的方式有意避开了文件路径，仅仅因为标准 C 中没有文件路径这个概念。自困于标准 C 直接导致了 Lua 的 os 库不能使用 POSIX API，几乎毫无用处。但也正是这个决定，让扩展非常方便，第三方很容易就写出 POSIX 的库供 Lua 使用。权衡得失，这个坚持还是相当大胆有效的</p>
 </li>
@@ -137,8 +137,8 @@
 </li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2><a class="toc-backref" href="#id7">总结</a></h2>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id8">总结</a></h2>
 <p>Lua 是一门局限性很大的语言，由于其小快灵的特点，在游戏脚本，编写扩展等领域是非常好的选择。可一旦程序上规模就会捉襟见肘。其极端的灵活性和简陋的设施，并不适合大团队协同开发。这年头语言层出不穷，新语言要想得到市场认可，四平八稳的设计思路是很难出头的。Lua 很多近乎偏质的设计决定，正是它得以流行的关键。</p>
 <p>当然，Lua 还远谈不上是一门好语言。我一向认为，编程语言本身需肩负起教育与规劝的责任，应该用精巧的限制和有力的规则来避免码农犯愚蠢的错误。相反，把过多的自由交给无知的键盘，只会带给世界更多的垃圾代码。</p>
 </div>
@@ -147,12 +147,12 @@
   </div>
 <footer>
   <p>
-    <time datetime="2012-05-02T01:20:00+08:00" pubdate>2012-05-02</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2012-05-02T01:20:00+08:00" pubdate>2012-05-02</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/lua.html"><span class="tag" i18n>lua</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/review.html"><span class="tag" i18n>review</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/design.html"><span class="tag" i18n>design</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/lua.html"><span class="tag" i18n>lua</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/review.html"><span class="tag" i18n>review</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -177,11 +177,11 @@
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";

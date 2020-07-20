@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,7 +25,7 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/ftputil-introduction.html">ftputil 简介</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/ftputil-introduction.html">ftputil 简介</a></h1>
 </header>  <div>
     <section>
       <p>最近工作上需要定制一个 FTP 客户端工具，用来同步本地文件夹到 FTP 服务器上。这般粗活首选当然是 Python: 开发迅速，编写简洁，还能用 py2exe 打包独立分发。</p>
@@ -36,9 +36,9 @@
 <span class="kn">from</span> <span class="nn">ftputil.ftp_error</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">ftputil.ftp_sync</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="n">local_directory</span><span class="p">,</span> <span class="n">ftp_host</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="n">local_directory</span><span class="p">,</span> <span class="n">ftp_host</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">FTPHost</span><span class="p">(</span><span class="n">ftp_host</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="k">as</span> <span class="n">remote</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s1">&#39;Login to FTP </span><span class="si">%s</span><span class="s1"> successfully as user </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span> <span class="ow">and</span> <span class="n">user</span> <span class="ow">or</span> <span class="s1">&#39;anonymous&#39;</span><span class="p">))</span>
+        <span class="nb">print</span> <span class="s1">&#39;Login to FTP </span><span class="si">%s</span><span class="s1"> successfully as user </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span> <span class="ow">and</span> <span class="n">user</span> <span class="ow">or</span> <span class="s1">&#39;anonymous&#39;</span><span class="p">))</span>
         <span class="n">local</span> <span class="o">=</span> <span class="n">LocalHost</span><span class="p">()</span>
         <span class="n">syncer</span> <span class="o">=</span> <span class="n">Syncer</span><span class="p">(</span><span class="n">local</span><span class="p">,</span> <span class="n">remote</span><span class="p">)</span>
         <span class="n">syncer</span><span class="o">.</span><span class="n">sync</span><span class="p">(</span><span class="n">local_directory</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span>
@@ -57,11 +57,11 @@
   </div>
 <footer>
   <p>
-    <time datetime="2012-06-12T23:23:00+08:00" pubdate>2012-06-12</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2012-06-12T23:23:00+08:00" pubdate>2012-06-12</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -86,11 +86,11 @@
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";

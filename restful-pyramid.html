@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,38 +25,38 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/restful-pyramid.html">RESTful Pyramid</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/restful-pyramid.html">RESTful Pyramid</a></h1>
 </header>  <div>
     <section>
-      <div class="contents local topic" id="contents">
+      <div class="contents local topic" id="id1">
 <ul class="simple">
-<li><a class="reference internal" href="#english-version" id="id4">English Version (英文版)</a><ul>
-<li><a class="reference internal" href="#http-verb-based-route" id="id5">HTTP Verb Based Route</a></li>
-<li><a class="reference internal" href="#http-method-override" id="id6">HTTP Method Override</a></li>
-<li><a class="reference internal" href="#mime-type-based-route" id="id7">MIME-Type Based Route</a></li>
-<li><a class="reference internal" href="#file-extension-based-route" id="id8">File Extension Based Route</a></li>
-<li><a class="reference internal" href="#something-about-client" id="id9">Something about Client</a></li>
+<li><a class="reference internal" href="#english-version" id="id5">English Version (英文版)</a><ul>
+<li><a class="reference internal" href="#http-verb-based-route" id="id6">HTTP Verb Based Route</a></li>
+<li><a class="reference internal" href="#http-method-override" id="id7">HTTP Method Override</a></li>
+<li><a class="reference internal" href="#mime-type-based-route" id="id8">MIME-Type Based Route</a></li>
+<li><a class="reference internal" href="#file-extension-based-route" id="id9">File Extension Based Route</a></li>
+<li><a class="reference internal" href="#something-about-client" id="id10">Something about Client</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#chinese-version" id="id10">中文版 (Chinese Version)</a><ul>
-<li><a class="reference internal" href="#http" id="id11">基于 HTTP 动词的分派</a></li>
-<li><a class="reference internal" href="#id1" id="id12">HTTP 方法覆盖</a></li>
-<li><a class="reference internal" href="#mime-type" id="id13">基于 MIME-Type 的分派</a></li>
-<li><a class="reference internal" href="#id2" id="id14">基于文件扩展名的分派</a></li>
-<li><a class="reference internal" href="#id3" id="id15">关于客户端</a></li>
+<li><a class="reference internal" href="#chinese-version" id="id11">中文版 (Chinese Version)</a><ul>
+<li><a class="reference internal" href="#http" id="id12">基于 HTTP 动词的分派</a></li>
+<li><a class="reference internal" href="#id2" id="id13">HTTP 方法覆盖</a></li>
+<li><a class="reference internal" href="#mime-type" id="id14">基于 MIME-Type 的分派</a></li>
+<li><a class="reference internal" href="#id3" id="id15">基于文件扩展名的分派</a></li>
+<li><a class="reference internal" href="#id4" id="id16">关于客户端</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="english-version">
-<h2><a class="toc-backref" href="#id4">English Version (英文版)</a></h2>
+<h2><a class="toc-backref" href="#id5">English Version (英文版)</a></h2>
 <p>Recently python web framework <tt class="docutils literal">Pylons</tt> and <tt class="docutils literal">repoze.bfg</tt> merged together as <tt class="docutils literal">Pyramid</tt> and release v 1.0 very soon.</p>
 <p>The first impression of Pyramid is that it is more a micro-framework than Pylons. And sometimes I found it too micro that it lacks some of the convenience utility such as build-in support for RESTful style serivce: there is no Pylons's <tt class="docutils literal">RestController</tt></p>
 <p>Thanks to Pyramid's flexible design, it's easy to setup the RESTful route manually and here comes the cookbook.</p>
 <div class="section" id="http-verb-based-route">
-<h3><a class="toc-backref" href="#id5">HTTP Verb Based Route</a></h3>
+<h3><a class="toc-backref" href="#id6">HTTP Verb Based Route</a></h3>
 <p>RESTful style service requires different HTTP verbs mapping to different handlers. In Pyramid we can map different views to same route based on different <tt class="docutils literal">request_method</tt></p>
-<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">pyramid.view</span> <span class="kn">import</span> <span class="n">view_config</span>
 
@@ -71,7 +71,7 @@
 </pre></div>
 </div>
 <div class="section" id="http-method-override">
-<h3><a class="toc-backref" href="#id6">HTTP Method Override</a></h3>
+<h3><a class="toc-backref" href="#id7">HTTP Method Override</a></h3>
 <p>RESTful web service take advantage of all HTTP methods, including <tt class="docutils literal">DELETE</tt> and <tt class="docutils literal">PUT</tt>. However sometimes HTTP clients could only send <tt class="docutils literal">GET</tt> and <tt class="docutils literal">POST</tt> requests because:</p>
 <ul class="simple">
 <li>HTML standard only supports <tt class="docutils literal">GET</tt> and <tt class="docutils literal">POST</tt> via link and form actions. Web browser just cannot send <tt class="docutils literal">PUT</tt> or <tt class="docutils literal">DELETE</tt> without ajax support.</li>
@@ -163,7 +163,7 @@ a=1&amp;_method=DELETE
 </pre></div>
 </div>
 <div class="section" id="mime-type-based-route">
-<h3><a class="toc-backref" href="#id7">MIME-Type Based Route</a></h3>
+<h3><a class="toc-backref" href="#id8">MIME-Type Based Route</a></h3>
 <p>For RESTful service, an URI could gives different representations for the same resource based on <tt class="docutils literal"><span class="pre">MIME-types</span></tt> (like <tt class="docutils literal">application/xml</tt> or <tt class="docutils literal">application/json</tt>) in HTTP request's <tt class="docutils literal">Accept</tt> header. Pyramid has build-in support for this:</p>
 <div class="highlight"><pre><span></span><span class="c1"># if MIME type is XML we use the xml template for render</span>
 <span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
@@ -180,11 +180,11 @@ a=1&amp;_method=DELETE
 </pre></div>
 </div>
 <div class="section" id="file-extension-based-route">
-<h3><a class="toc-backref" href="#id8">File Extension Based Route</a></h3>
+<h3><a class="toc-backref" href="#id9">File Extension Based Route</a></h3>
 <p>Some RESTful services also use file extension of the URI to decide the right resource representation.</p>
 <p>For example, server gives data in the default HTML format on URI <tt class="docutils literal">/post/123</tt>. It will also returns HTML on the explicit request for <tt class="docutils literal">/post/123.html</tt> and only returns JSON on <tt class="docutils literal">/post/123.json</tt>.</p>
 <p>We could let multiple routes mapping to the same view to support this schema:</p>
-<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_html&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}.html&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_html&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">.html&#39;</span><span class="p">)</span>
 <span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_json, &#39;</span><span class="n">post</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">json</span><span class="s1">&#39;)</span>
 <span class="c1"># The raw ID without &quot;.&quot; and &quot;/&quot;</span>
 <span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id:[^/\.]+}&#39;</span><span class="p">)</span>
@@ -208,7 +208,7 @@ a=1&amp;_method=DELETE
 
     <span class="k">return</span> <span class="n">predicate</span>
 
-<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="nd">@view_config</span><span class="p">(</span>
     <span class="n">route_name</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
@@ -240,7 +240,7 @@ a=1&amp;_method=DELETE
 </pre></div>
 </div>
 <div class="section" id="something-about-client">
-<h3><a class="toc-backref" href="#id9">Something about Client</a></h3>
+<h3><a class="toc-backref" href="#id10">Something about Client</a></h3>
 <p>As said, you have to use the <tt class="docutils literal">POST</tt> tunnel to fire a <tt class="docutils literal">PUT</tt> or <tt class="docutils literal">DELETE</tt> request in current web browser if javascript is disabled.</p>
 <p>The only way to perform an HTTP <tt class="docutils literal">POST</tt> with standard HTML is to use a <tt class="docutils literal">&lt;form&gt;</tt> tag. and you have to use one of <tt class="docutils literal">&lt;input <span class="pre">type=&quot;submit&quot;&gt;</span></tt> <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> or <tt class="docutils literal">&lt;input <span class="pre">type=&quot;button&quot;&gt;</span></tt> tag to create the action trigger.</p>
 <p>I prefer <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> which gives you more control on how it looks (and lucky by default it just looks like a link):</p>
@@ -285,13 +285,13 @@ a=1&amp;_method=DELETE
 </div>
 <hr class="docutils" />
 <div class="section" id="chinese-version">
-<h2><a class="toc-backref" href="#id10">中文版 (Chinese Version)</a></h2>
+<h2><a class="toc-backref" href="#id11">中文版 (Chinese Version)</a></h2>
 <p>最近 python web 框架 Pylons 和 repoze.bfg 合并成了 Pyramid，很快就推出了 1.0 版本。</p>
 <p>对 Pyramid 的第一印象：相对 Pylons 来说，它更加简洁，有时甚至简洁到缺乏一些方便工具。比如对 RESTful 风格服务的内建支持: 你找不到原来 Pylons 中 <tt class="docutils literal">RestController</tt> 相对应的方法。好在 Pyramid 设计的很具弹性，手工搞定 RESTful 风格的 URI 分派也不是什么难事，下面就是实际的例子。</p>
 <div class="section" id="http">
-<h3><a class="toc-backref" href="#id11">基于 HTTP 动词的分派</a></h3>
+<h3><a class="toc-backref" href="#id12">基于 HTTP 动词的分派</a></h3>
 <p>RESTful 风格的服务需要根据不同的 HTTP 动词做不同的处理。在 Pyramid 中这很容易做到。只要在相同的 URI 上将不同的 <tt class="docutils literal">request_method</tt> 分派到不同的 <tt class="docutils literal">view</tt> 上就行了：</p>
-<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">pyramid.view</span> <span class="kn">import</span> <span class="n">view_config</span>
 
@@ -305,8 +305,8 @@ a=1&amp;_method=DELETE
     <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;DELETE post </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="section" id="id1">
-<h3><a class="toc-backref" href="#id12">HTTP 方法覆盖</a></h3>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id13">HTTP 方法覆盖</a></h3>
 <p>RESTful 服务充分利用每一个 HTTP 方法，包括 <tt class="docutils literal">DELETE</tt> 和 <tt class="docutils literal">PUT</tt>。可有时，HTTP 客户端只能发出 <tt class="docutils literal">GET</tt> 和 <tt class="docutils literal">POST</tt> 请求：</p>
 <ul>
 <li><p class="first">HTML 标准只通过链接和表单支持 <tt class="docutils literal">GET</tt> 和 <tt class="docutils literal">POST</tt> 。在没有 Ajax 支持的网页浏览器中不能发出 <tt class="docutils literal">PUT</tt> 或 <tt class="docutils literal">DELETE</tt> 命令</p>
@@ -401,7 +401,7 @@ a=1&amp;_method=DELETE
 </pre></div>
 </div>
 <div class="section" id="mime-type">
-<h3><a class="toc-backref" href="#id13">基于 MIME-Type 的分派</a></h3>
+<h3><a class="toc-backref" href="#id14">基于 MIME-Type 的分派</a></h3>
 <p>对于 RESTful 服务来说，一个 URI 背后对应的资源可以有不同的表现形式。在 HTTP 请求中可以通过 <tt class="docutils literal">Accept</tt> 头来表明客户端需要的 <tt class="docutils literal"><span class="pre">MIME-Type</span></tt> (<tt class="docutils literal">application/xml</tt>, <tt class="docutils literal">application/json</tt>)。Pyramid 对此支持的很好：</p>
 <div class="highlight"><pre><span></span><span class="c1"># if MIME type is XML we use the xml template for render</span>
 <span class="nd">@view_config</span><span class="p">(</span><span class="n">route_name</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
@@ -417,11 +417,11 @@ a=1&amp;_method=DELETE
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">post_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">matchdict</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="section" id="id2">
-<h3><a class="toc-backref" href="#id14">基于文件扩展名的分派</a></h3>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id15">基于文件扩展名的分派</a></h3>
 <p>一些 RESTful 服务还会利用 URI 路径的扩展名来决定客户端需要什么形式的回复。</p>
 <p>例如，当请求 <tt class="docutils literal">/post/123</tt> 时，服务器回复默认的 HTML 格式。当明确请求 <tt class="docutils literal">/post/123.html</tt> 时，仍然回复 HTML 格式。当请求 <tt class="docutils literal">post/123.json</tt> 时就会回复 JSON 格式的数据。我们可以通过定义多个 <tt class="docutils literal">route</tt> 来映射到同一个 <tt class="docutils literal">view</tt> 支持这样的模式：</p>
-<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_html&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}.html&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_html&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">.html&#39;</span><span class="p">)</span>
 <span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post_json, &#39;</span><span class="n">post</span><span class="o">/</span><span class="p">{</span><span class="nb">id</span><span class="p">}</span><span class="o">.</span><span class="n">json</span><span class="s1">&#39;)</span>
 <span class="c1"># The raw ID without &quot;.&quot; and &quot;/&quot;</span>
 <span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id:[^/\.]+}&#39;</span><span class="p">)</span>
@@ -445,7 +445,7 @@ a=1&amp;_method=DELETE
 
     <span class="k">return</span> <span class="n">predicate</span>
 
-<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/{id}&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;post/</span><span class="si">{id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="nd">@view_config</span><span class="p">(</span>
     <span class="n">route_name</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
@@ -478,8 +478,8 @@ a=1&amp;_method=DELETE
         <span class="k">return</span> <span class="n">HTTPNotFount</span><span class="p">(</span><span class="s2">&quot;not found the format for &quot;</span> <span class="o">%</span> <span class="n">ext</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="section" id="id3">
-<h3><a class="toc-backref" href="#id15">关于客户端</a></h3>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id16">关于客户端</a></h3>
 <p>如前述，如果禁止 javascript 的话，在浏览器里你只能使用 <tt class="docutils literal">POST</tt> 来伪装一个 <tt class="docutils literal">PUT</tt> 或 <tt class="docutils literal">DELETE</tt> 的请求。</p>
 <p>在标准 HTML 中，只能通过 <tt class="docutils literal">&lt;form&gt;</tt> 标签来发送一个 <tt class="docutils literal">POST</tt> 请求。而且，你还必须使用一个 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;submit&quot;&gt;</span></tt>, <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt> 或 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;button&quot;&gt;</span></tt> 标签。个人喜欢使用 <tt class="docutils literal">&lt;input <span class="pre">type=&quot;image&quot;&gt;</span></tt>, 这样可以更好地控制外观 （而且它默认也长的象普通的链接）：</p>
 <div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;${request.route_url(&#39;post&#39;, id=id)}&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;delete&quot;</span><span class="p">&gt;</span>
@@ -525,13 +525,13 @@ a=1&amp;_method=DELETE
   </div>
 <footer>
   <p>
-    <time datetime="2011-03-13T18:06:00+08:00" pubdate>2011-03-13</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2011-03-13T18:06:00+08:00" pubdate>2011-03-13</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/english.html"><span class="tag" i18n>english</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/javascript.html"><span class="tag" i18n>javascript</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/web.html"><span class="tag" i18n>web</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/english.html"><span class="tag" i18n>english</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/javascript.html"><span class="tag" i18n>javascript</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/web.html"><span class="tag" i18n>web</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -556,11 +556,11 @@ a=1&amp;_method=DELETE
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";

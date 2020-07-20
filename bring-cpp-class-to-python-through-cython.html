@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="zh-cn"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-cn"> <!--<![endif]-->
   <head>
     
     <meta charset="utf-8">
@@ -10,13 +10,13 @@
     <meta name="author" content="Qiang">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="http://localhost:8000/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="道可叨 Atom Feed" />
-        <link rel="stylesheet" href="http://zhuoqiang.me/theme/css/app.css">
-    <script src="http://zhuoqiang.me/theme/js/vendor/custom.modernizr.js"></script>
+        <link rel="stylesheet" href="https://zhuoqiang.github.io/theme/css/app.css">
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/custom.modernizr.js"></script>
   </head>
   <body>
     <header>
       <hgroup>
-        <a href="http://zhuoqiang.me">
+        <a href="https://zhuoqiang.github.io">
           <h1 i18n>道可叨</h1>
           <h2>Free Will</h2>
         </a>
@@ -25,7 +25,7 @@
     <section>
 <article>
 <header>
-  <h1><a href="http://zhuoqiang.me/bring-cpp-class-to-python-through-cython.html">逆世界：让 C++ 走进 Python</a></h1>
+  <h1><a href="https://zhuoqiang.github.io/bring-cpp-class-to-python-through-cython.html">逆世界：让 C++ 走进 Python</a></h1>
 </header>  <div>
     <section>
       <p><em>本文首发程序员杂志 2014 年 8 月刊</em></p>
@@ -93,7 +93,7 @@
 <p>接着让我们更进一步：如果需要在 Python 中继承 <tt class="docutils literal">PyFoo</tt> 并且改写 <tt class="docutils literal"><span class="pre">CppFoo::fun()</span></tt> 虚函数又会发生什么呢？</p>
 <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PyDerivedFoo</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">PyFoo</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span> <span class="s1">&#39;PyDerivedFoo.fun()&#39;</span>
+        <span class="nb">print</span> <span class="s1">&#39;PyDerivedFoo.fun()&#39;</span>
 
 <span class="n">derived</span> <span class="o">=</span> <span class="n">PyDerivedFoo</span><span class="p">()</span>
 
@@ -160,7 +160,7 @@
         <span class="nb">object</span> <span class="bp">self</span><span class="p">,</span>
         <span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">method_name</span><span class="p">):</span>
 
-    <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">)</span>
 </pre></div>
 <p><tt class="docutils literal">getattr()</tt> 方法能通过名字找到对象中相应的属性对象。在尝试获得 <tt class="docutils literal">self</tt> 中与方法名想同名称的子对象后，我们再判断这个子对象的类型是不是一个方法。</p>
@@ -170,7 +170,7 @@
     <span class="n">method</span><span class="p">()</span>
 </pre></div>
 <p>搞清了 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 的实现细节后，下一步就是看如何将 Python 对象 <tt class="docutils literal">self</tt> 塞进 <tt class="docutils literal">CppFooProxy</tt> 中</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cpython.ref</span> <span class="nn">cimport</span> <span class="nn">PyObject</span>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cpython.ref</span> <span class="n">cimport</span> <span class="n">PyObject</span>
 
 <span class="c1"># 在 Cython 中引入 C++ 类 CppFoo 的定义</span>
 <span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s2">&quot;CppFoo.hpp&quot;</span><span class="p">:</span>
@@ -204,7 +204,7 @@
     <span class="n">call_fun</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">_this</span><span class="p">)</span>
 </pre></div>
 <p>可以看到，我们先把要包装导出的 C++ 目标类 <tt class="docutils literal">CppFoo</tt> 和我们刚刚实现的代理类 <tt class="docutils literal">CppFooProxy</tt> 的定义导出到 Cython 中，再构造 Python 类 <tt class="docutils literal">PyFoo</tt> 来包装我们的代理类 <tt class="docutils literal">CppFooProxy</tt>。<tt class="docutils literal">PyFoo</tt> 在内部维护了一个 <tt class="docutils literal">CppFooProxy</tt> 代理类的对象，而 <tt class="docutils literal">PyFoo.foo()</tt> 调用会被转发到代理类的  <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 函数上。当创建 <tt class="docutils literal">CppFooProxy</tt> 对象时，<tt class="docutils literal">PyFoo</tt> 也会将自己通过 <tt class="docutils literal">self</tt> 传入到 <tt class="docutils literal">CppFooProxy</tt> 中。这样一来，<tt class="docutils literal">PyFoo</tt> 与 <tt class="docutils literal">CppFooProxy</tt> 就彼此拥有对方。他们一起合作来完成 C++ 和 Python 这两个世界的连接。</p>
-<object data="http://zhuoqiang.me/images/cpp-py-classes.svg" type="image/svg+xml">
+<object data="https://zhuoqiang.github.io/images/cpp-py-classes.svg" type="image/svg+xml">
 C++ 与 Python 的跨语言多态实现原理 http://yuml.me/diagram/plain/class/[CppFoo|fun(){bg:orange}]^-[CppFooProxy|fun(){bg:orange}], [PyFoo|fun(){bg:green}]->[CppFooProxy], [CppFooProxy]->[PyFoo], [PyFoo]^-[PyDerivedFoo|fun(){bg:green}].svg</object>
 <p>细心的朋友可能意识到了，上面 <tt class="docutils literal">foo()</tt> 函数调用转发隐藏着一个问题。<tt class="docutils literal">PyFoo.fun()</tt> 会去调用 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt>，而 <tt class="docutils literal"><span class="pre">CppFooProxy::fun()</span></tt> 又会去调用 Python 对象中的 <tt class="docutils literal">fun()</tt> 方法，这不是一个死循环吗？ 幸运的是在 <tt class="docutils literal">has_python_override_method()</tt> 中，我们是用 <tt class="docutils literal">types.MethodType</tt> 来做比较，去判定对象是否改写了 <tt class="docutils literal">fun()</tt> 方法。而 <tt class="docutils literal">types.MethodType</tt> 只会匹配纯 Python 方法，它不包含内建函数 (built-in functions)。我们知道，Python 扩展中的方法类型都是属于内建函数类型。这样恰好排除掉了 <tt class="docutils literal">PyFoo</tt> 自己那个属于内建函数的 <tt class="docutils literal">fun()</tt> 方法，从而避免了危险的死循环。</p>
 <p>至此，我们的 C++ 类 <tt class="docutils literal">CppFoo</tt> 就成功地通过 <tt class="docutils literal">PyFoo</tt> 类转移到了 Python 世界中了。来检验一下成果吧：</p>
@@ -258,7 +258,7 @@ $ <span class="nb">cd</span> out/ <span class="o">&amp;&amp;</span> python setup
 <h2>cppython 原理与实现</h2>
 <p>通过上面的描述，我们已经了解了 cppython 的主要功能。它的输入是 C++ 头文件，里面包含了待导出的 C++ 类定义。根据输入，cppython 会自动生成代理类实现和一堆 Cython 文件。可是 cppython 究竟是如何实现这些功能的呢？ 让我们来深入了解一下。</p>
 <p>在 cppython 内部，我们首先会对输入的 C++ 文件进行语法分析，生成语法树。接着通过遍历语法树来生成所需要的包装导出代码。这里我们用访问者 (Visitor) 设计模式来解耦，把语法树的遍历逻辑和不同文件的代码生成逻辑区分开来，彼此独立实现。</p>
-<object data="http://zhuoqiang.me/images/cppython-visitors.svg" type="image/svg+xml">
+<object data="https://zhuoqiang.github.io/images/cppython-visitors.svg" type="image/svg+xml">
 cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
 <!-- [IVisitor|on_class_begin();on_method();on_...()]^-[BaseVisitor{bg:orange}], [BaseVisitor]^-[PyxVisitor{bg:green}],[BaseVisitor]^-[CppVisitor{bg:green}], [BaseVisitor]^-[HppVisitor{bg:green}], [BaseVisitor]^-[PxdVisitor{bg:green}], [BaseVisitor]^-[PxdProxyVisitor{bg:green}], [BaseVisitor]^-[PxiVisitor{bg:green}], [BaseVisitor]^-[SetupVisitor{bg:green}], [IVisitor]^-[VisitorGroup{bg:green}] -->
 <!-- [IVisitor|on_class_begin();on_method();on_...()]^-[BaseVisitor{bg:orange}], , [BaseVisitor]^-[... Visitor], [BaseVisitor]^-[CppVisitor{bg:green}],  [BaseVisitor]^-[PyxVisitor{bg:green}], , [IVisitor]^-[VisitorGroup{bg:green}] -->
@@ -277,7 +277,7 @@ cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
 
 <span class="k">def</span> <span class="nf">print_cpp_parse_tree</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="s1">&#39;递归打印 C++ 语法树&#39;</span>
-    <span class="k">print</span> <span class="n">indent</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">spelling</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">spelling</span>
+    <span class="nb">print</span> <span class="n">indent</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">spelling</span><span class="p">,</span> <span class="n">cursor</span><span class="o">.</span><span class="n">spelling</span>
 
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">get_children</span><span class="p">():</span>
         <span class="n">print_cpp_parse_tree</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">indent</span><span class="o">+</span><span class="s1">&#39;  &#39;</span><span class="p">)</span>
@@ -322,13 +322,13 @@ cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
   </div>
 <footer>
   <p>
-    <time datetime="2014-09-15T20:39:00+08:00" pubdate>2014-09-15</time><a href="http://zhuoqiang.me/category/programming.html"><span class="category" i18n>programming</span></a> 
+    <time datetime="2014-09-15T20:39:00+08:00" pubdate>2014-09-15</time><a href="https://zhuoqiang.github.io/category/programming.html"><span class="category" i18n>programming</span></a> 
   </p>
   <ul>
-    <li><a href="http://zhuoqiang.me/tag/python.html"><span class="tag" i18n>python</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/design.html"><span class="tag" i18n>design</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/c.html"><span class="tag" i18n>c++</span></i></a>
-    <li><a href="http://zhuoqiang.me/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/python.html"><span class="tag" i18n>python</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/design.html"><span class="tag" i18n>design</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/c.html"><span class="tag" i18n>c++</span></i></a>
+    <li><a href="https://zhuoqiang.github.io/tag/opensource.html"><span class="tag" i18n>opensource</span></i></a>
   </ul>
 </footer><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script>
@@ -353,11 +353,11 @@ cppython 的实现中的 visitor 模式 http://yuml.me/f1e0a616.svg</object>
       <p>@ <a href="mailto:zhuo.qiang@gmail.com"><span i18n>Qiang</span></a> | <span class="heart"><a href="https://github.com/getpelican/pelican">Pelican</a> & <a href="https://bitbucket.org/zhuoqiang/jing">Jing</a></span></p>
     </footer>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-    <script>window.jQuery || document.write('<script src="http://zhuoqiang.me/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment.min.js"></script>
-    <script src="http://zhuoqiang.me/theme/js/vendor/moment-lang.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/vendor/i18next-1.6.0.min.js"></script>    
-    <script src="http://zhuoqiang.me/theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="https://zhuoqiang.github.io/theme/js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment.min.js"></script>
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/moment-lang.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/vendor/i18next-1.6.0.min.js"></script>    
+    <script src="https://zhuoqiang.github.io/theme/js/main.js"></script>
     <script type="text/javascript">
       var GoSquared = {};
       GoSquared.acct = "GSN-743443-H";
