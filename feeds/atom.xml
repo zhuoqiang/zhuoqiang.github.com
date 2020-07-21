@@ -138,7 +138,7 @@
 &lt;li&gt;静态类型检查时会确保是否在派生类中有相同签名的实现&lt;/li&gt;
 &lt;li&gt;动态运行时, 会检查是否同名函数存在&lt;/li&gt;
 &lt;li&gt;代码影响: 自动非侵入式, 不需要继承, 也无需手工注册&lt;/li&gt;
-&lt;/ul&gt;</content><category term="content"></category><category term="python"></category><category term="design"></category></entry><entry><title>逆世界：让 C++ 走进 Python</title><link href="https://zhuoqiang.github.io/bring-cpp-class-to-python-through-cython.html" rel="alternate"></link><published>2014-09-15T20:39:00+08:00</published><updated>2014-09-15T20:39:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.github.io,2014-09-15:/bring-cpp-class-to-python-through-cython.html</id><summary type="html">&lt;p&gt;&lt;em&gt;本文首发程序员杂志 2014 年 8 月刊&lt;/em&gt;&lt;/p&gt;
+&lt;/ul&gt;</content><category term="programming"></category><category term="python"></category><category term="design"></category></entry><entry><title>逆世界：让 C++ 走进 Python</title><link href="https://zhuoqiang.github.io/bring-cpp-class-to-python-through-cython.html" rel="alternate"></link><published>2014-09-15T20:39:00+08:00</published><updated>2014-09-15T20:39:00+08:00</updated><author><name>Qiang</name></author><id>tag:zhuoqiang.github.io,2014-09-15:/bring-cpp-class-to-python-through-cython.html</id><summary type="html">&lt;p&gt;&lt;em&gt;本文首发程序员杂志 2014 年 8 月刊&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;要想实现 C 语言与 Python 之间的交互，业界已有不少成熟的解决方案。但如果希望实现 C++ 与 Python 之间的水乳交融，现有的这些解决方案却又都不那么完美：Boost.Python 失之环境复杂; Cython 对 C++ 支持有限; 易于上手的 ctypes 则干脆不支持 C++。&lt;/p&gt;
 &lt;p&gt;下面将会向大家介绍一种基于 Cython 的解决方案，可以轻松实现 C++ 与 Python 之间的跨语言多态，也算是补足了 Cython 对 C++ 支持的短板吧。&lt;/p&gt;
 &lt;div class="section" id="id1"&gt;
